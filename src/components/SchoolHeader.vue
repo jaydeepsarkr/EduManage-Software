@@ -232,10 +232,10 @@
     },
     methods: {
       getCurrentPageTitle() {
-        return "Dashboard Overview";
+        return "Wellcome back!";
       },
       getCurrentPageDescription() {
-        return "Welcome back! Here's what's happening at your school today.";
+        return "Here's what's happening at your school today.";
       },
       toggleUserMenu() {
         this.showUserMenu = !this.showUserMenu;
