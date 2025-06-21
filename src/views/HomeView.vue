@@ -1,8 +1,24 @@
 <template>
   <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
-      <!-- Dashboard Cards -->
+      <h1 class="text-2xl font-bold text-gray-900 mb-6">
+        School Management Dashboard
+      </h1>
 
+      <!-- Dashboard Cards -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+      >
+        <DashboardCards
+          v-for="(card, index) in stats"
+          :key="index"
+          :icon="card.icon"
+          :label="card.label"
+          :value="card.value"
+          :bgColor="card.bgColor"
+          :iconColor="card.iconColor"
+        />
+      </div>
       <!-- Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-sm p-6">
@@ -163,7 +179,7 @@
   </main>
 </template>
 
-<script>
+<script setup>
   import {
     Users,
     UserCheck,
@@ -178,49 +194,52 @@
     AlertCircle,
   } from "lucide-vue-next";
 
-  export default {
-    name: "App",
-    components: {
-      CalendarPlus,
-      FileText,
-      Plus,
-      UserPlus,
+  import { ref } from "vue";
+  import DashboardCards from "@/components/Home/DashboardCards.vue";
 
-      Users,
-      UserCheck,
-      ClipboardCheck,
-      BookOpen,
-      Calendar,
-      Award,
-      AlertCircle,
+  const announcements = ref([
+    {
+      id: 1,
+      title: "Holiday Schedule Update",
+      content:
+        "Please note the updated holiday schedule for the winter break period.",
+      date: "Dec 20, 2024",
     },
-    data() {
-      return {
-        showMobileSidebar: false,
-        announcements: [
-          {
-            id: 1,
-            title: "Holiday Schedule Update",
-            content:
-              "Please note the updated holiday schedule for the winter break period.",
-            date: "Dec 20, 2024",
-          },
-          {
-            id: 2,
-            title: "Parent-Teacher Meeting",
-            content: "Scheduled for September 5th at 6 PM.",
-            date: "August 28, 2023",
-          },
-        ],
-      };
+    {
+      id: 2,
+      title: "Parent-Teacher Meeting",
+      content: "Scheduled for September 5th at 6 PM.",
+      date: "August 28, 2023",
     },
-    methods: {
-      toggleMobileSidebar() {
-        this.showMobileSidebar = !this.showMobileSidebar;
-      },
-      closeMobileSidebar() {
-        this.showMobileSidebar = false;
-      },
+  ]);
+  const stats = [
+    {
+      icon: Users,
+      label: "Total Students",
+      value: "1,247",
+      bgColor: "bg-blue-100",
+      iconColor: "text-blue-600",
     },
-  };
+    {
+      icon: UserCheck,
+      label: "Teaching Staff",
+      value: 80,
+      bgColor: "bg-green-100",
+      iconColor: "text-green-600",
+    },
+    {
+      icon: ClipboardCheck,
+      label: "Attendance Rate",
+      value: "94.2%",
+      bgColor: "bg-orange-100",
+      iconColor: "text-orange-600",
+    },
+    {
+      icon: BookOpen,
+      label: "Active Classes",
+      value: 42,
+      bgColor: "bg-purple-100",
+      iconColor: "text-purple-600",
+    },
+  ];
 </script>

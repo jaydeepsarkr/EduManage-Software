@@ -1,4 +1,3 @@
-<!-- components/StatCard.vue -->
 <template>
   <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
     <div class="flex items-center">
@@ -17,12 +16,30 @@
   </div>
 </template>
 
-<script setup>
-  defineProps({
-    icon: Object, // Pass the imported icon directly
-    label: String,
-    value: [String, Number],
-    bgColor: String, // Tailwind bg class like "bg-blue-100"
-    iconColor: String, // Tailwind text class like "text-blue-600"
-  });
+<script>
+  export default {
+    name: "StatCard",
+    props: {
+      icon: {
+        type: [Object, Function],
+        required: true,
+      },
+      label: {
+        type: String,
+        required: true,
+      },
+      value: {
+        type: [String, Number],
+        required: true,
+      },
+      bgColor: {
+        type: String,
+        required: true,
+      },
+      iconColor: {
+        type: String,
+        required: true,
+      },
+    },
+  };
 </script>
