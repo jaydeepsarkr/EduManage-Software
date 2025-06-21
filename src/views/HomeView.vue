@@ -1,10 +1,6 @@
 <template>
   <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6">
-        School Management Dashboard
-      </h1>
-
       <!-- Dashboard Cards -->
       <div
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"

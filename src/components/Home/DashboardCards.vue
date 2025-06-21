@@ -1,16 +1,26 @@
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+  <div
+    class="bg-white p-4 rounded-xl shadow-md border border-gray-100 transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+  >
     <div class="flex items-center">
-      <div :class="['p-2 rounded-lg', bgColor]">
+      <div
+        :class="[
+          'p-2 rounded-lg shadow-inner transition duration-300',
+          bgColor,
+        ]"
+      >
         <component
           :is="icon"
-          class="w-6 h-6"
-          :class="iconColor"
+          class="w-5 h-5"
+          :class="[
+            iconColor,
+            'transition-transform duration-300 group-hover:scale-110',
+          ]"
         />
       </div>
       <div class="ml-4">
-        <p class="text-sm font-medium text-gray-600">{{ label }}</p>
-        <p class="text-2xl font-bold text-gray-900">{{ value }}</p>
+        <p class="text-xs font-medium text-gray-500">{{ label }}</p>
+        <p class="text-lg font-bold text-gray-800">{{ value }}</p>
       </div>
     </div>
   </div>
