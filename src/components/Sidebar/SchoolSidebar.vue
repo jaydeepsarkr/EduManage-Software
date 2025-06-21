@@ -40,50 +40,49 @@
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
         <!-- Main Navigation -->
-        <div class="space-y-1">
+        <RouterLink
+          v-for="item in mainNavigationItems"
+          :key="item.id"
+          :to="item.route"
+          class="block"
+        >
           <div
-            v-for="item in mainNavigationItems"
-            :key="item.id"
-            class="relative"
+            @click="setActiveItem(item.id)"
+            :class="[
+              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              activeItem === item.id
+                ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+            ]"
+            :title="isCollapsed ? item.label : ''"
           >
-            <button
-              @click="setActiveItem(item.id)"
+            <component
+              :is="item.icon"
               :class="[
-                'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                activeItem === item.id
-                  ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                'flex-shrink-0 transition-colors duration-200',
+                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
               ]"
-              :title="isCollapsed ? item.label : ''"
+            />
+            <span
+              v-if="!isCollapsed"
+              class="truncate transition-opacity duration-200"
             >
-              <component
-                :is="item.icon"
-                :class="[
-                  'flex-shrink-0 transition-colors duration-200',
-                  isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
-                  activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
-                ]"
-              />
-              <span
-                v-if="!isCollapsed"
-                class="truncate transition-opacity duration-200"
-              >
-                {{ item.label }}
-              </span>
-              <span
-                v-if="!isCollapsed && item.badge"
-                :class="[
-                  'ml-auto text-xs px-2 py-0.5 rounded-full',
-                  item.badgeType === 'urgent'
-                    ? 'bg-red-100 text-red-600'
-                    : 'bg-blue-100 text-blue-600',
-                ]"
-              >
-                {{ item.badge }}
-              </span>
-            </button>
+              {{ item.label }}
+            </span>
+            <span
+              v-if="!isCollapsed && item.badge"
+              :class="[
+                'ml-auto text-xs px-2 py-0.5 rounded-full',
+                item.badgeType === 'urgent'
+                  ? 'bg-red-100 text-red-600'
+                  : 'bg-blue-100 text-blue-600',
+              ]"
+            >
+              {{ item.badge }}
+            </span>
           </div>
-        </div>
+        </RouterLink>
 
         <!-- Academic Section -->
         <div class="pt-4">
@@ -97,19 +96,22 @@
               Academic
             </h3>
           </div>
+
           <div class="space-y-1">
-            <div
+            <RouterLink
               v-for="item in academicItems"
               :key="item.id"
+              :to="item.route"
+              class="block"
             >
-              <button
-                @click="setActiveItem(item.id)"
+              <div
                 :class="[
                   'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
                   activeItem === item.id
                     ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
                     : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
                 ]"
+                @click="setActiveItem(item.id)"
                 :title="isCollapsed ? item.label : ''"
               >
                 <component
@@ -134,101 +136,87 @@
                 >
                   {{ item.badge }}
                 </span>
-              </button>
-            </div>
+              </div>
+            </RouterLink>
           </div>
         </div>
 
         <!-- Administration Section -->
-        <div class="pt-4">
+        <RouterLink
+          v-for="item in administrationItems"
+          :key="item.id"
+          :to="item.route"
+          class="block"
+        >
           <div
-            v-if="!isCollapsed"
-            class="px-3 mb-2"
+            @click="setActiveItem(item.id)"
+            :class="[
+              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              activeItem === item.id
+                ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+            ]"
+            :title="isCollapsed ? item.label : ''"
           >
-            <h3
-              class="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+            <component
+              :is="item.icon"
+              :class="[
+                'flex-shrink-0 transition-colors duration-200',
+                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
+              ]"
+            />
+            <span
+              v-if="!isCollapsed"
+              class="truncate transition-opacity duration-200"
             >
-              Administration
-            </h3>
-          </div>
-          <div class="space-y-1">
-            <div
-              v-for="item in administrationItems"
-              :key="item.id"
+              {{ item.label }}
+            </span>
+            <span
+              v-if="!isCollapsed && item.badge"
+              class="ml-auto bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full"
             >
-              <button
-                @click="setActiveItem(item.id)"
-                :class="[
-                  'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                  activeItem === item.id
-                    ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-                ]"
-                :title="isCollapsed ? item.label : ''"
-              >
-                <component
-                  :is="item.icon"
-                  :class="[
-                    'flex-shrink-0 transition-colors duration-200',
-                    isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
-                    activeItem === item.id
-                      ? 'text-indigo-600'
-                      : 'text-gray-500',
-                  ]"
-                />
-                <span
-                  v-if="!isCollapsed"
-                  class="truncate transition-opacity duration-200"
-                >
-                  {{ item.label }}
-                </span>
-                <span
-                  v-if="!isCollapsed && item.badge"
-                  class="ml-auto bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full"
-                >
-                  {{ item.badge }}
-                </span>
-              </button>
-            </div>
+              {{ item.badge }}
+            </span>
           </div>
-        </div>
+        </RouterLink>
 
         <!-- Separator -->
         <div class="my-4 border-t border-gray-200"></div>
 
         <!-- System Section -->
-        <div class="space-y-1">
+        <RouterLink
+          v-for="item in systemItems"
+          :key="item.id"
+          :to="item.route"
+          class="block"
+        >
           <div
-            v-for="item in systemItems"
-            :key="item.id"
+            @click="setActiveItem(item.id)"
+            :class="[
+              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              activeItem === item.id
+                ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+            ]"
+            :title="isCollapsed ? item.label : ''"
           >
-            <button
-              @click="setActiveItem(item.id)"
+            <component
+              :is="item.icon"
               :class="[
-                'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-                activeItem === item.id
-                  ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                'flex-shrink-0 transition-colors duration-200',
+                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
               ]"
-              :title="isCollapsed ? item.label : ''"
+            />
+            <span
+              v-if="!isCollapsed"
+              class="truncate transition-opacity duration-200"
             >
-              <component
-                :is="item.icon"
-                :class="[
-                  'flex-shrink-0 transition-colors duration-200',
-                  isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
-                  activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
-                ]"
-              />
-              <span
-                v-if="!isCollapsed"
-                class="truncate transition-opacity duration-200"
-              >
-                {{ item.label }}
-              </span>
-            </button>
+              {{ item.label }}
+            </span>
           </div>
-        </div>
+        </RouterLink>
       </nav>
 
       <!-- Footer -->
@@ -317,6 +305,7 @@
       id: "dashboard",
       label: "Dashboard",
       icon: Home,
+      route: "/dasboard",
       description:
         "Overview of school statistics, recent activities, and key performance indicators.",
       quickAction: "View Today's Schedule",
@@ -330,6 +319,7 @@
       label: "Students",
       icon: Users,
       badge: "1,247",
+      route: "/about",
       description:
         "Manage student records, enrollment, personal information, and academic history.",
       quickAction: "Add New Student",
