@@ -22,8 +22,8 @@
 <script setup>
   import { useRoute } from "vue-router";
   import { computed } from "vue";
-  import SchoolHeader from "./components/SchoolHeader.vue";
-  import SchoolSidebar from "./components/SchoolSidebar.vue";
+  import SchoolHeader from "./components/Header/SchoolHeader.vue";
+  import SchoolSidebar from "./components/Sidebar/SchoolSidebar.vue";
 
   const route = useRoute();
 

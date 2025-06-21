@@ -1,62 +1,8 @@
 <template>
   <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-2xl font-bold text-gray-900 mb-6">
-        School Management Dashboard
-      </h1>
-
       <!-- Dashboard Cards -->
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
-      >
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div class="flex items-center">
-            <div class="p-2 bg-blue-100 rounded-lg">
-              <Users class="w-6 h-6 text-blue-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Total Students</p>
-              <p class="text-2xl font-bold text-gray-900">1,247</p>
-            </div>
-          </div>
-        </div>
 
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div class="flex items-center">
-            <div class="p-2 bg-green-100 rounded-lg">
-              <UserCheck class="w-6 h-6 text-green-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Teaching Staff</p>
-              <p class="text-2xl font-bold text-gray-900">89</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div class="flex items-center">
-            <div class="p-2 bg-orange-100 rounded-lg">
-              <ClipboardCheck class="w-6 h-6 text-orange-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Attendance Rate</p>
-              <p class="text-2xl font-bold text-gray-900">94.2%</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-          <div class="flex items-center">
-            <div class="p-2 bg-purple-100 rounded-lg">
-              <BookOpen class="w-6 h-6 text-purple-600" />
-            </div>
-            <div class="ml-4">
-              <p class="text-sm font-medium text-gray-600">Active Classes</p>
-              <p class="text-2xl font-bold text-gray-900">42</p>
-            </div>
-          </div>
-        </div>
-      </div>
       <!-- Quick Actions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div class="bg-white rounded-lg shadow-sm p-6">
