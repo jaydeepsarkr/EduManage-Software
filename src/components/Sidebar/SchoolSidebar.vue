@@ -142,6 +142,16 @@
         </div>
 
         <!-- Administration Section -->
+        <div
+          v-if="!isCollapsed"
+          class="px-3 mb-2 pt-4"
+        >
+          <h3
+            class="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+          >
+            Administration
+          </h3>
+        </div>
         <RouterLink
           v-for="item in administrationItems"
           :key="item.id"
@@ -305,7 +315,7 @@
       id: "dashboard",
       label: "Dashboard",
       icon: Home,
-      route: "/dasboard",
+      route: "/",
       description:
         "Overview of school statistics, recent activities, and key performance indicators.",
       quickAction: "View Today's Schedule",
@@ -319,7 +329,7 @@
       label: "Students",
       icon: Users,
       badge: "1,247",
-      route: "/about",
+      route: "/working",
       description:
         "Manage student records, enrollment, personal information, and academic history.",
       quickAction: "Add New Student",
@@ -332,6 +342,7 @@
       description:
         "Manage teacher profiles, assignments, schedules, and performance records.",
       quickAction: "Add New Teacher",
+      route: "/working",
     },
     {
       id: "classes",
@@ -341,6 +352,7 @@
       description:
         "Manage class schedules, room assignments, and student-teacher allocations.",
       quickAction: "Create New Class",
+      route: "/working",
     },
     {
       id: "subjects",
@@ -349,6 +361,7 @@
       description:
         "Manage curriculum, subject assignments, and academic requirements.",
       quickAction: "Add New Subject",
+      route: "/working",
     },
     {
       id: "timetable",
@@ -357,6 +370,7 @@
       description:
         "Create and manage class schedules, exam timetables, and academic calendar.",
       quickAction: "Generate Timetable",
+      route: "/working",
     },
     {
       id: "attendance",
@@ -365,6 +379,7 @@
       badge: "Today",
       description: "Track and manage student and teacher attendance records.",
       quickAction: "Mark Attendance",
+      route: "/working",
     },
     {
       id: "grades",
@@ -373,6 +388,7 @@
       description:
         "Manage student grades, report cards, and academic assessments.",
       quickAction: "Enter Grades",
+      route: "/working",
     },
   ]);
 
@@ -386,6 +402,7 @@
       description:
         "Manage library resources, book inventory, and student borrowing records.",
       quickAction: "Add New Book",
+      route: "/working",
     },
     {
       id: "finance",
@@ -396,6 +413,7 @@
       description:
         "Manage school finances, fee collection, salary payments, and budgets.",
       quickAction: "View Pending Fees",
+      route: "/working",
     },
     {
       id: "events",
@@ -405,6 +423,7 @@
       description:
         "Plan and manage school events, activities, and important announcements.",
       quickAction: "Create Event",
+      route: "/working",
     },
     {
       id: "transport",
@@ -413,6 +432,7 @@
       description:
         "Manage school transportation, bus routes, and student transport assignments.",
       quickAction: "Manage Routes",
+      route: "/working",
     },
     {
       id: "reports",
@@ -421,6 +441,7 @@
       description:
         "Generate comprehensive reports on academics, attendance, and administration.",
       quickAction: "Generate Report",
+      route: "/working",
     },
   ]);
 
@@ -433,6 +454,7 @@
       description:
         "Configure system settings, user permissions, and school preferences.",
       quickAction: "Manage Settings",
+      route: "/working",
     },
     {
       id: "help",
@@ -441,6 +463,7 @@
       description:
         "Access help documentation, tutorials, and technical support.",
       quickAction: "Contact Support",
+      route: "/working",
     },
     {
       id: "logout",
@@ -448,6 +471,7 @@
       icon: LogOut,
       description: "Securely sign out of the school management system.",
       quickAction: null,
+      route: "/working",
     },
   ]);
 
