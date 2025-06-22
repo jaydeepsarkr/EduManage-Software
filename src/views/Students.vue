@@ -305,7 +305,7 @@
 <script setup>
   import { ref } from "vue";
   import { Pencil, X, Save } from "lucide-vue-next";
-  import Header from "@/components/Students/Header.vue";
+  import Header from "@/components/Students/HeaderStudent.vue";
 
   // Reactive data
 

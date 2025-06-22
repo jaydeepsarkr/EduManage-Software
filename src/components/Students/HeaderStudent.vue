@@ -5,51 +5,11 @@
     >
       <div class="flex flex-col sm:flex-row gap-4 flex-1">
         <!-- Search -->
-        <div class="relative flex-1 max-w-md">
-          <svg
-            class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            ></path>
-          </svg>
-          <input
-            type="text"
-            placeholder="Search students..."
-            class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
-
+        <Search />
         <!-- Grade Filter -->
-        <select
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">All Grades</option>
-          <option
-            v-for="grade in grades"
-            :key="grade"
-            :value="grade"
-          >
-            {{ grade }}
-          </option>
-        </select>
-
+        <GradeFilter />
         <!-- Status Filter -->
-        <select
-          v-model="selectedStatus"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-        >
-          <option value="">All Status</option>
-          <option value="Active">Active</option>
-          <option value="Inactive">Inactive</option>
-          <option value="Graduated">Graduated</option>
-        </select>
+        <StatusFilter />
       </div>
 
       <!-- Add Student Button -->
@@ -179,10 +139,11 @@
 <script setup>
   import { ref } from "vue";
   import { X, UserPlus, Save } from "lucide-vue-next";
+  import Search from "@/components/Students/Search/Search.vue";
+  import GradeFilter from "@/components/Students/GradeFilter/GradeFilter.vue";
+  import StatusFilter from "@/components/Students/StatusFilter/StatusFilter.vue";
 
   // Reactive data
-
-  const selectedStatus = ref("");
 
   const showAddModal = ref(false);
 
