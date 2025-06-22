@@ -4,6 +4,7 @@ import AboutView from "../views/AboutView.vue";
 import Login from "../views/Auth/LoginView.vue";
 import Signup from "../views/Auth/SignupView.vue";
 import UnderConstraction from "../views/UnderConstration.vue";
+import Students from "../views/Students.vue";
 
 const routes = [
   {
@@ -30,6 +31,11 @@ const routes = [
     path: "/working",
     name: "UnderConstraction",
     component: UnderConstraction,
+  },
+  {
+    path: "/students",
+    name: "students",
+    component: Students,
   },
 ];
 

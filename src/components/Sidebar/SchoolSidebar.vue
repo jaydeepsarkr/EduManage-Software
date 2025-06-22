@@ -329,7 +329,7 @@
       label: "Students",
       icon: Users,
       badge: "1,247",
-      route: "/working",
+      route: "/students",
       description:
         "Manage student records, enrollment, personal information, and academic history.",
       quickAction: "Add New Student",

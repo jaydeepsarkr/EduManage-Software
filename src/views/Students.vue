@@ -2,82 +2,8 @@
   <div class="min-h-screen bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
       <!-- Controls -->
-      <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
-        <div
-          class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
-        >
-          <div class="flex flex-col sm:flex-row gap-4 flex-1">
-            <!-- Search -->
-            <div class="relative flex-1 max-w-md">
-              <svg
-                class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                ></path>
-              </svg>
-              <input
-                type="text"
-                placeholder="Search students..."
-                class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div>
-
-            <!-- Grade Filter -->
-            <select
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All Grades</option>
-              <option
-                v-for="grade in grades"
-                :key="grade"
-                :value="grade"
-              >
-                {{ grade }}
-              </option>
-            </select>
-
-            <!-- Status Filter -->
-            <select
-              v-model="selectedStatus"
-              class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="">All Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Graduated">Graduated</option>
-            </select>
-          </div>
-
-          <!-- Add Student Button -->
-          <button
-            @click="showAddModal = true"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
-          >
-            <svg
-              class="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              ></path>
-            </svg>
-            Add Student
-          </button>
-        </div>
-      </div>
-
+      <Header />
+      .
       <!-- Table -->
       <div class="bg-white rounded-lg shadow-sm border overflow-hidden">
         <div class="overflow-x-auto">
@@ -191,8 +117,9 @@
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {{ student.grade }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ student.phone }}
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-900">{{ student.phone }}</div>
+                  <div class="text-sm text-gray-500">{{ student.address }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
@@ -261,69 +188,107 @@
                 </td>
               </tr>
             </tbody>
+            <!-- Edit Student Modal -->
             <div
               v-if="showEditModal"
-              class="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center"
+              class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4"
             >
               <div
-                class="bg-white w-full max-w-md p-6 rounded-lg shadow-xl relative"
+                class="bg-white w-full max-w-lg rounded-2xl shadow-lg p-6 relative animate-fade-in"
               >
                 <!-- Close Button -->
                 <button
                   @click="closeModal"
-                  class="absolute top-3 right-3 text-gray-500 hover:text-black"
+                  class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
+                  title="Close"
                 >
                   <X class="w-5 h-5" />
                 </button>
 
-                <h2 class="text-lg font-semibold text-gray-800 mb-4">
-                  Edit Student
-                </h2>
+                <div class="mb-4 flex items-center gap-2">
+                  <Pencil class="w-6 h-6 text-green-600" />
+                  <h2 class="text-xl font-semibold text-gray-800">
+                    Edit Student
+                  </h2>
+                </div>
 
-                <div class="space-y-4">
+                <div class="grid grid-cols-1 gap-4">
                   <div>
-                    <label class="text-sm text-gray-600">Name</label>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Full Name</label
+                    >
                     <input
                       v-model="editingStudent.name"
-                      class="w-full border rounded px-3 py-2 mt-1"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label class="text-sm text-gray-600">Email</label>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Email</label
+                    >
                     <input
                       v-model="editingStudent.email"
-                      class="w-full border rounded px-3 py-2 mt-1"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label class="text-sm text-gray-600">Grade</label>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Grade</label
+                    >
                     <input
                       v-model="editingStudent.grade"
-                      class="w-full border rounded px-3 py-2 mt-1"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
                   </div>
 
                   <div>
-                    <label class="text-sm text-gray-600">Phone</label>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Phone</label
+                    >
                     <input
                       v-model="editingStudent.phone"
-                      class="w-full border rounded px-3 py-2 mt-1"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Address</label
+                    >
+                    <input
+                      v-model="editingStudent.address"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >Status</label
+                    >
+                    <select
+                      v-model="editingStudent.status"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                      <option value="Graduated">Graduated</option>
+                    </select>
                   </div>
                 </div>
 
-                <div class="flex justify-end gap-2 mt-6">
+                <div class="mt-6 flex justify-end gap-2">
                   <button
                     @click="saveStudent"
-                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    class="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
                   >
-                    Save
+                    <Save class="w-4 h-4" />
+                    Save Changes
                   </button>
                   <button
                     @click="closeModal"
-                    class="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                    class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
                   >
                     Cancel
                   </button>
@@ -339,13 +304,10 @@
 
 <script setup>
   import { ref } from "vue";
-  import { Pencil, X } from "lucide-vue-next";
+  import { Pencil, X, Save } from "lucide-vue-next";
+  import Header from "@/components/Students/Header.vue";
 
   // Reactive data
-
-  const selectedStatus = ref("");
-
-  const showAddModal = ref(false);
 
   // Sample student data
   const students = ref([
@@ -355,6 +317,7 @@
       email: "alice.johnson@email.com",
       grade: "10th Grade",
       phone: "+1 (555) 123-4567",
+      address: "123 Main St, Springfield",
       status: "Active",
       enrollmentDate: "2024-01-15",
     },
@@ -364,6 +327,7 @@
       email: "bob.smith@email.com",
       grade: "11th Grade",
       phone: "+1 (555) 234-5678",
+      address: "456 Oak Ave, Shelbyville",
       status: "Active",
       enrollmentDate: "2024-01-20",
     },
@@ -411,3 +375,19 @@
     showEditModal.value = false;
   }
 </script>
+<style scoped>
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.2s ease-out;
+  }
+</style>
