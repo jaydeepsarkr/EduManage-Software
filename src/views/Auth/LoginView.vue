@@ -1,25 +1,36 @@
 <template>
-  <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+  <div
+    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4"
+  >
     <div class="max-w-md w-full">
       <!-- Login Card -->
       <div
-        class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden transform transition-all duration-500 hover:shadow-md"
+        class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden transform transition-all duration-500 hover:shadow-2xl hover:scale-[1.02]"
       >
         <!-- Header -->
-        <div class="px-8 pt-8 pb-6 text-center border-b border-gray-100">
-          <h1 class="text-2xl font-semibold text-gray-900 mb-1">
+        <div class="px-8 pt-8 pb-6 text-center">
+          <div
+            class="w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg"
+          >
+            <GraduationCapIcon class="w-8 h-8 text-white" />
+          </div>
+          <h1
+            class="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2"
+          >
             Welcome Back
           </h1>
-          <p class="text-sm text-gray-600">Sign in to your school account</p>
+          <p class="text-gray-600 font-medium">
+            Sign in to your school account
+          </p>
         </div>
 
         <!-- OAuth Section -->
-        <div class="px-8 pt-6 space-y-3">
+        <div class="px-8 pt-2 space-y-3">
           <button
-            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:scale-[1.02]"
+            class="w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-xl shadow-sm text-sm font-semibold text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-md group"
           >
             <svg
-              class="w-5 h-5 mr-3"
+              class="w-5 h-5 mr-3 transition-transform group-hover:scale-110"
               viewBox="0 0 24 24"
             >
               <path
@@ -42,53 +53,13 @@
             Continue with Google
           </button>
 
-          <button
-            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:scale-[1.02]"
-          >
-            <svg
-              class="w-5 h-5 mr-3"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="#f25022"
-                d="M1 1h10v10H1z"
-              />
-              <path
-                fill="#00a4ef"
-                d="M13 1h10v10H13z"
-              />
-              <path
-                fill="#7fba00"
-                d="M1 13h10v10H1z"
-              />
-              <path
-                fill="#ffb900"
-                d="M13 13h10v10H13z"
-              />
-            </svg>
-            Continue with Microsoft
-          </button>
-
-          <button
-            class="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-all duration-200 transform hover:scale-[1.02]"
-          >
-            <svg
-              class="w-5 h-5 mr-3"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 ..." />
-            </svg>
-            Continue with GitHub
-          </button>
-
           <!-- Divider -->
           <div class="relative my-6">
             <div class="absolute inset-0 flex items-center">
-              <div class="w-full border-t border-gray-300"></div>
+              <div class="w-full border-t border-gray-200"></div>
             </div>
             <div class="relative flex justify-center text-sm">
-              <span class="px-2 bg-white text-gray-500"
+              <span class="px-4 bg-white text-gray-500 font-medium"
                 >Or continue with email</span
               >
             </div>
@@ -96,116 +67,232 @@
         </div>
 
         <!-- Login Form -->
-        <div class="px-8 pb-8 space-y-4">
-          <div>
+        <div class="px-8 pb-8 space-y-5">
+          <div class="space-y-1">
             <label
               for="email"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Email</label
+              class="block text-sm font-semibold text-gray-700 mb-2"
             >
-            <input
-              id="email"
-              type="email"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
-              placeholder="your@email.com"
-            />
+              <MailIcon class="w-4 h-4 inline mr-2 text-gray-500" />
+              Email Address
+            </label>
+            <div class="relative">
+              <input
+                id="email"
+                type="email"
+                v-model="email"
+                class="w-full px-4 py-3 pl-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
+                placeholder="your@email.com"
+              />
+              <MailIcon
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              />
+            </div>
           </div>
 
-          <div>
+          <div class="space-y-1">
             <label
               for="password"
-              class="block text-sm font-medium text-gray-700 mb-1"
-              >Password</label
+              class="block text-sm font-semibold text-gray-700 mb-2"
             >
-            <input
-              id="password"
-              type="password"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent transition-all duration-200"
-              placeholder="Enter password"
-            />
+              <LockIcon class="w-4 h-4 inline mr-2 text-gray-500" />
+              Password
+            </label>
+            <div class="relative">
+              <input
+                id="password"
+                :type="showPassword ? 'text' : 'password'"
+                v-model="password"
+                class="w-full px-4 py-3 pl-11 pr-11 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-gray-50 hover:bg-white focus:bg-white"
+                placeholder="Enter your password"
+              />
+              <LockIcon
+                class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+              />
+              <button
+                type="button"
+                @click="showPassword = !showPassword"
+                class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <EyeIcon
+                  v-if="!showPassword"
+                  class="w-5 h-5"
+                />
+                <EyeOffIcon
+                  v-else
+                  class="w-5 h-5"
+                />
+              </button>
+            </div>
           </div>
 
+          <transition
+            name="error"
+            mode="out-in"
+          >
+            <div
+              v-if="errorMessage"
+              class="flex items-center space-x-2 text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3"
+            >
+              <AlertCircleIcon class="w-4 h-4 flex-shrink-0" />
+              <span>{{ errorMessage }}</span>
+            </div>
+          </transition>
+
           <div class="flex items-center justify-between text-sm">
-            <label class="flex items-center">
+            <label class="flex items-center cursor-pointer group">
               <input
                 type="checkbox"
-                class="h-4 w-4 text-gray-900 border-gray-300 rounded"
+                class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 transition-colors"
               />
-              <span class="ml-2 text-gray-600">Remember me</span>
+              <span
+                class="ml-2 text-gray-600 group-hover:text-gray-800 transition-colors"
+                >Remember me</span
+              >
             </label>
             <a
               href="#"
-              class="text-gray-900 hover:underline"
-              >Forgot password?</a
+              class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-colors"
             >
+              Forgot password?
+            </a>
           </div>
 
           <div>
             <button
-              class="w-full bg-gray-900 text-white py-2.5 px-4 rounded-md font-medium hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all duration-200"
+              @click="handleLogin"
+              :disabled="isLoading"
+              class="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 px-4 rounded-xl font-semibold hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-2"
             >
-              Sign In
+              <LoaderIcon
+                v-if="isLoading"
+                class="w-5 h-5 animate-spin"
+              />
+              <LogInIcon
+                v-else
+                class="w-5 h-5"
+              />
+              <span>{{ isLoading ? "Signing In..." : "Sign In" }}</span>
             </button>
           </div>
 
           <div class="mt-6 text-center">
-            <p class="text-sm text-gray-600">
+            <p class="text-gray-600">
               Don't have an account?
-              <a
-                href="#"
-                class="text-gray-900 hover:underline font-medium"
-                >Sign up</a
+              <router-link
+                to="/signup"
+                class="text-blue-600 hover:text-blue-800 font-semibold hover:underline transition-colors ml-1"
               >
+                Sign up
+              </router-link>
             </p>
           </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="mt-8 text-center">
+        <p
+          class="text-sm text-gray-500 flex items-center justify-center space-x-1"
+        >
+          <ShieldCheckIcon class="w-4 h-4" />
+          <span>Your data is protected with enterprise-grade security</span>
+        </p>
       </div>
     </div>
   </div>
 </template>
 
+<script setup>
+  import { ref } from "vue";
+  import axios from "axios";
+  import router from "@/router";
+  import {
+    MailIcon,
+    LockIcon,
+    EyeIcon,
+    EyeOffIcon,
+    LogInIcon,
+    LoaderIcon,
+    AlertCircleIcon,
+    GraduationCapIcon,
+    ShieldCheckIcon,
+  } from "lucide-vue-next";
+
+  const email = ref("");
+  const password = ref("");
+  const errorMessage = ref("");
+  const showPassword = ref(false);
+  const isLoading = ref(false);
+
+  const handleLogin = async () => {
+    errorMessage.value = "";
+    isLoading.value = true;
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          email: email.value,
+          password: password.value,
+        }
+      );
+
+      // Save token & redirect
+      localStorage.setItem("token", response.data.token);
+      router.push("/dashboard");
+    } catch (err) {
+      errorMessage.value =
+        err.response?.data?.error || "Login failed. Please try again.";
+    } finally {
+      isLoading.value = false;
+    }
+  };
+</script>
+
 <style scoped>
-  /* Fade in animation */
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.6s ease-out;
-  }
-
-  /* Slide up animation */
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.5s ease-out both;
-  }
-
-  /* Message transition */
-  .message-enter-active,
-  .message-leave-active {
+  /* Error message transitions */
+  .error-enter-active,
+  .error-leave-active {
     transition: all 0.3s ease-out;
   }
 
-  .message-enter-from,
-  .message-leave-to {
+  .error-enter-from,
+  .error-leave-to {
     opacity: 0;
     transform: translateY(-10px) scale(0.95);
+  }
+
+  /* Custom scrollbar for better aesthetics */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Enhanced focus styles */
+  input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  }
+
+  /* Smooth animations for all interactive elements */
+  * {
+    transition-property: color, background-color, border-color,
+      text-decoration-color, fill, stroke, opacity, box-shadow, transform,
+      filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 </style>
