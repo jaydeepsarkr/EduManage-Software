@@ -14,7 +14,7 @@
                   class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
                   <button class="flex items-center gap-1 hover:text-gray-700">
-                    Student ID
+                    Roll no
                     <svg
                       class="w-4 h-4"
                       fill="none"
@@ -58,7 +58,7 @@
                 <th
                   class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                 >
-                  Grade
+                  Class
                 </th>
                 <th
                   class="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
@@ -91,8 +91,12 @@
                 <td
                   class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
                 >
-                  {{ student.id }}
+                  <div class="flex items-center gap-2">
+                    <IdCard class="w-6 h-6 text-purple-600" />
+                    <span>{{ student.rollNumber }}</span>
+                  </div>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 h-10 w-10">
@@ -112,26 +116,55 @@
                   </div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ student.email }}
+                  <div class="flex items-center gap-2">
+                    <Mail class="w-5 h-5 text-blue-600" />
+                    <span>{{ student.email }}</span>
+                  </div>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ student.grade }}
+                  <div class="flex items-center gap-2">
+                    <School class="w-5 h-5 text-green-600" />
+                    <span>{{ student.class }}</span>
+                  </div>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">{{ student.phone }}</div>
-                  <div class="text-sm text-gray-500">{{ student.address }}</div>
+                  <div class="flex items-center gap-2 text-sm text-gray-900">
+                    <Phone class="w-4 h-4 text-green-600" />
+                    <span>{{ student.phone }}</span>
+                  </div>
+                  <div class="flex items-center gap-2 text-sm text-gray-500">
+                    <MapPinHouse class="w-4 h-4 text-blue-600" />
+                    <span :title="student.address">
+                      {{
+                        student.address
+                          ? student.address.includes(",")
+                            ? student.address.split(",")[0]
+                            : student.address.split(" ")[0]
+                          : ""
+                      }}
+                    </span>
+                  </div>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap">
                   <span
                     :class="getStatusClass(student.status)"
-                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full"
+                    class="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full"
                   >
+                    <FileChartLine class="w-4 h-4 text-blue-600" />
                     {{ student.status }}
                   </span>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ student.enrollmentDate }}
+                  <div class="flex items-center gap-2">
+                    <Calendar class="w-4 h-4 text-blue-600" />
+                    <span>{{ formatDate(student.enrollmentDate) }}</span>
+                  </div>
                 </td>
+
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <div class="flex items-center gap-2">
                     <button
@@ -235,10 +268,19 @@
 
                   <div>
                     <label class="block text-sm font-medium text-gray-700"
-                      >Grade</label
+                      >Class</label
                     >
                     <input
-                      v-model="editingStudent.grade"
+                      v-model="editingStudent.class"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700"
+                      >rollNumber</label
+                    >
+                    <input
+                      v-model="editingStudent.rollNumber"
                       class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     />
                   </div>
@@ -259,7 +301,7 @@
                     >
                     <input
                       v-model="editingStudent.address"
-                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
+                      class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none truncate"
                     />
                   </div>
 
@@ -272,8 +314,8 @@
                       class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:outline-none"
                     >
                       <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                      <option value="Graduated">Graduated</option>
+                      <option value="Inactive">Leaved</option>
+                      <option value="Graduated">Passed Out</option>
                     </select>
                   </div>
                 </div>
@@ -301,39 +343,61 @@
     </div>
   </div>
 </template>
-
 <script setup>
-  import { ref } from "vue";
-  import { Pencil, X, Save } from "lucide-vue-next";
+  import { ref, onMounted, computed } from "vue";
+  import { useStore } from "vuex";
+  import {
+    Pencil,
+    X,
+    Save,
+    School,
+    Mail,
+    Phone,
+    MapPinHouse,
+    FileChartLine,
+    Calendar,
+    IdCard,
+  } from "lucide-vue-next";
   import Header from "@/components/Students/HeaderStudent.vue";
 
-  // Reactive data
+  // Vuex store
+  const store = useStore();
+  const students = computed(() => store.getters.allStudents);
+  console.log(students);
 
-  // Sample student data
-  const students = ref([
-    {
-      id: "STU001",
-      name: "Alice Johnson",
-      email: "alice.johnson@email.com",
-      grade: "10th Grade",
-      phone: "+1 (555) 123-4567",
-      address: "123 Main St, Springfield",
-      status: "Active",
-      enrollmentDate: "2024-01-15",
-    },
-    {
-      id: "STU002",
-      name: "Bob Smith",
-      email: "bob.smith@email.com",
-      grade: "11th Grade",
-      phone: "+1 (555) 234-5678",
-      address: "456 Oak Ave, Shelbyville",
-      status: "Active",
-      enrollmentDate: "2024-01-20",
-    },
-  ]);
+  // Local state
+  const editingStudent = ref(null);
+  const showEditModal = ref(false);
+  const loading = ref(false);
+  const error = ref("");
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-IN", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+  };
 
+  // Fetch students via Vuex
+  const fetchStudents = async () => {
+    try {
+      loading.value = true;
+      await store.dispatch("fetchStudents");
+    } catch (err) {
+      error.value = "Failed to fetch students.";
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // On component mount
+  onMounted(() => {
+    fetchStudents();
+  });
+
+  // Utilities
   const getInitials = (name) => {
+    if (!name || typeof name !== "string") return "NA";
     return name
       .split(" ")
       .map((n) => n[0])
@@ -353,20 +417,20 @@
         return "bg-gray-100 text-gray-800";
     }
   };
-  const editingStudent = ref(null);
-  const showEditModal = ref(false);
 
+  // Editing logic
   function editStudent(student) {
-    editingStudent.value = { ...student }; // clone to avoid direct mutation
+    editingStudent.value = { ...student };
     showEditModal.value = true;
   }
 
   function saveStudent() {
     const index = students.value.findIndex(
-      (s) => s.id === editingStudent.value.id
+      (s) => s._id === editingStudent.value._id
     );
     if (index !== -1) {
       students.value[index] = { ...editingStudent.value };
+      // Optional: Dispatch an update action to Vuex/server
     }
     showEditModal.value = false;
   }
@@ -375,6 +439,7 @@
     showEditModal.value = false;
   }
 </script>
+
 <style scoped>
   @keyframes fade-in {
     from {

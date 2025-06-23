@@ -236,8 +236,10 @@
           v-if="!isCollapsed"
           class="mb-3 p-2 bg-indigo-50 rounded-lg"
         >
-          <div class="text-xs text-indigo-600 font-medium">Academic Year</div>
-          <div class="text-sm font-semibold text-indigo-800">2024-2025</div>
+          <div class="text-xs text-indigo-600 font-medium">Today's Date</div>
+          <div class="text-sm font-semibold text-indigo-800">
+            {{ formatDate(new Date()) }}
+          </div>
         </div>
 
         <!-- User Profile -->
@@ -283,6 +285,7 @@
 
 <script setup>
   import { ref } from "vue";
+  import router from "@/router";
   import {
     Home,
     Users,
@@ -379,7 +382,7 @@
       badge: "Today",
       description: "Track and manage student and teacher attendance records.",
       quickAction: "Mark Attendance",
-      route: "/working",
+      route: "/attendance",
     },
     {
       id: "grades",
@@ -471,7 +474,7 @@
       icon: LogOut,
       description: "Securely sign out of the school management system.",
       quickAction: null,
-      route: "/working",
+      route: "/login",
     },
   ]);
 
@@ -479,12 +482,20 @@
   const toggleSidebar = () => {
     isCollapsed.value = !isCollapsed.value;
   };
+  const formatDate = (date) => {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
 
   const setActiveItem = (itemId) => {
     activeItem.value = itemId;
     if (itemId === "logout") {
-      // Handle logout logic here
-      console.log("Logging out...");
+      localStorage.removeItem("token");
+      router.push("/login");
     }
   };
 

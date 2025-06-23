@@ -240,7 +240,10 @@
 
       // Save token & redirect
       localStorage.setItem("token", response.data.token);
-      router.push("/dashboard");
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.token}`;
+      router.push("/");
     } catch (err) {
       errorMessage.value =
         err.response?.data?.error || "Login failed. Please try again.";

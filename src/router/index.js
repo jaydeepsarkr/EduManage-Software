@@ -5,6 +5,7 @@ import Login from "../views/Auth/LoginView.vue";
 import Signup from "../views/Auth/SignupView.vue";
 import UnderConstraction from "../views/UnderConstration.vue";
 import Students from "../views/Students.vue";
+import Attendeance from "../views/Attendance.vue";
 
 const routes = [
   {
@@ -38,6 +39,12 @@ const routes = [
     path: "/students",
     name: "students",
     component: Students,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/attendance",
+    name: "Attendeance",
+    component: Attendeance,
     meta: { requiresAuth: true },
   },
 ];
