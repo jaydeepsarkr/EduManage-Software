@@ -36,24 +36,24 @@ export default createStore({
   },
 
   actions: {
-    async fetchStudentsByRole({ commit }) {
-      try {
-        const token = localStorage.getItem("token");
+    // async fetchStudentsByRole({ commit }) {
+    //   try {
+    //     const token = localStorage.getItem("token");
 
-        const res = await axios.get("http://localhost:5000/api/students", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: {
-            role: "student", // 👈 pass the filter to backend
-          },
-        });
+    //     const res = await axios.get("http://localhost:5000/api/students", {
+    //       headers: {
+    //         Authorization: `Bearer ${token}`,
+    //       },
+    //       params: {
+    //         role: "student", // 👈 pass the filter to backend
+    //       },
+    //     });
 
-        commit("SET_STUDENTS", res.data.students); // reuse existing mutation
-      } catch (err) {
-        console.error("Failed to fetch students by role:", err);
-      }
-    },
+    //     commit("SET_STUDENTS", res.data.students); // reuse existing mutation
+    //   } catch (err) {
+    //     console.error("Failed to fetch students by role:", err);
+    //   }
+    // },
 
     async fetchStudents({ commit }, filters = {}) {
       try {
@@ -87,7 +87,7 @@ export default createStore({
 
     initializeUserRole({ commit }) {
       const token = localStorage.getItem("token");
-      console.log(token);
+
       // First, check if the token exists
       if (!token) {
         commit("SET_USER_ROLE", null);
@@ -130,6 +130,36 @@ export default createStore({
       } catch (err) {
         console.error(
           "Failed to register student:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
+    async markAttendance(_, { studentId, status, subject = "", notes = "" }) {
+      try {
+        const token = localStorage.getItem("token");
+        if (!token) throw new Error("Token not found");
+
+        const res = await axios.post(
+          "http://localhost:5000/api/attendance/manual",
+          {
+            studentId,
+            status,
+            subject,
+            notes: notes || "",
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Attendance marked successfully:", res.data);
+        return res.data;
+      } catch (err) {
+        console.error(
+          "Failed to mark attendance:",
           err.response?.data || err.message
         );
         throw err;
