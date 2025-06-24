@@ -1,33 +1,27 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-import AboutView from "../views/AboutView.vue";
+
+// Auth Views
 import Login from "../views/Auth/LoginView.vue";
 import Signup from "../views/Auth/SignupView.vue";
+
+// Main Views
+import HomeView from "../views/HomeView.vue";
+import AboutView from "../views/AboutView.vue";
 import UnderConstraction from "../views/UnderConstration.vue";
 import Students from "../views/Students.vue";
-import Attendeance from "../views/Attendance.vue";
+import Attendance from "../views/Attendance.vue";
+import MarkAttendance from "../views/NFC/MarkAttendance.vue";
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: HomeView,
-    meta: { requiresAuth: true },
-  },
-  {
-    path: "/about",
-    name: "about",
-    component: AboutView,
-    meta: { requiresAuth: true },
-  },
+  // Public Routes
   {
     path: "/login",
-    name: "login",
+    name: "Login",
     component: Login,
   },
   {
     path: "/signup",
-    name: "signup",
+    name: "Signup",
     component: Signup,
   },
   {
@@ -35,16 +29,36 @@ const routes = [
     name: "UnderConstraction",
     component: UnderConstraction,
   },
+
+  // Protected Routes
+  {
+    path: "/",
+    name: "Home",
+    component: HomeView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: AboutView,
+    meta: { requiresAuth: true },
+  },
   {
     path: "/students",
-    name: "students",
+    name: "Students",
     component: Students,
     meta: { requiresAuth: true },
   },
   {
     path: "/attendance",
-    name: "Attendeance",
-    component: Attendeance,
+    name: "Attendance",
+    component: Attendance,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/mark-attendance/:studentId",
+    name: "MarkAttendance",
+    component: MarkAttendance,
     meta: { requiresAuth: true },
   },
 ];
@@ -54,7 +68,7 @@ const router = createRouter({
   routes,
 });
 
-// Navigation Guard
+// ✅ Global Navigation Guard
 router.beforeEach((to, from, next) => {
   const isAuthenticated = !!localStorage.getItem("token");
 

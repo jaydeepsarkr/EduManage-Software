@@ -107,7 +107,16 @@
                   <tr
                     v-for="student in students"
                     :key="student._id"
-                    class="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+                    :class="[
+                      'border-b transition-colors',
+                      attendance[student._id] === 'present'
+                        ? 'bg-green-50 hover:bg-green-100'
+                        : attendance[student._id] === 'absent'
+                        ? 'bg-red-50 hover:bg-red-100'
+                        : attendance[student._id] === 'late'
+                        ? 'bg-yellow-50 hover:bg-yellow-100'
+                        : 'hover:bg-slate-50',
+                    ]"
                   >
                     <td
                       class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
@@ -117,6 +126,7 @@
                         <span>{{ student.rollNumber }}</span>
                       </div>
                     </td>
+
                     <td class="py-4 px-4">
                       <div class="flex items-center">
                         <div
@@ -126,48 +136,64 @@
                             {{ student.name.charAt(0).toUpperCase() }}
                           </span>
                         </div>
-                        <span class="font-medium text-slate-900">{{
-                          student.name
-                        }}</span>
+                        <span class="font-medium text-slate-900">
+                          {{ student.name }}
+                          <span
+                            v-if="alreadyMarked[student._id]"
+                            class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
+                          >
+                            (Marked)
+                          </span>
+                        </span>
                       </div>
                     </td>
+
                     <td class="py-4 px-4">
                       <div class="flex justify-center space-x-2">
                         <button
                           @click="setAttendance(student._id, 'present')"
-                          :class="
+                          :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                             attendance[student._id] === 'present'
                               ? 'bg-emerald-500 text-white shadow-md'
-                              : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200'
-                          "
-                          class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                              : alreadyMarked[student._id]
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                              : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200',
+                          ]"
                         >
                           Present
                         </button>
+
                         <button
                           @click="setAttendance(student._id, 'absent')"
-                          :class="
+                          :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                             attendance[student._id] === 'absent'
                               ? 'bg-red-500 text-white shadow-md'
-                              : 'bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-700 border border-slate-200'
-                          "
-                          class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                              : alreadyMarked[student._id]
+                              ? 'bg-red-50 text-red-700 border border-red-300'
+                              : 'bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-700 border border-slate-200',
+                          ]"
                         >
                           Absent
                         </button>
+
                         <button
                           @click="setAttendance(student._id, 'late')"
-                          :class="
+                          :class="[
+                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
                             attendance[student._id] === 'late'
                               ? 'bg-amber-500 text-white shadow-md'
-                              : 'bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-700 border border-slate-200'
-                          "
-                          class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200"
+                              : alreadyMarked[student._id]
+                              ? 'bg-amber-50 text-amber-700 border border-amber-300'
+                              : 'bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-700 border border-slate-200',
+                          ]"
                         >
                           Late
                         </button>
                       </div>
                     </td>
+
                     <td class="py-4 px-4">
                       <input
                         type="text"
@@ -234,19 +260,31 @@
   const attendanceDate = ref("");
   const attendance = ref({});
   const remarks = ref({});
+  const alreadyMarked = ref({}); // ✅ NEW
   const showSuccessToast = ref(false);
-  const selectedClass = ref("1"); // You can change this default value
+  const selectedClass = ref("1");
   const students = ref([]);
-  const isSaving = ref(false); // Optional: disable button while saving
+  const isSaving = ref(false);
 
   const store = useStore();
 
-  // Fetch students on mount
   onMounted(async () => {
     const today = new Date();
     attendanceDate.value = today.toISOString().split("T")[0];
+
     await store.dispatch("fetchStudents");
     students.value = store.getters.allStudents;
+
+    students.value.forEach((student) => {
+      if (student.attendanceStatus) {
+        attendance.value[student._id] = student.attendanceStatus;
+        alreadyMarked.value[student._id] = true;
+      }
+      if (student.remarks) {
+        remarks.value[student._id] = student.remarks;
+      }
+    });
+
     console.log("Students loaded:", students.value);
   });
 
@@ -262,24 +300,30 @@
   const getLateCount = () =>
     Object.values(attendance.value).filter((v) => v === "late").length;
 
-  // Bulk actions
+  // Bulk actions — don’t overwrite already marked
   const markAllPresent = () => {
     students.value.forEach((s) => {
-      attendance.value[s._id] = "present";
+      if (!alreadyMarked.value[s._id]) {
+        attendance.value[s._id] = "present";
+      }
     });
   };
 
   const markAllAbsent = () => {
     students.value.forEach((s) => {
-      attendance.value[s._id] = "absent";
+      if (!alreadyMarked.value[s._id]) {
+        attendance.value[s._id] = "absent";
+      }
     });
   };
 
   const clearAll = () => {
     students.value.forEach((s) => {
-      delete attendance.value[s._id];
+      if (!alreadyMarked.value[s._id]) {
+        delete attendance.value[s._id];
+        delete remarks.value[s._id];
+      }
     });
-    remarks.value = {};
   };
 
   // Individual setter
@@ -297,14 +341,16 @@
         const status = attendance.value[studentId];
         const notes = remarks.value[studentId] || "";
 
-        if (!status) continue; // skip unmarked
+        if (!status) continue;
 
         await store.dispatch("markAttendance", {
           studentId,
           status,
-          subject: "", // Add subject if needed
+          subject: "",
           notes,
         });
+
+        alreadyMarked.value[studentId] = true; // ✅ update after save
       }
 
       showSuccessToast.value = true;
