@@ -363,7 +363,7 @@
   // Vuex store
   const store = useStore();
   const students = computed(() => store.getters.allStudents);
-  console.log(students);
+  // console.log(students);
 
   // Local state
   const editingStudent = ref(null);
@@ -407,11 +407,11 @@
 
   const getStatusClass = (status) => {
     switch (status) {
-      case "Active":
+      case "active":
         return "bg-green-100 text-green-800";
-      case "Inactive":
+      case "leaved":
         return "bg-red-100 text-red-800";
-      case "Graduated":
+      case "passedout":
         return "bg-blue-100 text-blue-800";
       default:
         return "bg-gray-100 text-gray-800";

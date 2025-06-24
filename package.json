@@ -12,7 +12,7 @@
     "autoprefixer": "^10",
     "axios": "^1.10.0",
     "core-js": "^3.8.3",
-    "jwt-decode": "^4.0.0",
+    "jwt-decode": "^3.1.2",
     "lucide-vue-next": "^0.518.0",
     "postcss": "^8",
     "qrcode": "^1.5.4",

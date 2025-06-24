@@ -40,87 +40,187 @@
     class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4"
   >
     <div
-      class="bg-white w-full max-w-lg rounded-2xl shadow-lg p-6 relative animate-fade-in"
+      class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 relative animate-fade-in"
     >
       <!-- Close Button -->
       <button
         @click="closeAddModal"
-        class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 transition"
+        class="absolute top-3 right-3 text-gray-400 hover:text-gray-800 transition"
         title="Close"
       >
         <X class="w-5 h-5" />
       </button>
 
-      <div class="mb-4 flex items-center gap-2">
+      <div class="mb-6 flex items-center gap-2">
         <UserPlus class="w-6 h-6 text-blue-600" />
         <h2 class="text-xl font-semibold text-gray-800">Add New Student</h2>
       </div>
 
       <div class="grid grid-cols-1 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700"
-            >Full Name</label
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
           >
+            <User class="w-4 h-4 text-blue-500" /> Full Name
+          </label>
           <input
             v-model="newStudent.name"
             placeholder="Enter student name"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="input"
           />
+          <p
+            v-if="formErrors.name"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.name }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Email</label>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <Mail class="w-4 h-4 text-blue-500" /> Email
+          </label>
           <input
             v-model="newStudent.email"
             placeholder="example@email.com"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="input"
           />
+          <p
+            v-if="formErrors.email"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.email }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Grade</label>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <List class="w-4 h-4 text-blue-500" /> Class
+          </label>
           <input
-            v-model="newStudent.grade"
-            placeholder="10th Grade"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            v-model="newStudent.class"
+            placeholder="Class"
+            type="number"
+            min="1"
+            max="10"
+            class="input"
           />
+          <p
+            v-if="formErrors.class"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.class }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Phone</label>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <Hash class="w-4 h-4 text-blue-500" /> Roll No
+          </label>
           <input
-            v-model="newStudent.phone"
-            placeholder="+1 (555) 123-4567"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            v-model="newStudent.rollNumber"
+            placeholder="Roll number"
+            class="input"
           />
+          <p
+            v-if="formErrors.rollNumber"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.rollNumber }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Address</label>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <Calendar class="w-4 h-4 text-blue-500" /> Enrollment Date
+          </label>
           <input
+            type="date"
+            v-model="newStudent.enrollmentDate"
+            class="input"
+            :max="new Date().toISOString().split('T')[0]"
+          />
+          <p
+            v-if="formErrors.enrollmentDate"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.enrollmentDate }}
+          </p>
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <MapPin class="w-4 h-4 text-blue-500" /> Address
+          </label>
+          <textarea
             v-model="newStudent.address"
             placeholder="123 Main St, Springfield"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="input h-20 resize-none"
           />
+          <p
+            v-if="formErrors.address"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.address }}
+          </p>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700">Status</label>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <Phone class="w-4 h-4 text-blue-500" /> Phone
+          </label>
+          <input
+            v-model="newStudent.phone"
+            placeholder="9876543210"
+            class="input"
+          />
+          <p
+            v-if="formErrors.phone"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.phone }}
+          </p>
+        </div>
+
+        <div>
+          <label
+            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
+          >
+            <Activity class="w-4 h-4 text-blue-500" /> Status
+          </label>
           <select
             v-model="newStudent.status"
-            class="mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+            class="input"
           >
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            <option value="Graduated">Graduated</option>
+            <option value="active">Active</option>
+            <option value="leaved">Leaved</option>
+            <option value="passout">Passout</option>
           </select>
+          <p
+            v-if="formErrors.status"
+            class="text-sm text-red-600 mt-1"
+          >
+            {{ formErrors.status }}
+          </p>
         </div>
       </div>
 
-      <div class="mt-6 flex justify-end gap-2">
+      <div class="mt-6 flex justify-end gap-3">
         <button
           @click="addStudent"
-          class="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+          class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           <Save class="w-4 h-4" />
           Save
@@ -138,80 +238,94 @@
 
 <script setup>
   import { ref } from "vue";
-  import { X, UserPlus, Save } from "lucide-vue-next";
+  import { useStore } from "vuex";
+  import {
+    UserPlus,
+    X,
+    Save,
+    User,
+    Mail,
+    Calendar,
+    Hash,
+    List,
+    MapPin,
+    Phone,
+    Activity,
+  } from "lucide-vue-next";
   import Search from "@/components/Students/Search/Search.vue";
   import GradeFilter from "@/components/Students/GradeFilter/GradeFilter.vue";
   import StatusFilter from "@/components/Students/StatusFilter/StatusFilter.vue";
 
-  // Reactive data
+  const store = useStore(); // Vuex store
 
   const showAddModal = ref(false);
-
-  // Sample student data
-  const students = ref([
-    {
-      id: "STU001",
-      name: "Alice Johnson",
-      email: "alice.johnson@email.com",
-      grade: "10th Grade",
-      phone: "+1 (555) 123-4567",
-      address: "123 Main St, Springfield",
-      status: "Active",
-      enrollmentDate: "2024-01-15",
-    },
-    {
-      id: "STU002",
-      name: "Bob Smith",
-      email: "bob.smith@email.com",
-      grade: "11th Grade",
-      phone: "+1 (555) 234-5678",
-      address: "456 Oak Ave, Shelbyville",
-      status: "Active",
-      enrollmentDate: "2024-01-20",
-    },
-  ]);
+  const formErrors = ref({});
 
   const newStudent = ref({
-    id: "",
+    rollNumber: "",
     name: "",
     email: "",
-    grade: "",
+    class: "",
     phone: "",
     address: "",
-    status: "Active",
+    status: "",
     enrollmentDate: "",
   });
 
-  function addStudent() {
-    if (!newStudent.value.name || !newStudent.value.email) return;
-
-    const id = `STU${Math.floor(1000 + Math.random() * 9000)}`; // Random ID
-    const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-
-    students.value.push({
-      ...newStudent.value,
-      id,
-      enrollmentDate: today,
-    });
-
-    // Reset and close modal
-    newStudent.value = {
-      id: "",
-      name: "",
-      email: "",
-      grade: "",
-      phone: "",
-      address: "",
-      status: "Active",
-      enrollmentDate: "",
-    };
-    showAddModal.value = false;
-  }
-
+  // Reset and close modal
   function closeAddModal() {
     showAddModal.value = false;
   }
+
+  // Vuex-powered add student
+  async function addStudent() {
+    if (!newStudent.value.name || !newStudent.value.email) {
+      alert("Name and Email are required.");
+      return;
+    }
+
+    try {
+      // Create payload (password required by backend, and role is handled in Vuex)
+      const payload = {
+        name: newStudent.value.name,
+        email: newStudent.value.email,
+        password: "default123", // use real password field if needed
+        phone: newStudent.value.phone,
+        class: newStudent.value.class,
+        rollNumber: newStudent.value.rollNumber,
+        address: newStudent.value.address,
+        status: newStudent.value.status,
+        enrollmentDate: newStudent.value.enrollmentDate,
+      };
+
+      await store.dispatch("addStudent", payload);
+
+      // Optionally reload the student list
+      await store.dispatch("fetchStudents");
+
+      // Reset form
+      newStudent.value = {
+        rollNumber: "",
+        name: "",
+        email: "",
+        class: "",
+        phone: "",
+        address: "",
+        status: "",
+        enrollmentDate: "",
+      };
+
+      showAddModal.value = false;
+    } catch (error) {
+      if (error.response && error.response.data?.errors) {
+        formErrors.value = error.response.data.errors;
+      } else {
+        alert("Something went wrong!");
+      }
+    }
+  }
 </script>
+
 <style scoped>
   @keyframes fade-in {
     from {
@@ -226,5 +340,8 @@
 
   .animate-fade-in {
     animation: fade-in 0.2s ease-out;
+  }
+  .input {
+    @apply mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none;
   }
 </style>

@@ -254,9 +254,17 @@
             class="flex-1 min-w-0"
           >
             <p class="text-sm font-medium text-gray-900 truncate">
-              Dr. Sarah Johnson
+              {{ userName }}
             </p>
-            <p class="text-xs text-gray-500 truncate">Principal</p>
+            <p class="text-xs text-gray-500 truncate">
+              {{
+                UserRole === "admin"
+                  ? "Administrator"
+                  : UserRole === "teacher"
+                  ? "Teacher"
+                  : "Student"
+              }}
+            </p>
           </div>
         </div>
 
@@ -285,7 +293,9 @@
 
 <script setup>
   import { ref } from "vue";
+  import { computed, onMounted, onUnmounted } from "vue";
   import router from "@/router";
+  import { useStore } from "vuex";
   import {
     Home,
     Users,
@@ -307,10 +317,20 @@
     School,
     Building,
   } from "lucide-vue-next";
-
+  const store = useStore();
   // Reactive state
   const isCollapsed = ref(false);
   const activeItem = ref("dashboard");
+  // Fetch students on mount
+  onMounted(() => {
+    store.dispatch("initializeUserRole");
+  });
+
+  // Access students from Vuex state
+  const TotalStudents = computed(() => store.getters.allStudents.length);
+
+  const userName = computed(() => store.getters.getUserName);
+  const UserRole = computed(() => store.getters.getUserRole);
 
   // Main Navigation Items
   const mainNavigationItems = ref([
@@ -331,7 +351,7 @@
       id: "students",
       label: "Students",
       icon: Users,
-      badge: "1,247",
+      badge: TotalStudents,
       route: "/students",
       description:
         "Manage student records, enrollment, personal information, and academic history.",
@@ -494,6 +514,10 @@
   const setActiveItem = (itemId) => {
     activeItem.value = itemId;
     if (itemId === "logout") {
+      localStorage.clear();
+      sessionStorage.clear();
+      sessionStorage.clear();
+
       localStorage.removeItem("token");
       router.push("/login");
     }
@@ -507,7 +531,6 @@
   };
 
   // Lifecycle
-  import { onMounted, onUnmounted } from "vue";
 
   onMounted(() => {
     window.addEventListener("resize", handleResize);

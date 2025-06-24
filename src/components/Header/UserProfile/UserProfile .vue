@@ -3,8 +3,8 @@
     class="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-4 border-l border-gray-200"
   >
     <div class="text-right hidden lg:block">
-      <div class="text-sm font-medium text-gray-900">Dr. Sarah Johnson</div>
-      <div class="text-xs text-gray-500">Principal • Greenwood High</div>
+      <div class="text-sm font-medium text-gray-900">{{ userName }}</div>
+      <div class="text-xs text-gray-500">{{ userRole }}</div>
     </div>
     <div class="relative">
       <button
@@ -52,40 +52,35 @@
   </div>
 </template>
 
-<script>
+<script setup>
+  import { ref, onMounted, computed } from "vue";
   import { User, ChevronDown, Settings, LogOut } from "lucide-vue-next";
+  import store from "@/store";
 
-  export default {
-    name: "SchoolHeader",
-    components: {
-      User,
-      ChevronDown,
+  // state
+  const showUserMenu = ref(false);
+  const showSearch = ref(false);
 
-      Settings,
-      LogOut,
-    },
-    data() {
-      return {
-        showUserMenu: false,
-        showSearch: false,
-      };
-    },
-    methods: {
-      toggleUserMenu() {
-        this.showUserMenu = !this.showUserMenu;
-      },
-    },
-    mounted() {
-      // Close dropdowns when clicking outside
-      document.addEventListener("click", (e) => {
-        if (!this.$el.contains(e.target)) {
-          this.showUserMenu = false;
-          this.showSearch = false;
-          this.showCalendar = false;
-        }
-      });
-    },
+  // actions
+  const toggleUserMenu = () => {
+    showUserMenu.value = !showUserMenu.value;
   };
+
+  // getters
+  const userName = computed(() => store.getters.getUserName);
+  const userRole = computed(() => store.getters.getUserRole);
+
+  onMounted(() => {
+    store.dispatch("initializeUserRole");
+
+    document.addEventListener("click", (e) => {
+      const el = document.querySelector(".your-profile-wrapper"); // adjust if needed
+      if (el && !el.contains(e.target)) {
+        showUserMenu.value = false;
+        showSearch.value = false;
+      }
+    });
+  });
 </script>
 
 <style></style>
