@@ -141,9 +141,9 @@
               >Today</span
             >
           </div>
-          <h3 class="text-lg font-semibold mb-2">On Leave</h3>
-          <p class="text-3xl font-bold mb-2">{{ stats.today?.leave || 0 }}</p>
-          <p class="text-amber-100">Approved leaves</p>
+          <h3 class="text-lg font-semibold mb-2">Late</h3>
+          <p class="text-3xl font-bold mb-2">{{ stats.today?.late || 0 }}</p>
+          <p class="text-amber-100">late student</p>
         </div>
 
         <!-- Average Attendance -->
@@ -310,37 +310,59 @@
       </div>
 
       <!-- Pagination -->
+      <!-- Pagination Section -->
       <div class="flex items-center justify-between mt-8 px-2">
+        <!-- Results summary -->
         <div class="text-sm text-gray-600 font-medium">
-          Showing <span class="font-bold text-gray-900">1</span> to
-          <span class="font-bold text-gray-900">{{
-            Math.min(20, history?.length || 0)
-          }}</span>
+          Showing
+          <span class="font-bold text-gray-900">
+            {{ (currentPage - 1) * limit + 1 }}
+          </span>
+          to
+          <span class="font-bold text-gray-900">
+            {{ Math.min(currentPage * limit, totalResults) }}
+          </span>
           of
-          <span class="font-bold text-gray-900">{{
-            history?.length || 0
-          }}</span>
+          <span class="font-bold text-gray-900">
+            {{ totalResults }}
+          </span>
           results
         </div>
+
+        <!-- Pagination buttons -->
         <div class="flex items-center gap-1">
+          <!-- Previous button -->
           <button
-            class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft class="w-4 h-4" />
           </button>
-          <button
-            class="px-4 py-2 text-sm font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+
+          <!-- Numbered buttons -->
+          <template
+            v-for="page in totalPages"
+            :key="page"
           >
-            1
-          </button>
+            <button
+              @click="goToPage(page)"
+              :class="[
+                'px-3 py-2 text-sm rounded-xl transition-all duration-200',
+                page === currentPage
+                  ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
+                  : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+              ]"
+            >
+              {{ page }}
+            </button>
+          </template>
+
+          <!-- Next button -->
           <button
-            class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200"
-          >
-            2
-          </button>
-          <button
-            class="px-4 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200"
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight class="w-4 h-4" />
           </button>
@@ -372,14 +394,22 @@
 
   const store = useStore();
 
-  // Form fields
+  // Form filter fields
   const search = ref("");
   const selectedClass = ref("");
   const selectedDate = ref("");
 
-  // Attendance data from Vuex
+  // Pagination state
+  const currentPage = ref(1);
+
+  // Getters from Vuex
   const history = computed(() => store.getters.getAttendanceHistory);
   const stats = computed(() => store.getters.getAttendanceStats);
+  const pagination = computed(() => store.getters.getAttendancePagination);
+
+  const totalPages = computed(() => pagination.value.pages || 1);
+  const totalResults = computed(() => pagination.value.total || 0);
+  const limit = computed(() => pagination.value.limit || 20);
 
   // Utility functions
   const getInitials = (name) => {
@@ -457,22 +487,23 @@
     return Math.round(avgPercentage);
   };
 
-  // Fetch on mount
+  // Fetch attendance and stats on mount
   onMounted(() => {
     fetchFilteredHistory();
     store.dispatch("fetchAttendanceStats");
   });
 
-  // Watchers for filters
+  // Watch filters
   watch([search, selectedClass, selectedDate], () => {
+    currentPage.value = 1;
     fetchFilteredHistory();
   });
 
-  // Filtered fetch function
+  // Fetch data with filters
   async function fetchFilteredHistory() {
     const filters = {
-      page: 1,
-      limit: 1,
+      page: currentPage.value,
+      limit: limit.value,
       search: search.value || "",
       class: selectedClass.value || "",
     };
@@ -483,6 +514,14 @@
     }
 
     await store.dispatch("fetchAttendanceHistory", filters);
+  }
+
+  // Pagination navigation
+  function goToPage(page) {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+      fetchFilteredHistory();
+    }
   }
 </script>
 

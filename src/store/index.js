@@ -21,6 +21,12 @@ export default createStore({
     },
 
     userCache: {},
+    attendancePagination: {
+      page: 1,
+      limit: 1,
+      total: 0,
+      pages: 1,
+    },
   },
 
   getters: {
@@ -33,9 +39,15 @@ export default createStore({
     getAttendanceHistory: (state) => state.attendanceHistory,
     getAttendanceStats: (state) => state.attendanceStats,
     getUserFromCache: (state) => (id) => state.userCache[id],
+    getAttendancePagination: (state) => state.attendancePagination,
+    getTotalAttendanceResults: (state) => state.attendancePagination.total,
   },
 
   mutations: {
+    SET_ATTENDANCE_PAGINATION(state, pagination) {
+      state.attendancePagination = pagination;
+    },
+
     SET_STUDENTS(state, students) {
       state.students = students;
     },
@@ -200,7 +212,7 @@ export default createStore({
           startDate = "",
           endDate = "",
           page = 1,
-          limit = 1,
+          limit = 20,
           self = false,
           search = "", // ✅ Add search
           class: classFilter = "", // ✅ Add class filter
@@ -226,6 +238,7 @@ export default createStore({
         );
 
         const attendance = res.data.attendance || [];
+        const pagination = res.data.pagination || {};
 
         // 🔄 Enrich with user names
         const enriched = await Promise.all(
@@ -243,6 +256,7 @@ export default createStore({
         );
 
         commit("SET_ATTENDANCE_HISTORY", enriched);
+        commit("SET_ATTENDANCE_PAGINATION", pagination);
       } catch (err) {
         console.error("Failed to fetch attendance history:", err);
       }

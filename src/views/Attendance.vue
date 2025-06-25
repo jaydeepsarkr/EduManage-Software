@@ -228,10 +228,7 @@
         </div>
       </div>
 
-      <div
-        v-else-if="currentView === 'details'"
-        class="shadow-sm p-8"
-      >
+      <div v-else-if="currentView === 'details'">
         <AttendanceDetails />
       </div>
     </div>
