@@ -1,4 +1,3 @@
-// store/index.js
 import { createStore } from "vuex";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
@@ -9,6 +8,19 @@ export default createStore({
     userRole: null,
     userName: null,
     userId: null,
+
+    attendanceHistory: [],
+    attendanceStats: {
+      daily: [],
+      today: {
+        present: 0,
+        absent: 0,
+        leave: 0,
+        total: 0,
+      },
+    },
+
+    userCache: {},
   },
 
   getters: {
@@ -18,11 +30,14 @@ export default createStore({
     isStudent: (state) => state.userRole === "student",
     getUserName: (state) => state.userName,
     getUserId: (state) => state.userId,
+    getAttendanceHistory: (state) => state.attendanceHistory,
+    getAttendanceStats: (state) => state.attendanceStats,
+    getUserFromCache: (state) => (id) => state.userCache[id],
   },
 
   mutations: {
     SET_STUDENTS(state, students) {
-      state.students = students; // ✅ each student now includes attendanceStatus and remarks
+      state.students = students;
     },
     SET_USER_ROLE(state, role) {
       state.userRole = role;
@@ -33,9 +48,41 @@ export default createStore({
     SET_USER_ID(state, id) {
       state.userId = id;
     },
+    SET_ATTENDANCE_HISTORY(state, history) {
+      state.attendanceHistory = history;
+    },
+    SET_ATTENDANCE_STATS(state, stats) {
+      state.attendanceStats = stats;
+    },
+    SET_USER_CACHE(state, { userId, user }) {
+      state.userCache[userId] = user;
+    },
   },
 
   actions: {
+    async fetchUserById({ state, commit }, userId) {
+      // ✅ Use cache if already available
+      if (state.userCache[userId]) {
+        return state.userCache[userId];
+      }
+
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          `http://localhost:5000/api/users/${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const user = res.data;
+        commit("SET_USER_CACHE", { userId, user });
+        return user;
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        return null;
+      }
+    },
+
     async fetchStudents({ commit }, filters = {}) {
       try {
         const token = localStorage.getItem("token");
@@ -60,7 +107,6 @@ export default createStore({
           },
         });
 
-        // ✅ This now includes attendanceStatus and remarks per student
         commit("SET_STUDENTS", res.data.students);
       } catch (err) {
         console.error("Failed to fetch students:", err);
@@ -141,6 +187,83 @@ export default createStore({
           err.response?.data || err.message
         );
         throw err;
+      }
+    },
+
+    // ✅ Fetch Attendance History and attach names
+    async fetchAttendanceHistory({ commit, dispatch }, filters = {}) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const {
+          studentId = "",
+          startDate = "",
+          endDate = "",
+          page = 1,
+          limit = 1,
+          self = false,
+          search = "", // ✅ Add search
+          class: classFilter = "", // ✅ Add class filter
+        } = filters;
+
+        const res = await axios.get(
+          "http://localhost:5000/api/attendance/history",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              studentId,
+              startDate,
+              endDate,
+              page,
+              limit,
+              self,
+              search, // ✅ Pass search query
+              class: classFilter, // ✅ Pass class filter (as 'class')
+            },
+          }
+        );
+
+        const attendance = res.data.attendance || [];
+
+        // 🔄 Enrich with user names
+        const enriched = await Promise.all(
+          attendance.map(async (entry) => {
+            if (entry.studentId && typeof entry.studentId === "string") {
+              const student = await dispatch("fetchUserById", entry.studentId);
+              entry.studentName = student?.name || "Unknown";
+            }
+            if (entry.teacherId && typeof entry.teacherId === "string") {
+              const teacher = await dispatch("fetchUserById", entry.teacherId);
+              entry.teacherName = teacher?.name || "Unknown";
+            }
+            return entry;
+          })
+        );
+
+        commit("SET_ATTENDANCE_HISTORY", enriched);
+      } catch (err) {
+        console.error("Failed to fetch attendance history:", err);
+      }
+    },
+    // ✅ Fetch Attendance Stats
+    async fetchAttendanceStats({ commit }) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          "http://localhost:5000/api/attendance/stats",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        commit("SET_ATTENDANCE_STATS", res.data || {});
+      } catch (err) {
+        console.error("Failed to fetch attendance stats:", err);
       }
     },
   },

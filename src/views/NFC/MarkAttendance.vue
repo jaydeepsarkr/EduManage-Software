@@ -262,9 +262,10 @@
         {
           studentId,
           status: "present",
-          subject: "Math",
+          subject: "",
           notes: "Marked via NFC link",
           attendanceByNFC: true,
+          method: "nfc",
         },
         {
           headers: {

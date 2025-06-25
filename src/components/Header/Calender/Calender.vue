@@ -76,9 +76,20 @@
           <p class="font-medium text-blue-900 text-sm">
             Selected: {{ formatSelectedDate() }}
           </p>
-          <p class="text-blue-700 text-xs mt-1">
-            No events scheduled for this date
-          </p>
+          <div class="text-blue-700 text-xs mt-1">
+            <template v-if="getEventsForDate(selectedDate).length">
+              <p class="font-semibold">Events:</p>
+              <ul class="list-disc ml-4 mt-1">
+                <li
+                  v-for="(event, idx) in getEventsForDate(selectedDate)"
+                  :key="idx"
+                >
+                  {{ event.summary }} - {{ formatEventTime(event) }}
+                </li>
+              </ul>
+            </template>
+            <p v-else>No events scheduled for this date</p>
+          </div>
         </div>
       </div>
     </div>
@@ -89,10 +100,9 @@
   import { Calendar, ChevronLeft, ChevronRight } from "lucide-vue-next";
 
   export default {
-    name: "SchoolHeader",
+    name: "SchoolCalendar",
     components: {
       Calendar,
-
       ChevronLeft,
       ChevronRight,
     },
@@ -101,25 +111,14 @@
         showCalendar: false,
         selectedDate: new Date(),
         currentDate: new Date(),
+        events: [],
+        calendarId: "en.indian%23holiday@group.v.calendar.google.com",
+        apiKey: "AIzaSyAOUtolLD5gDA9PHzV8QIWz0JYmvKLuv8E",
       };
     },
     computed: {
       currentMonth() {
-        const months = [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ];
-        return months[this.currentDate.getMonth()];
+        return this.currentDate.toLocaleString("default", { month: "long" });
       },
       currentYear() {
         return this.currentDate.getFullYear();
@@ -127,35 +126,25 @@
       calendarDates() {
         const year = this.currentDate.getFullYear();
         const month = this.currentDate.getMonth();
-
-        // First day of the month
         const firstDay = new Date(year, month, 1);
-        // Last day of the month
-        // const lastDay = new Date(year, month + 1, 0);
-        // First day of the week for the first day of the month
         const startDate = new Date(firstDay);
         startDate.setDate(startDate.getDate() - firstDay.getDay());
 
         const dates = [];
         const today = new Date();
 
-        // Generate 42 days (6 weeks)
         for (let i = 0; i < 42; i++) {
           const date = new Date(startDate);
           date.setDate(startDate.getDate() + i);
 
-          const isCurrentMonth = date.getMonth() === month;
-          const isToday = date.toDateString() === today.toDateString();
-          const isSelected =
-            this.selectedDate &&
-            date.toDateString() === this.selectedDate.toDateString();
-
           dates.push({
             day: date.getDate(),
             date: new Date(date),
-            isCurrentMonth,
-            isToday,
-            isSelected,
+            isCurrentMonth: date.getMonth() === month,
+            isToday: date.toDateString() === today.toDateString(),
+            isSelected:
+              this.selectedDate &&
+              date.toDateString() === this.selectedDate.toDateString(),
             key: `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
           });
         }
@@ -164,17 +153,6 @@
       },
     },
     methods: {
-      // Search methods
-      toggleSearch() {
-        this.showSearch = !this.showSearch;
-        if (this.showSearch) {
-          this.$nextTick(() => {
-            this.$refs.searchInput?.focus();
-          });
-        }
-      },
-
-      // Calendar methods
       toggleCalendar() {
         this.showCalendar = !this.showCalendar;
       },
@@ -184,6 +162,7 @@
           this.currentDate.getMonth() - 1,
           1
         );
+        this.fetchCalendarEvents();
       },
       nextMonth() {
         this.currentDate = new Date(
@@ -191,6 +170,7 @@
           this.currentDate.getMonth() + 1,
           1
         );
+        this.fetchCalendarEvents();
       },
       selectDate(dateObj) {
         this.selectedDate = new Date(dateObj.date);
@@ -203,13 +183,46 @@
           day: "numeric",
         });
       },
+      async fetchCalendarEvents() {
+        const timeMin = new Date(
+          this.currentDate.getFullYear(),
+          this.currentDate.getMonth(),
+          1
+        ).toISOString();
+        const timeMax = new Date(
+          this.currentDate.getFullYear(),
+          this.currentDate.getMonth() + 1,
+          0
+        ).toISOString();
+
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${this.calendarId}/events?key=${this.apiKey}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
+
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          this.events = data.items || [];
+        } catch (err) {
+          console.error("Error fetching calendar events", err);
+        }
+      },
+      getEventsForDate(date) {
+        return this.events.filter((event) => {
+          const eventDate = new Date(event.start.date || event.start.dateTime);
+          return eventDate.toDateString() === date.toDateString();
+        });
+      },
+      formatEventTime(event) {
+        const start = event.start.dateTime || event.start.date;
+        return new Date(start).toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      },
     },
     mounted() {
-      // Close dropdowns when clicking outside
+      this.fetchCalendarEvents();
       document.addEventListener("click", (e) => {
         if (!this.$el.contains(e.target)) {
-          this.showUserMenu = false;
-          this.showSearch = false;
           this.showCalendar = false;
         }
       });
@@ -218,49 +231,7 @@
 </script>
 
 <style scoped>
-  .search-overlay-enter-active,
-  .search-overlay-leave-active {
-    transition: all 0.3s ease;
-  }
-
-  .search-overlay-enter-from,
-  .search-overlay-leave-to {
-    opacity: 0;
-  }
-
-  /* Search panel transitions */
-  .search-panel-enter-active,
-  .search-panel-leave-active {
-    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .search-panel-enter-from,
-  .search-panel-leave-to {
-    opacity: 0;
-    transform: translateY(-50px) scale(0.9);
-  }
-
-  /* Calendar dropdown transitions */
-  .calendar-dropdown-enter-active,
-  .calendar-dropdown-leave-active {
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-
-  .calendar-dropdown-enter-from,
-  .calendar-dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
-  }
-
-  /* Dropdown transitions */
-  .dropdown-enter-active,
-  .dropdown-leave-active {
-    transition: all 0.2s ease;
-  }
-
-  .dropdown-enter-from,
-  .dropdown-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
+  button:focus {
+    outline: none;
   }
 </style>

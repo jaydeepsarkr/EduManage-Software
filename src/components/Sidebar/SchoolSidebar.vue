@@ -300,14 +300,14 @@
     Home,
     Users,
     UserCheck,
-    BookOpen,
-    Calendar,
+    // BookOpen,
+    // Calendar,
     ClipboardCheck,
-    Trophy,
-    Library,
-    DollarSign,
-    CalendarDays,
-    FileText,
+    // Trophy,
+    // Library,
+    // DollarSign,
+    // CalendarDays,
+    // FileText,
     Settings,
     HelpCircle,
     LogOut,
@@ -315,7 +315,7 @@
     User,
     ChevronLeft,
     School,
-    Building,
+    // Building,
   } from "lucide-vue-next";
   const store = useStore();
   // Reactive state
@@ -377,24 +377,24 @@
       quickAction: "Create New Class",
       route: "/working",
     },
-    {
-      id: "subjects",
-      label: "Subjects",
-      icon: BookOpen,
-      description:
-        "Manage curriculum, subject assignments, and academic requirements.",
-      quickAction: "Add New Subject",
-      route: "/working",
-    },
-    {
-      id: "timetable",
-      label: "Timetable",
-      icon: Calendar,
-      description:
-        "Create and manage class schedules, exam timetables, and academic calendar.",
-      quickAction: "Generate Timetable",
-      route: "/working",
-    },
+    // {
+    //   id: "subjects",
+    //   label: "Subjects",
+    //   icon: BookOpen,
+    //   description:
+    //     "Manage curriculum, subject assignments, and academic requirements.",
+    //   quickAction: "Add New Subject",
+    //   route: "/working",
+    // },
+    // {
+    //   id: "timetable",
+    //   label: "Timetable",
+    //   icon: Calendar,
+    //   description:
+    //     "Create and manage class schedules, exam timetables, and academic calendar.",
+    //   quickAction: "Generate Timetable",
+    //   route: "/working",
+    // },
     {
       id: "attendance",
       label: "Attendance",
@@ -404,69 +404,69 @@
       quickAction: "Mark Attendance",
       route: "/attendance",
     },
-    {
-      id: "grades",
-      label: "Grades & Results",
-      icon: Trophy,
-      description:
-        "Manage student grades, report cards, and academic assessments.",
-      quickAction: "Enter Grades",
-      route: "/working",
-    },
+    // {
+    //   id: "grades",
+    //   label: "Grades & Results",
+    //   icon: Trophy,
+    //   description:
+    //     "Manage student grades, report cards, and academic assessments.",
+    //   quickAction: "Enter Grades",
+    //   route: "/working",
+    // },
   ]);
 
   // Administration Items
-  const administrationItems = ref([
-    {
-      id: "library",
-      label: "Library",
-      icon: Library,
-      badge: "12,450",
-      description:
-        "Manage library resources, book inventory, and student borrowing records.",
-      quickAction: "Add New Book",
-      route: "/working",
-    },
-    {
-      id: "finance",
-      label: "Finance",
-      icon: DollarSign,
-      badge: "Pending",
-      badgeType: "urgent",
-      description:
-        "Manage school finances, fee collection, salary payments, and budgets.",
-      quickAction: "View Pending Fees",
-      route: "/working",
-    },
-    {
-      id: "events",
-      label: "Events",
-      icon: CalendarDays,
-      badge: "3",
-      description:
-        "Plan and manage school events, activities, and important announcements.",
-      quickAction: "Create Event",
-      route: "/working",
-    },
-    {
-      id: "transport",
-      label: "Transport",
-      icon: Building,
-      description:
-        "Manage school transportation, bus routes, and student transport assignments.",
-      quickAction: "Manage Routes",
-      route: "/working",
-    },
-    {
-      id: "reports",
-      label: "Reports",
-      icon: FileText,
-      description:
-        "Generate comprehensive reports on academics, attendance, and administration.",
-      quickAction: "Generate Report",
-      route: "/working",
-    },
-  ]);
+  // const administrationItems = ref([
+  //   {
+  //     id: "library",
+  //     label: "Library",
+  //     icon: Library,
+  //     badge: "12,450",
+  //     description:
+  //       "Manage library resources, book inventory, and student borrowing records.",
+  //     quickAction: "Add New Book",
+  //     route: "/working",
+  //   },
+  //   {
+  //     id: "finance",
+  //     label: "Finance",
+  //     icon: DollarSign,
+  //     badge: "Pending",
+  //     badgeType: "urgent",
+  //     description:
+  //       "Manage school finances, fee collection, salary payments, and budgets.",
+  //     quickAction: "View Pending Fees",
+  //     route: "/working",
+  //   },
+  //   {
+  //     id: "events",
+  //     label: "Events",
+  //     icon: CalendarDays,
+  //     badge: "3",
+  //     description:
+  //       "Plan and manage school events, activities, and important announcements.",
+  //     quickAction: "Create Event",
+  //     route: "/working",
+  //   },
+  //   {
+  //     id: "transport",
+  //     label: "Transport",
+  //     icon: Building,
+  //     description:
+  //       "Manage school transportation, bus routes, and student transport assignments.",
+  //     quickAction: "Manage Routes",
+  //     route: "/working",
+  //   },
+  //   {
+  //     id: "reports",
+  //     label: "Reports",
+  //     icon: FileText,
+  //     description:
+  //       "Generate comprehensive reports on academics, attendance, and administration.",
+  //     quickAction: "Generate Report",
+  //     route: "/working",
+  //   },
+  // ]);
 
   // System Items
   const systemItems = ref([

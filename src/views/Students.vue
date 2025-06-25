@@ -1,6 +1,61 @@
 <template>
   <div class="min-h-screen bg-gray-50 p-6">
     <div class="max-w-7xl mx-auto">
+      <!-- Stats Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-600">Total Students</p>
+              <p class="text-2xl font-bold text-slate-900">
+                {{ students.length }}
+              </p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-lg">
+              <Users class="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-600">Active</p>
+              <p class="text-2xl font-bold text-emerald-600">
+                {{ activeStudents }}
+              </p>
+            </div>
+            <div class="p-3 bg-emerald-100 rounded-lg">
+              <UserCheck class="w-6 h-6 text-emerald-600" />
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-600">Graduated</p>
+              <p class="text-2xl font-bold text-blue-600">
+                {{ graduatedStudents }}
+              </p>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-lg">
+              <GraduationCap class="w-6 h-6 text-blue-600" />
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-medium text-slate-600">Inactive</p>
+              <p class="text-2xl font-bold text-red-600">
+                {{ inactiveStudents }}
+              </p>
+            </div>
+            <div class="p-3 bg-red-100 rounded-lg">
+              <UserX class="w-6 h-6 text-red-600" />
+            </div>
+          </div>
+        </div>
+      </div>
       <!-- Controls -->
       <Header />
       .
@@ -357,6 +412,10 @@
     FileChartLine,
     Calendar,
     IdCard,
+    Users,
+    UserCheck,
+    GraduationCap,
+    UserX,
   } from "lucide-vue-next";
   import Header from "@/components/Students/HeaderStudent.vue";
 
