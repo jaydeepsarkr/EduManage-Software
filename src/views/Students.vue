@@ -95,7 +95,10 @@
       </div>
 
       <!-- Controls -->
-      <Header />
+      <Header
+        @search-text="handleSearch"
+        @selected-class="handleClassSelect"
+      />
 
       <!-- Enhanced Table -->
       <div
@@ -494,12 +497,70 @@
           </div>
         </div>
       </div>
+      <!-- Pagination Section -->
+      <div class="flex items-center justify-between mt-8 px-2">
+        <!-- Results summary -->
+        <div class="text-sm text-gray-600 font-medium">
+          Showing
+          <span class="font-bold text-gray-900">
+            {{ (currentPage - 1) * limit + 1 }}
+          </span>
+          to
+          <span class="font-bold text-gray-900">
+            {{ Math.min(currentPage * limit, totalResults) }}
+          </span>
+          of
+          <span class="font-bold text-gray-900">
+            {{ totalResults }}
+          </span>
+          results
+        </div>
+
+        <!-- Pagination buttons -->
+        <div class="flex items-center gap-1">
+          <!-- Previous button -->
+          <button
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft class="w-4 h-4" />
+          </button>
+
+          <!-- Numbered buttons -->
+          <template
+            v-for="page in totalPages"
+            :key="page"
+          >
+            <button
+              @click="goToPage(page)"
+              :class="[
+                'px-3 py-2 text-sm rounded-xl transition-all duration-200',
+                page === currentPage
+                  ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
+                  : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+              ]"
+            >
+              {{ page }}
+            </button>
+          </template>
+
+          <!-- Next button -->
+          <button
+            @click="goToPage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ChevronRight class="w-4 h-4" />
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from "vue";
+  import { ref, onMounted, computed, watch } from "vue";
   import { useStore } from "vuex";
   import {
     Pencil,
@@ -516,12 +577,21 @@
     UserCheck,
     GraduationCap,
     UserX,
+    ChevronLeft,
+    ChevronRight,
   } from "lucide-vue-next";
+
   import Header from "@/components/Students/HeaderStudent.vue";
 
   // Vuex store
   const store = useStore();
   const students = computed(() => store.getters.allStudents);
+
+  // 📄 Pagination State
+  const currentPage = ref(1);
+  const limit = ref(50);
+  const totalResults = computed(() => store.getters.getStudentPagination.total);
+  const totalPages = computed(() => store.getters.getStudentPagination.pages);
 
   // Local state
   const editingStudent = ref(null);
@@ -529,6 +599,47 @@
   const loading = ref(false);
   const error = ref("");
 
+  // Filters
+  const searchTerm = ref("");
+  const selectedClass = ref(null);
+
+  // Handle events from Header
+  const handleSearch = (value) => {
+    searchTerm.value = value;
+  };
+
+  const handleClassSelect = (value) => {
+    selectedClass.value = value;
+  };
+
+  // Fetch students with filters
+  const fetchStudents = async () => {
+    try {
+      loading.value = true;
+      await store.dispatch("fetchStudents", {
+        search: searchTerm.value,
+        class: selectedClass.value,
+        page: currentPage.value,
+        limit: limit.value,
+      });
+    } catch (err) {
+      error.value = "Failed to fetch students.";
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  // Fetch on mount
+  onMounted(() => {
+    fetchStudents();
+  });
+
+  // Watch filters and refetch
+  watch([searchTerm, selectedClass], () => {
+    fetchStudents();
+  });
+
+  // Utilities
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
@@ -537,24 +648,6 @@
     });
   };
 
-  // Fetch students via Vuex
-  const fetchStudents = async () => {
-    try {
-      loading.value = true;
-      await store.dispatch("fetchStudents");
-    } catch (err) {
-      error.value = "Failed to fetch students.";
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  // On component mount
-  onMounted(() => {
-    fetchStudents();
-  });
-
-  // Utilities
   const getInitials = (name) => {
     if (!name || typeof name !== "string") return "NA";
     return name
@@ -577,13 +670,13 @@
     }
   };
 
-  // Editing logic
-  function editStudent(student) {
+  // Edit logic
+  const editStudent = (student) => {
     editingStudent.value = { ...student };
     showEditModal.value = true;
-  }
+  };
 
-  function saveStudent() {
+  const saveStudent = () => {
     const index = students.value.findIndex(
       (s) => s._id === editingStudent.value._id
     );
@@ -592,11 +685,16 @@
       // Optional: Dispatch an update action to Vuex/server
     }
     showEditModal.value = false;
-  }
+  };
 
-  function closeModal() {
+  const closeModal = () => {
     showEditModal.value = false;
-  }
+  };
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+      fetchFilteredStudents(page);
+    }
+  };
 </script>
 
 <style scoped>

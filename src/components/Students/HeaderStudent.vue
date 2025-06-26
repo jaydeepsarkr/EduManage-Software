@@ -12,16 +12,16 @@
       >
         <!-- Search -->
         <div class="flex-1 min-w-0">
-          <Search />
+          <Search @search-text="emitSearchText" />
         </div>
 
         <!-- Filters Container -->
         <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
           <div class="min-w-0">
-            <GradeFilter />
+            <!-- <GradeFilter /> -->
           </div>
           <div class="min-w-0">
-            <StatusFilter />
+            <StatusFilter @selected-class="emitSelectedClass" />
           </div>
         </div>
       </div>
@@ -31,19 +31,7 @@
         @click="showAddModal = true"
         class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
       >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-          ></path>
-        </svg>
+        <Plus class="w-5 h-5" />
         <span class="font-bold">Add Student</span>
       </button>
     </div>
@@ -108,17 +96,7 @@
               v-if="formErrors.name"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.name }}
             </p>
           </div>
@@ -142,17 +120,7 @@
               v-if="formErrors.rollNumber"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.rollNumber }}
             </p>
           </div>
@@ -177,17 +145,7 @@
               v-if="formErrors.email"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.email }}
             </p>
           </div>
@@ -214,17 +172,7 @@
               v-if="formErrors.class"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.class }}
             </p>
           </div>
@@ -248,17 +196,7 @@
               v-if="formErrors.phone"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.phone }}
             </p>
           </div>
@@ -286,17 +224,7 @@
               v-if="formErrors.status"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.status }}
             </p>
           </div>
@@ -321,17 +249,7 @@
               v-if="formErrors.enrollmentDate"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.enrollmentDate }}
             </p>
           </div>
@@ -356,17 +274,7 @@
               v-if="formErrors.address"
               class="text-sm text-red-600 flex items-center gap-1"
             >
-              <svg
-                class="w-4 h-4"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                  clip-rule="evenodd"
-                />
-              </svg>
+              <AlertCircle class="w-4 h-4" />
               {{ formErrors.address }}
             </p>
           </div>
@@ -412,15 +320,30 @@
     MapPin,
     Phone,
     Activity,
+    Plus,
+    AlertCircle,
   } from "lucide-vue-next";
+
   import Search from "@/components/Students/Search/Search.vue";
-  import GradeFilter from "@/components/Students/GradeFilter/GradeFilter.vue";
+  // import GradeFilter from "@/components/Students/GradeFilter/GradeFilter.vue";
   import StatusFilter from "@/components/Students/StatusFilter/StatusFilter.vue";
 
-  const store = useStore(); // Vuex store
-
+  const store = useStore();
   const showAddModal = ref(false);
   const formErrors = ref({});
+
+  // ✅ Only one defineEmits with all events
+  const emit = defineEmits(["selected-class", "search-text"]);
+
+  // Emit class to MainParent
+  const emitSelectedClass = (val) => {
+    emit("selected-class", val);
+  };
+
+  // Emit search input to MainParent
+  const emitSearchText = (val) => {
+    emit("search-text", val);
+  };
 
   const newStudent = ref({
     rollNumber: "",
@@ -433,12 +356,10 @@
     enrollmentDate: "",
   });
 
-  // Reset and close modal
   function closeAddModal() {
     showAddModal.value = false;
   }
 
-  // Vuex-powered add student
   async function addStudent() {
     if (!newStudent.value.name || !newStudent.value.email) {
       alert("Name and Email are required.");
@@ -446,11 +367,10 @@
     }
 
     try {
-      // Create payload (password required by backend, and role is handled in Vuex)
       const payload = {
         name: newStudent.value.name,
         email: newStudent.value.email,
-        password: "default123", // use real password field if needed
+        password: "default123",
         phone: newStudent.value.phone,
         class: newStudent.value.class,
         rollNumber: newStudent.value.rollNumber,
@@ -460,11 +380,8 @@
       };
 
       await store.dispatch("addStudent", payload);
-
-      // Optionally reload the student list
       await store.dispatch("fetchStudents");
 
-      // Reset form
       newStudent.value = {
         rollNumber: "",
         name: "",
@@ -478,7 +395,7 @@
 
       showAddModal.value = false;
     } catch (error) {
-      if (error.response && error.response.data?.errors) {
+      if (error.response?.data?.errors) {
         formErrors.value = error.response.data.errors;
       } else {
         alert("Something went wrong!");
