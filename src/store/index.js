@@ -23,7 +23,7 @@ export default createStore({
     userCache: {},
     attendancePagination: {
       page: 1,
-      limit: 1,
+      limit: 10,
       total: 0,
       pages: 1,
     },
@@ -102,7 +102,7 @@ export default createStore({
           search = "",
           page = 1,
           limit = 10,
-          sort = "asc",
+          sort = "desc",
           class: classFilter = "",
         } = filters;
 

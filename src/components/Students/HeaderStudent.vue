@@ -1,21 +1,35 @@
 <template>
-  <div class="bg-white rounded-lg shadow-sm border p-6 mb-6">
+  <!-- Enhanced Header Section -->
+  <div
+    class="bg-white rounded-2xl shadow-lg border border-slate-200 p-4 md:p-6 mb-6"
+  >
     <div
-      class="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between"
+      class="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between"
     >
-      <div class="flex flex-col sm:flex-row gap-4 flex-1">
+      <!-- Search and Filters Section -->
+      <div
+        class="flex flex-col sm:flex-row gap-3 md:gap-4 flex-1 w-full lg:w-auto"
+      >
         <!-- Search -->
-        <Search />
-        <!-- Grade Filter -->
-        <GradeFilter />
-        <!-- Status Filter -->
-        <StatusFilter />
+        <div class="flex-1 min-w-0">
+          <Search />
+        </div>
+
+        <!-- Filters Container -->
+        <div class="flex flex-col sm:flex-row gap-3 md:gap-4">
+          <div class="min-w-0">
+            <GradeFilter />
+          </div>
+          <div class="min-w-0">
+            <StatusFilter />
+          </div>
+        </div>
       </div>
 
-      <!-- Add Student Button -->
+      <!-- Enhanced Add Student Button -->
       <button
         @click="showAddModal = true"
-        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+        class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
       >
         <svg
           class="w-5 h-5"
@@ -30,207 +44,354 @@
             d="M12 6v6m0 0v6m0-6h6m-6 0H6"
           ></path>
         </svg>
-        Add Student
+        <span class="font-bold">Add Student</span>
       </button>
     </div>
   </div>
-  <!-- Add Student Modal -->
+
+  <!-- Enhanced Scrollable Add Student Modal -->
   <div
     v-if="showAddModal"
-    class="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4"
+    class="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4"
   >
     <div
-      class="bg-white w-full max-w-lg rounded-2xl shadow-2xl p-6 relative animate-fade-in"
+      class="bg-white w-full max-w-2xl max-h-[95vh] rounded-3xl shadow-2xl relative animate-fade-in border border-slate-200 flex flex-col"
     >
-      <!-- Close Button -->
-      <button
-        @click="closeAddModal"
-        class="absolute top-3 right-3 text-gray-400 hover:text-gray-800 transition"
-        title="Close"
-      >
-        <X class="w-5 h-5" />
-      </button>
-
-      <div class="mb-6 flex items-center gap-2">
-        <UserPlus class="w-6 h-6 text-blue-600" />
-        <h2 class="text-xl font-semibold text-gray-800">Add New Student</h2>
-      </div>
-
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <User class="w-4 h-4 text-blue-500" /> Full Name
-          </label>
-          <input
-            v-model="newStudent.name"
-            placeholder="Enter student name"
-            class="input"
-          />
-          <p
-            v-if="formErrors.name"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.name }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <Mail class="w-4 h-4 text-blue-500" /> Email
-          </label>
-          <input
-            v-model="newStudent.email"
-            placeholder="example@email.com"
-            class="input"
-          />
-          <p
-            v-if="formErrors.email"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.email }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <List class="w-4 h-4 text-blue-500" /> Class
-          </label>
-          <input
-            v-model="newStudent.class"
-            placeholder="Class"
-            type="number"
-            min="1"
-            max="10"
-            class="input"
-          />
-          <p
-            v-if="formErrors.class"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.class }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <Hash class="w-4 h-4 text-blue-500" /> Roll No
-          </label>
-          <input
-            v-model="newStudent.rollNumber"
-            placeholder="Roll number"
-            class="input"
-          />
-          <p
-            v-if="formErrors.rollNumber"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.rollNumber }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <Calendar class="w-4 h-4 text-blue-500" /> Enrollment Date
-          </label>
-          <input
-            type="date"
-            v-model="newStudent.enrollmentDate"
-            class="input"
-            :max="new Date().toISOString().split('T')[0]"
-          />
-          <p
-            v-if="formErrors.enrollmentDate"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.enrollmentDate }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <MapPin class="w-4 h-4 text-blue-500" /> Address
-          </label>
-          <textarea
-            v-model="newStudent.address"
-            placeholder="123 Main St, Springfield"
-            class="input h-20 resize-none"
-          />
-          <p
-            v-if="formErrors.address"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.address }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <Phone class="w-4 h-4 text-blue-500" /> Phone
-          </label>
-          <input
-            v-model="newStudent.phone"
-            placeholder="9876543210"
-            class="input"
-          />
-          <p
-            v-if="formErrors.phone"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.phone }}
-          </p>
-        </div>
-
-        <div>
-          <label
-            class="block text-sm font-medium text-gray-700 flex items-center gap-1"
-          >
-            <Activity class="w-4 h-4 text-blue-500" /> Status
-          </label>
-          <select
-            v-model="newStudent.status"
-            class="input"
-          >
-            <option value="active">Active</option>
-            <option value="leaved">Leaved</option>
-            <option value="passout">Passout</option>
-          </select>
-          <p
-            v-if="formErrors.status"
-            class="text-sm text-red-600 mt-1"
-          >
-            {{ formErrors.status }}
-          </p>
-        </div>
-      </div>
-
-      <div class="mt-6 flex justify-end gap-3">
-        <button
-          @click="addStudent"
-          class="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          <Save class="w-4 h-4" />
-          Save
-        </button>
+      <!-- Fixed Header -->
+      <div class="flex-shrink-0 p-6 md:p-8 border-b border-slate-200">
+        <!-- Close Button -->
         <button
           @click="closeAddModal"
-          class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition"
+          class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200"
+          title="Close"
         >
-          Cancel
+          <X class="w-5 h-5" />
         </button>
+
+        <!-- Header -->
+        <div class="flex items-center gap-3">
+          <div
+            class="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl shadow-lg"
+          >
+            <UserPlus class="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h2 class="text-xl md:text-2xl font-bold text-slate-800">
+              Add New Student
+            </h2>
+            <p class="text-slate-500 text-sm">
+              Fill in the student information below
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrollable Form Content -->
+      <div class="flex-1 overflow-y-auto p-6 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <!-- Full Name -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-blue-100 rounded">
+                <User class="w-3 h-3 text-blue-600" />
+              </div>
+              Full Name
+            </label>
+            <input
+              v-model="newStudent.name"
+              placeholder="Enter student name"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.name"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.name }}
+            </p>
+          </div>
+
+          <!-- Roll Number -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-purple-100 rounded">
+                <Hash class="w-3 h-3 text-purple-600" />
+              </div>
+              Roll Number
+            </label>
+            <input
+              v-model="newStudent.rollNumber"
+              placeholder="Enter roll number"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.rollNumber"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.rollNumber }}
+            </p>
+          </div>
+
+          <!-- Email -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-green-100 rounded">
+                <Mail class="w-3 h-3 text-green-600" />
+              </div>
+              Email Address
+            </label>
+            <input
+              v-model="newStudent.email"
+              type="email"
+              placeholder="student@example.com"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.email"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.email }}
+            </p>
+          </div>
+
+          <!-- Class -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-emerald-100 rounded">
+                <List class="w-3 h-3 text-emerald-600" />
+              </div>
+              Class
+            </label>
+            <input
+              v-model="newStudent.class"
+              placeholder="Enter class"
+              type="number"
+              min="1"
+              max="12"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.class"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.class }}
+            </p>
+          </div>
+
+          <!-- Phone -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-orange-100 rounded">
+                <Phone class="w-3 h-3 text-orange-600" />
+              </div>
+              Phone Number
+            </label>
+            <input
+              v-model="newStudent.phone"
+              placeholder="9876543210"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.phone"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.phone }}
+            </p>
+          </div>
+
+          <!-- Status -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-indigo-100 rounded">
+                <Activity class="w-3 h-3 text-indigo-600" />
+              </div>
+              Status
+            </label>
+            <select
+              v-model="newStudent.status"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base"
+            >
+              <option value="">Select status</option>
+              <option value="active">Active</option>
+              <option value="leaved">Leaved</option>
+              <option value="passout">Passed Out</option>
+            </select>
+            <p
+              v-if="formErrors.status"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.status }}
+            </p>
+          </div>
+
+          <!-- Enrollment Date -->
+          <div class="space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-cyan-100 rounded">
+                <Calendar class="w-3 h-3 text-cyan-600" />
+              </div>
+              Enrollment Date
+            </label>
+            <input
+              type="date"
+              v-model="newStudent.enrollmentDate"
+              :max="new Date().toISOString().split('T')[0]"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+            />
+            <p
+              v-if="formErrors.enrollmentDate"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.enrollmentDate }}
+            </p>
+          </div>
+
+          <!-- Address -->
+          <div class="md:col-span-2 space-y-2">
+            <label
+              class="block text-sm font-semibold text-slate-700 flex items-center gap-2"
+            >
+              <div class="p-1 bg-rose-100 rounded">
+                <MapPin class="w-3 h-3 text-rose-600" />
+              </div>
+              Address
+            </label>
+            <textarea
+              v-model="newStudent.address"
+              placeholder="123 Main Street, City, State, ZIP"
+              rows="3"
+              class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base"
+            ></textarea>
+            <p
+              v-if="formErrors.address"
+              class="text-sm text-red-600 flex items-center gap-1"
+            >
+              <svg
+                class="w-4 h-4"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+              {{ formErrors.address }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fixed Footer -->
+      <div class="flex-shrink-0 p-6 md:p-8 border-t border-slate-200">
+        <div
+          class="flex flex-col-reverse md:flex-row justify-end gap-3 md:gap-4"
+        >
+          <button
+            @click="closeAddModal"
+            class="px-6 py-3 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition-all duration-200 transform hover:scale-105 text-sm md:text-base"
+          >
+            Cancel
+          </button>
+          <button
+            @click="addStudent"
+            class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm md:text-base"
+          >
+            <Save class="w-4 h-4" />
+            Save Student
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -330,18 +491,34 @@
   @keyframes fade-in {
     from {
       opacity: 0;
-      transform: scale(0.95);
+      transform: scale(0.95) translateY(20px);
     }
     to {
       opacity: 1;
-      transform: scale(1);
+      transform: scale(1) translateY(0);
     }
   }
 
   .animate-fade-in {
-    animation: fade-in 0.2s ease-out;
+    animation: fade-in 0.3s ease-out;
   }
-  .input {
-    @apply mt-1 w-full rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none;
+
+  /* Custom scrollbar for modal */
+  .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
   }
 </style>

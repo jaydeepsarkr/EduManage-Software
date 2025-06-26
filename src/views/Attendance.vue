@@ -23,6 +23,71 @@
       </div>
 
       <div v-if="currentView === 'attendance'">
+        <!-- Filter Section -->
+        <div
+          class="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 mb-8 hover:shadow-xl transition-all duration-300"
+        >
+          <div
+            class="flex flex-col lg:flex-row gap-4 items-center justify-between"
+          >
+            <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+              <!-- Search Input -->
+              <div class="relative flex-1 sm:w-80 group">
+                <Search
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-indigo-500 transition-colors"
+                />
+                <input
+                  v-model="search"
+                  type="text"
+                  placeholder="Search student by name..."
+                  class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80"
+                />
+              </div>
+
+              <!-- Class Dropdown -->
+              <div class="relative group">
+                <GraduationCap
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-indigo-500 transition-colors"
+                />
+                <select
+                  v-model="selectedClass"
+                  class="pl-10 pr-8 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 appearance-none w-40"
+                >
+                  <option
+                    v-for="n in 10"
+                    :key="n"
+                    :value="n"
+                  >
+                    Class {{ n }}
+                  </option>
+                </select>
+                <ChevronDown
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none"
+                />
+              </div>
+
+              <button
+                @click="fetchFilteredStudents"
+                class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                Submit
+              </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+              <button
+                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
+              >
+                <Filter class="w-4 h-4" />
+              </button>
+              <button
+                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
+              >
+                <RefreshCw class="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
         <div
           v-if="students.length > 0"
           class="bg-white rounded-xl shadow-sm border border-slate-200"
@@ -235,7 +300,7 @@
 
     <div
       v-if="showSuccessToast"
-      class="fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-6 py-4 rounded-xl shadow-xl transition-all duration-300 transform"
+      class="fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-6 rounded-2xl shadow-2xl transition-all duration-500 transform animate-bounce z-50"
     >
       <ShowSuccess />
     </div>
@@ -245,7 +310,14 @@
 <script setup>
   import { ref, onMounted, computed } from "vue";
   import { useStore } from "vuex";
-  import { IdCard } from "lucide-vue-next";
+  import {
+    IdCard,
+    ChevronDown,
+    Search,
+    GraduationCap,
+    Filter,
+    RefreshCw,
+  } from "lucide-vue-next";
 
   import AttendanceCard from "@/components/Attendence/ActionButtons.vue";
   import EmptyStateCard from "@/components/Attendence/EmptyState.vue";
@@ -257,9 +329,10 @@
   const attendanceDate = ref("");
   const attendance = ref({});
   const remarks = ref({});
-  const alreadyMarked = ref({}); // ✅ NEW
+  const alreadyMarked = ref({});
   const showSuccessToast = ref(false);
   const selectedClass = ref("1");
+  const search = ref("");
   const students = ref([]);
   const isSaving = ref(false);
 
@@ -268,9 +341,26 @@
   onMounted(async () => {
     const today = new Date();
     attendanceDate.value = today.toISOString().split("T")[0];
+    await fetchFilteredStudents(); // initial load
+  });
 
-    await store.dispatch("fetchStudents");
-    students.value = store.getters.allStudents;
+  // 🔍 Fetch Students with Filters
+  const fetchFilteredStudents = async () => {
+    await store.dispatch("fetchStudents", {
+      class: selectedClass.value,
+      search: search.value.trim(),
+      page: 1,
+      limit: 50,
+    });
+
+    // Sort students by roll number before assigning
+    students.value = [...store.getters.allStudents].sort(
+      (a, b) => a.rollNumber - b.rollNumber
+    );
+
+    attendance.value = {};
+    remarks.value = {};
+    alreadyMarked.value = {};
 
     students.value.forEach((student) => {
       if (student.attendanceStatus) {
@@ -281,11 +371,12 @@
         remarks.value[student._id] = student.remarks;
       }
     });
-  });
+  };
 
-  // Helpers
+  // 🎓 Class Display Helper
   const getClassName = (classId) => `Class ${classId ?? "N/A"}`;
 
+  // 📊 Count Helpers
   const getPresentCount = () =>
     Object.values(attendance.value).filter((v) => v === "present").length;
 
@@ -295,7 +386,7 @@
   const getLateCount = () =>
     Object.values(attendance.value).filter((v) => v === "late").length;
 
-  // Bulk actions — don’t overwrite already marked
+  // ✅ Bulk Marking
   const markAllPresent = () => {
     students.value.forEach((s) => {
       if (!alreadyMarked.value[s._id]) {
@@ -321,12 +412,12 @@
     });
   };
 
-  // Individual setter
+  // ✅ Set individual attendance
   const setAttendance = (studentId, status) => {
     attendance.value[studentId] = status;
   };
 
-  // Save logic with Vuex call
+  // 💾 Save attendance
   const saveAttendance = async () => {
     isSaving.value = true;
 
@@ -345,7 +436,7 @@
           notes,
         });
 
-        alreadyMarked.value[studentId] = true; // ✅ update after save
+        alreadyMarked.value[studentId] = true;
       }
 
       showSuccessToast.value = true;
@@ -358,6 +449,64 @@
     }
   };
 
-  // Enable/disable submit button
+  // 🔒 Allow submit only if something is selected
   const canSubmit = computed(() => Object.keys(attendance.value).length > 0);
 </script>
+<style scoped>
+  /* Custom animations */
+  @keyframes bounce {
+    0%,
+    20%,
+    53%,
+    80%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    40%,
+    43% {
+      transform: translate3d(0, -30px, 0);
+    }
+    70% {
+      transform: translate3d(0, -15px, 0);
+    }
+    90% {
+      transform: translate3d(0, -4px, 0);
+    }
+  }
+
+  .animate-bounce {
+    animation: bounce 1s ease infinite;
+  }
+
+  /* Smooth transitions */
+  * {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Focus styles */
+  input:focus,
+  select:focus,
+  button:focus {
+    outline: none;
+  }
+
+  /* Custom scrollbar */
+  .overflow-x-auto::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+</style>

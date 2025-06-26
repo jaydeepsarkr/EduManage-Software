@@ -427,7 +427,7 @@
         return "bg-emerald-100 text-emerald-800 border border-emerald-200";
       case "absent":
         return "bg-red-100 text-red-800 border border-red-200";
-      case "leave":
+      case "late":
         return "bg-yellow-100 text-yellow-800 border border-yellow-200";
       default:
         return "bg-slate-100 text-slate-800 border border-slate-200";
@@ -440,7 +440,7 @@
         return "bg-emerald-500";
       case "absent":
         return "bg-red-500";
-      case "leave":
+      case "late":
         return "bg-yellow-500";
       default:
         return "bg-slate-500";
