@@ -407,7 +407,8 @@
   const stats = computed(() => store.getters.getAttendanceStats);
   const pagination = computed(() => store.getters.getAttendancePagination);
 
-  const totalPages = computed(() => pagination.value.pages || 1);
+  const totalPages = computed(() => pagination.value.pages ?? 0);
+
   const totalResults = computed(() => pagination.value.total || 0);
   const limit = computed(() => pagination.value.limit || 20);
 

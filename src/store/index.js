@@ -23,6 +23,12 @@ export default createStore({
     userCache: {},
     attendancePagination: {
       page: 1,
+      limit: 1,
+      total: 0,
+      pages: 1,
+    },
+    studentPagination: {
+      page: 1,
       limit: 10,
       total: 0,
       pages: 1,
@@ -41,6 +47,7 @@ export default createStore({
     getUserFromCache: (state) => (id) => state.userCache[id],
     getAttendancePagination: (state) => state.attendancePagination,
     getTotalAttendanceResults: (state) => state.attendancePagination.total,
+    getStudentPagination: (state) => state.studentPagination,
   },
 
   mutations: {
@@ -68,6 +75,9 @@ export default createStore({
     },
     SET_USER_CACHE(state, { userId, user }) {
       state.userCache[userId] = user;
+    },
+    SET_STUDENT_PAGINATION(state, pagination) {
+      state.studentPagination = pagination;
     },
   },
 
@@ -120,6 +130,9 @@ export default createStore({
         });
 
         commit("SET_STUDENTS", res.data.students);
+        if (res.data.pagination) {
+          commit("SET_STUDENT_PAGINATION", res.data.pagination);
+        }
       } catch (err) {
         console.error("Failed to fetch students:", err);
       }

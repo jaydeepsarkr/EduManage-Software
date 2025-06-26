@@ -291,6 +291,64 @@
         <div v-else>
           <EmptyStateCard />
         </div>
+        <!-- Pagination Section -->
+        <div class="flex items-center justify-between mt-8 px-2">
+          <!-- Results summary -->
+          <div class="text-sm text-gray-600 font-medium">
+            Showing
+            <span class="font-bold text-gray-900">
+              {{ (currentPage - 1) * limit + 1 }}
+            </span>
+            to
+            <span class="font-bold text-gray-900">
+              {{ Math.min(currentPage * limit, totalResults) }}
+            </span>
+            of
+            <span class="font-bold text-gray-900">
+              {{ totalResults }}
+            </span>
+            results
+          </div>
+
+          <!-- Pagination buttons -->
+          <div class="flex items-center gap-1">
+            <!-- Previous button -->
+            <button
+              @click="goToPage(currentPage - 1)"
+              :disabled="currentPage === 1"
+              class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft class="w-4 h-4" />
+            </button>
+
+            <!-- Numbered buttons -->
+            <template
+              v-for="page in totalPages"
+              :key="page"
+            >
+              <button
+                @click="goToPage(page)"
+                :class="[
+                  'px-3 py-2 text-sm rounded-xl transition-all duration-200',
+                  page === currentPage
+                    ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
+                    : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+                ]"
+              >
+                {{ page }}
+              </button>
+            </template>
+
+            <!-- Next button -->
+            <button
+              @click="goToPage(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+              class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight class="w-4 h-4" />
+            </button>
+          </div>
+        </div>
       </div>
 
       <div v-else-if="currentView === 'details'">
@@ -308,7 +366,7 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, computed } from "vue";
+  import { ref, onMounted, computed, watch } from "vue";
   import { useStore } from "vuex";
   import {
     IdCard,
@@ -317,6 +375,8 @@
     GraduationCap,
     Filter,
     RefreshCw,
+    ChevronLeft,
+    ChevronRight,
   } from "lucide-vue-next";
 
   import AttendanceCard from "@/components/Attendence/ActionButtons.vue";
@@ -324,7 +384,8 @@
   import AttendanceDetails from "@/components/Attendence/AttendanceDetails.vue";
   import ShowSuccess from "@/components/Attendence/Success.vue";
 
-  // State
+  // 🧠 Store & Local State
+  const store = useStore();
   const currentView = ref("attendance");
   const attendanceDate = ref("");
   const attendance = ref({});
@@ -336,24 +397,30 @@
   const students = ref([]);
   const isSaving = ref(false);
 
-  const store = useStore();
+  // 📄 Pagination State
+  const currentPage = ref(1);
+  const limit = ref(50);
+  const totalResults = computed(() => store.getters.getStudentPagination.total);
+  const totalPages = computed(() => store.getters.getStudentPagination.pages);
 
+  // ✅ Mounted: Fetch initial data
   onMounted(async () => {
     const today = new Date();
     attendanceDate.value = today.toISOString().split("T")[0];
-    await fetchFilteredStudents(); // initial load
+    await fetchFilteredStudents();
   });
 
-  // 🔍 Fetch Students with Filters
-  const fetchFilteredStudents = async () => {
+  // 🔄 Fetch Students (with pagination support)
+  const fetchFilteredStudents = async (page = 1) => {
+    currentPage.value = page;
+
     await store.dispatch("fetchStudents", {
       class: selectedClass.value,
       search: search.value.trim(),
-      page: 1,
-      limit: 50,
+      page: currentPage.value,
+      limit: limit.value,
     });
 
-    // Sort students by roll number before assigning
     students.value = [...store.getters.allStudents].sort(
       (a, b) => a.rollNumber - b.rollNumber
     );
@@ -373,10 +440,23 @@
     });
   };
 
-  // 🎓 Class Display Helper
+  // 🔁 Watch for Class or Search changes
+  let searchTimeout;
+  watch(search, () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      fetchFilteredStudents(1); // reset to page 1
+    }, 300);
+  });
+
+  watch(selectedClass, () => {
+    fetchFilteredStudents(1);
+  });
+
+  // 📚 Class name display helper
   const getClassName = (classId) => `Class ${classId ?? "N/A"}`;
 
-  // 📊 Count Helpers
+  // 📊 Count helpers
   const getPresentCount = () =>
     Object.values(attendance.value).filter((v) => v === "present").length;
 
@@ -412,7 +492,7 @@
     });
   };
 
-  // ✅ Set individual attendance
+  // 🔘 Set individual attendance
   const setAttendance = (studentId, status) => {
     attendance.value[studentId] = status;
   };
@@ -449,9 +529,17 @@
     }
   };
 
-  // 🔒 Allow submit only if something is selected
+  // 🔁 Pagination Button Click
+  const goToPage = (page) => {
+    if (page >= 1 && page <= totalPages.value) {
+      fetchFilteredStudents(page);
+    }
+  };
+
+  // 🚫 Allow submit only if at least one attendance is selected
   const canSubmit = computed(() => Object.keys(attendance.value).length > 0);
 </script>
+
 <style scoped>
   /* Custom animations */
   @keyframes bounce {
