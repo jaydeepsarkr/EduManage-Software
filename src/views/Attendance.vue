@@ -399,7 +399,7 @@
 
   // 📄 Pagination State
   const currentPage = ref(1);
-  const limit = ref(50);
+  const limit = ref(20);
   const totalResults = computed(() => store.getters.getStudentPagination.total);
   const totalPages = computed(() => store.getters.getStudentPagination.pages);
 

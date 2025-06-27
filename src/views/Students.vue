@@ -589,7 +589,7 @@
 
   // 📄 Pagination State
   const currentPage = ref(1);
-  const limit = ref(50);
+  const limit = ref(20);
   const totalResults = computed(() => store.getters.getStudentPagination.total);
   const totalPages = computed(() => store.getters.getStudentPagination.pages);
 
@@ -692,7 +692,8 @@
   };
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages.value) {
-      fetchFilteredStudents(page);
+      currentPage.value = page;
+      fetchStudents(); // ✅ correct function
     }
   };
 </script>

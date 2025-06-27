@@ -112,8 +112,8 @@
         selectedDate: new Date(),
         currentDate: new Date(),
         events: [],
-        calendarId: "en.indian%23holiday@group.v.calendar.google.com",
-        apiKey: "AIzaSyAOUtolLD5gDA9PHzV8QIWz0JYmvKLuv8E",
+        calendarId: process.env.VUE_APP_GOOGLE_CALENDAR_ID,
+        apiKey: process.env.VUE_APP_GOOGLE_API_KEY,
       };
     },
     computed: {

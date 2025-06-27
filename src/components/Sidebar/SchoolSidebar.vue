@@ -292,22 +292,15 @@
 </template>
 
 <script setup>
-  import { ref } from "vue";
-  import { computed, onMounted, onUnmounted } from "vue";
+  import { ref, computed, onMounted, onUnmounted } from "vue";
   import router from "@/router";
   import { useStore } from "vuex";
+
   import {
     Home,
     Users,
     UserCheck,
-    // BookOpen,
-    // Calendar,
     ClipboardCheck,
-    // Trophy,
-    // Library,
-    // DollarSign,
-    // CalendarDays,
-    // FileText,
     Settings,
     HelpCircle,
     LogOut,
@@ -315,24 +308,26 @@
     User,
     ChevronLeft,
     School,
-    // Building,
   } from "lucide-vue-next";
+
   const store = useStore();
-  // Reactive state
+
+  // Sidebar state
   const isCollapsed = ref(false);
   const activeItem = ref("dashboard");
-  // Fetch students on mount
+
+  // Fetch role on mount
   onMounted(() => {
     store.dispatch("initializeUserRole");
+    store.dispatch("fetchStudents", { page: 1, limit: 1 }); // ensure we get updated total
   });
 
-  // Access students from Vuex state
-  const TotalStudents = computed(() => store.getters.allStudents.length);
-
+  // Computed values
+  const TotalStudents = computed(() => store.getters.getTotalStudents);
   const userName = computed(() => store.getters.getUserName);
   const UserRole = computed(() => store.getters.getUserRole);
 
-  // Main Navigation Items
+  // Main navigation items
   const mainNavigationItems = ref([
     {
       id: "dashboard",
@@ -345,13 +340,13 @@
     },
   ]);
 
-  // Academic Items
-  const academicItems = ref([
+  // ✅ Academic items with dynamic student total
+  const academicItems = computed(() => [
     {
       id: "students",
       label: "Students",
       icon: Users,
-      badge: TotalStudents,
+      badge: TotalStudents.value,
       route: "/students",
       description:
         "Manage student records, enrollment, personal information, and academic history.",
@@ -377,24 +372,6 @@
       quickAction: "Create New Class",
       route: "/working",
     },
-    // {
-    //   id: "subjects",
-    //   label: "Subjects",
-    //   icon: BookOpen,
-    //   description:
-    //     "Manage curriculum, subject assignments, and academic requirements.",
-    //   quickAction: "Add New Subject",
-    //   route: "/working",
-    // },
-    // {
-    //   id: "timetable",
-    //   label: "Timetable",
-    //   icon: Calendar,
-    //   description:
-    //     "Create and manage class schedules, exam timetables, and academic calendar.",
-    //   quickAction: "Generate Timetable",
-    //   route: "/working",
-    // },
     {
       id: "attendance",
       label: "Attendance",
@@ -404,69 +381,7 @@
       quickAction: "Mark Attendance",
       route: "/attendance",
     },
-    // {
-    //   id: "grades",
-    //   label: "Grades & Results",
-    //   icon: Trophy,
-    //   description:
-    //     "Manage student grades, report cards, and academic assessments.",
-    //   quickAction: "Enter Grades",
-    //   route: "/working",
-    // },
   ]);
-
-  // Administration Items
-  // const administrationItems = ref([
-  //   {
-  //     id: "library",
-  //     label: "Library",
-  //     icon: Library,
-  //     badge: "12,450",
-  //     description:
-  //       "Manage library resources, book inventory, and student borrowing records.",
-  //     quickAction: "Add New Book",
-  //     route: "/working",
-  //   },
-  //   {
-  //     id: "finance",
-  //     label: "Finance",
-  //     icon: DollarSign,
-  //     badge: "Pending",
-  //     badgeType: "urgent",
-  //     description:
-  //       "Manage school finances, fee collection, salary payments, and budgets.",
-  //     quickAction: "View Pending Fees",
-  //     route: "/working",
-  //   },
-  //   {
-  //     id: "events",
-  //     label: "Events",
-  //     icon: CalendarDays,
-  //     badge: "3",
-  //     description:
-  //       "Plan and manage school events, activities, and important announcements.",
-  //     quickAction: "Create Event",
-  //     route: "/working",
-  //   },
-  //   {
-  //     id: "transport",
-  //     label: "Transport",
-  //     icon: Building,
-  //     description:
-  //       "Manage school transportation, bus routes, and student transport assignments.",
-  //     quickAction: "Manage Routes",
-  //     route: "/working",
-  //   },
-  //   {
-  //     id: "reports",
-  //     label: "Reports",
-  //     icon: FileText,
-  //     description:
-  //       "Generate comprehensive reports on academics, attendance, and administration.",
-  //     quickAction: "Generate Report",
-  //     route: "/working",
-  //   },
-  // ]);
 
   // System Items
   const systemItems = ref([
@@ -502,6 +417,7 @@
   const toggleSidebar = () => {
     isCollapsed.value = !isCollapsed.value;
   };
+
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -516,22 +432,19 @@
     if (itemId === "logout") {
       localStorage.clear();
       sessionStorage.clear();
-      sessionStorage.clear();
-
       localStorage.removeItem("token");
       router.push("/login");
     }
   };
 
-  // Handle responsive behavior
+  // Responsive sidebar
   const handleResize = () => {
     if (window.innerWidth < 768) {
       isCollapsed.value = true;
     }
   };
 
-  // Lifecycle
-
+  // Lifecycle hooks
   onMounted(() => {
     window.addEventListener("resize", handleResize);
     handleResize();

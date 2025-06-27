@@ -69,11 +69,20 @@
           </div>
 
           <div class="flex items-center gap-2">
-            <button
-              class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
-            >
-              <Filter class="w-4 h-4" />
-            </button>
+            <div class="">
+              <button
+                :class="[
+                  'px-4 py-2 rounded-md text-sm font-medium',
+                  isMineOnly
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                ]"
+                @click="toggleView"
+              >
+                {{ isMineOnly ? "Showing: Mine Only" : "Showing: All" }}
+              </button>
+            </div>
+
             <button
               class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
             >
@@ -379,7 +388,7 @@
     Calendar,
     GraduationCap,
     ChevronDown,
-    Filter,
+    // Filter,
     RefreshCw,
     UserCheck,
     UserX,
@@ -398,6 +407,7 @@
   const search = ref("");
   const selectedClass = ref("");
   const selectedDate = ref("");
+  const isMineOnly = ref(false); // false = All, true = Mine only
 
   // Pagination state
   const currentPage = ref(1);
@@ -495,10 +505,17 @@
   });
 
   // Watch filters
-  watch([search, selectedClass, selectedDate], () => {
+  watch([search, selectedClass, selectedDate, isMineOnly], () => {
     currentPage.value = 1;
     fetchFilteredHistory();
   });
+
+  watch(
+    () => pagination.value.page,
+    (val) => {
+      currentPage.value = val;
+    }
+  );
 
   // Fetch data with filters
   async function fetchFilteredHistory() {
@@ -513,6 +530,9 @@
       filters.startDate = selectedDate.value;
       filters.endDate = selectedDate.value;
     }
+    if (isMineOnly.value) {
+      filters.self = true;
+    }
 
     await store.dispatch("fetchAttendanceHistory", filters);
   }
@@ -523,6 +543,11 @@
       currentPage.value = page;
       fetchFilteredHistory();
     }
+  }
+  function toggleView() {
+    isMineOnly.value = !isMineOnly.value;
+    currentPage.value = 1;
+    fetchFilteredHistory();
   }
 </script>
 

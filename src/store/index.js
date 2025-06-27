@@ -23,16 +23,17 @@ export default createStore({
     userCache: {},
     attendancePagination: {
       page: 1,
-      limit: 1,
+      limit: 20,
       total: 0,
       pages: 1,
     },
     studentPagination: {
       page: 1,
-      limit: 10,
+      limit: 20,
       total: 0,
       pages: 1,
     },
+    studentTotalCount: 0,
   },
 
   getters: {
@@ -48,6 +49,8 @@ export default createStore({
     getAttendancePagination: (state) => state.attendancePagination,
     getTotalAttendanceResults: (state) => state.attendancePagination.total,
     getStudentPagination: (state) => state.studentPagination,
+    getTotalStudents: (state) => state.studentPagination.total,
+    getTotalStudentCount: (state) => state.studentTotalCount,
   },
 
   mutations: {
@@ -79,9 +82,32 @@ export default createStore({
     SET_STUDENT_PAGINATION(state, pagination) {
       state.studentPagination = pagination;
     },
+    SET_TOTAL_STUDENT_COUNT(state, total) {
+      state.studentTotalCount = total;
+    },
   },
 
   actions: {
+    async fetchTotalStudentCount({ commit }) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get("http://localhost:5000/api/students", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            page: 1,
+            limit: 1, // ✅ Only fetch 1 student to get total count
+          },
+        });
+
+        const total = res.data.pagination?.total || 0;
+        commit("SET_TOTAL_STUDENT_COUNT", total);
+      } catch (err) {
+        console.error("Failed to fetch total student count:", err);
+      }
+    },
     async fetchUserById({ state, commit }, userId) {
       // ✅ Use cache if already available
       if (state.userCache[userId]) {
@@ -204,7 +230,7 @@ export default createStore({
           }
         );
 
-        console.log("Attendance marked successfully:", res.data);
+        // console.log("Attendance marked successfully:", res.data);
         return res.data;
       } catch (err) {
         console.error(
@@ -243,7 +269,7 @@ export default createStore({
               endDate,
               page,
               limit,
-              self,
+              self: self ? "true" : "false",
               search, // ✅ Pass search query
               class: classFilter, // ✅ Pass class filter (as 'class')
             },
