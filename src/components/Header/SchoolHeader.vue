@@ -9,6 +9,7 @@
             <h2 class="text-lg sm:text-xl font-semibold text-gray-900 truncate">
               {{ getCurrentPageTitle() }}
             </h2>
+
             <div
               class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1"
             >

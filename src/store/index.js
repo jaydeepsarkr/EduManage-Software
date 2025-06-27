@@ -5,9 +5,11 @@ import jwt_decode from "jwt-decode";
 export default createStore({
   state: {
     students: [],
+    upcomingEvents: [],
     userRole: null,
     userName: null,
     userId: null,
+    userPhoto: null,
 
     attendanceHistory: [],
     attendanceStats: {
@@ -37,8 +39,10 @@ export default createStore({
   },
 
   getters: {
+    getUpcomingEvents: (state) => state.upcomingEvents,
     allStudents: (state) => state.students,
     getUserRole: (state) => state.userRole,
+    getUserPhoto: (state) => state.userPhoto,
     isTeacher: (state) => state.userRole === "teacher",
     isStudent: (state) => state.userRole === "student",
     getUserName: (state) => state.userName,
@@ -54,6 +58,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_UPCOMING_EVENTS(state, events) {
+      state.upcomingEvents = events;
+    },
     SET_ATTENDANCE_PAGINATION(state, pagination) {
       state.attendancePagination = pagination;
     },
@@ -69,6 +76,9 @@ export default createStore({
     },
     SET_USER_ID(state, id) {
       state.userId = id;
+    },
+    SET_USER_PHOTO(state, photo) {
+      state.userPhoto = photo;
     },
     SET_ATTENDANCE_HISTORY(state, history) {
       state.attendanceHistory = history;
@@ -88,6 +98,9 @@ export default createStore({
   },
 
   actions: {
+    storeCalendarEvents({ commit }, events) {
+      commit("SET_UPCOMING_EVENTS", events);
+    },
     async fetchTotalStudentCount({ commit }) {
       try {
         const token = localStorage.getItem("token");
@@ -171,20 +184,24 @@ export default createStore({
         commit("SET_USER_ROLE", null);
         commit("SET_USER_NAME", null);
         commit("SET_USER_ID", null);
+        commit("SET_USER_PHOTO", null); // ✅ reset photo
         return;
       }
 
       try {
         const decoded = jwt_decode(token);
-        const { role, name, userId } = decoded;
+        const { role, name, userId, photo } = decoded;
+
         commit("SET_USER_ROLE", role || null);
         commit("SET_USER_NAME", name || null);
         commit("SET_USER_ID", userId || null);
+        commit("SET_USER_PHOTO", photo || null); // ✅ store photo
       } catch (error) {
         console.error("Failed to decode token:", error);
         commit("SET_USER_ROLE", null);
         commit("SET_USER_NAME", null);
         commit("SET_USER_ID", null);
+        commit("SET_USER_PHOTO", null); // ✅ reset on failure
       }
     },
 

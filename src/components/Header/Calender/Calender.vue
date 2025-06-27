@@ -200,7 +200,8 @@
         try {
           const res = await fetch(url);
           const data = await res.json();
-          this.events = data.items || [];
+          const events = data.items || [];
+          this.events = events;
         } catch (err) {
           console.error("Error fetching calendar events", err);
         }
@@ -221,6 +222,8 @@
     },
     mounted() {
       this.fetchCalendarEvents();
+
+      // Hide calendar on outside click
       document.addEventListener("click", (e) => {
         if (!this.$el.contains(e.target)) {
           this.showCalendar = false;

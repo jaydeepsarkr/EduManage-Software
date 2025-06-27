@@ -245,9 +245,18 @@
         <!-- User Profile -->
         <div class="flex items-center space-x-3 mb-3">
           <div
-            class="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center"
+            class="w-8 h-8 rounded-full overflow-hidden border border-gray-300 flex items-center justify-center bg-indigo-100"
           >
-            <User class="w-4 h-4 text-indigo-600" />
+            <template v-if="userPhoto">
+              <img
+                :src="userPhoto"
+                alt="User Photo"
+                class="w-full h-full object-cover"
+              />
+            </template>
+            <template v-else>
+              <User class="w-4 h-4 text-indigo-600" />
+            </template>
           </div>
           <div
             v-if="!isCollapsed"
@@ -326,6 +335,15 @@
   const TotalStudents = computed(() => store.getters.getTotalStudents);
   const userName = computed(() => store.getters.getUserName);
   const UserRole = computed(() => store.getters.getUserRole);
+  const userPhoto = computed(() => {
+    const photo = store.getters.getUserPhoto;
+    const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+    return photo
+      ? photo.startsWith("http")
+        ? photo
+        : `${baseURL}/${photo}`
+      : null;
+  });
 
   // Main navigation items
   const mainNavigationItems = ref([
