@@ -1,4 +1,37 @@
 <template>
+  <!-- Loading Overlay -->
+  <div
+    v-if="isLoading"
+    class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex items-center justify-center"
+  >
+    <div class="text-center">
+      <div class="relative">
+        <!-- Animated Spinner -->
+        <div
+          class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"
+        ></div>
+        <!-- Pulsing Dots -->
+        <div class="flex justify-center space-x-1 mb-4">
+          <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+          <div
+            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
+            style="animation-delay: 0.1s"
+          ></div>
+          <div
+            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
+            style="animation-delay: 0.2s"
+          ></div>
+        </div>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-700 mb-2">
+        {{ loadingMessage }}
+      </h3>
+      <p class="text-sm text-gray-500">
+        Please wait while we load your data...
+      </p>
+    </div>
+  </div>
+
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
     <div class="max-w-6xl mx-auto">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -40,8 +73,18 @@
                   v-model="search"
                   type="text"
                   placeholder="Search student by name..."
-                  class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80"
+                  :disabled="isSearching"
+                  class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
+                <!-- Search Loading Indicator -->
+                <div
+                  v-if="isSearching"
+                  class="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
+                  <div
+                    class="w-4 h-4 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
+                  ></div>
+                </div>
               </div>
 
               <!-- Class Dropdown -->
@@ -51,7 +94,8 @@
                 />
                 <select
                   v-model="selectedClass"
-                  class="pl-10 pr-8 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 appearance-none w-40"
+                  :disabled="isLoading"
+                  class="pl-10 pr-8 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 appearance-none w-40 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option
                     v-for="n in 10"
@@ -68,246 +112,296 @@
 
               <button
                 @click="fetchFilteredStudents"
-                class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
+                :disabled="isLoading"
+                class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                Submit
+                <div
+                  v-if="isLoading"
+                  class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                ></div>
+                <span>{{ isLoading ? "Loading..." : "Submit" }}</span>
               </button>
             </div>
 
             <div class="flex items-center gap-2">
               <button
-                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
+                :disabled="isLoading"
+                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Filter class="w-4 h-4" />
               </button>
               <button
-                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105"
+                @click="refreshData"
+                :disabled="isLoading"
+                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <RefreshCw class="w-4 h-4" />
+                <RefreshCw
+                  :class="['w-4 h-4', isLoading ? 'animate-spin' : '']"
+                />
               </button>
             </div>
           </div>
         </div>
-        <div
-          v-if="students.length > 0"
-          class="bg-white rounded-xl shadow-sm border border-slate-200"
-        >
-          <div class="p-6 border-b border-slate-200">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-xl font-semibold text-slate-900">
-                {{ getClassName(selectedClass) }} - Student Attendance
-              </h2>
-              <div class="flex items-center space-x-6 text-sm">
-                <span class="flex items-center">
-                  <div class="w-3 h-3 bg-emerald-500 rounded-full mr-2"></div>
-                  <span class="font-medium text-slate-700"
-                    >Present: {{ getPresentCount() }}</span
-                  >
-                </span>
-                <span class="flex items-center">
-                  <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
-                  <span class="font-medium text-slate-700"
-                    >Absent: {{ getAbsentCount() }}</span
-                  >
-                </span>
-                <span class="flex items-center">
-                  <div class="w-3 h-3 bg-amber-500 rounded-full mr-2"></div>
-                  <span class="font-medium text-slate-700"
-                    >Late: {{ getLateCount() }}</span
-                  >
-                </span>
+
+        <!-- Content Area with Loading State -->
+        <div class="relative">
+          <!-- Content Loading Overlay -->
+          <div
+            v-if="isContentLoading"
+            class="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center"
+          >
+            <div class="text-center">
+              <div
+                class="w-8 h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
+              ></div>
+              <p class="text-sm text-gray-600">Loading students...</p>
+            </div>
+          </div>
+
+          <div
+            v-if="students.length > 0"
+            class="bg-white rounded-xl shadow-sm border border-slate-200"
+          >
+            <div class="p-6 border-b border-slate-200">
+              <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-slate-900">
+                  {{ getClassName(selectedClass) }} - Student Attendance
+                </h2>
+                <div class="flex items-center space-x-6 text-sm">
+                  <span class="flex items-center">
+                    <div class="w-3 h-3 bg-emerald-500 rounded-full mr-2"></div>
+                    <span class="font-medium text-slate-700"
+                      >Present: {{ getPresentCount() }}</span
+                    >
+                  </span>
+                  <span class="flex items-center">
+                    <div class="w-3 h-3 bg-red-500 rounded-full mr-2"></div>
+                    <span class="font-medium text-slate-700"
+                      >Absent: {{ getAbsentCount() }}</span
+                    >
+                  </span>
+                  <span class="flex items-center">
+                    <div class="w-3 h-3 bg-amber-500 rounded-full mr-2"></div>
+                    <span class="font-medium text-slate-700"
+                      >Late: {{ getLateCount() }}</span
+                    >
+                  </span>
+                </div>
+              </div>
+
+              <div class="flex flex-wrap gap-3">
+                <button
+                  @click="markAllPresent"
+                  :disabled="isLoading"
+                  class="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium border border-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Mark All Present
+                </button>
+                <button
+                  @click="markAllAbsent"
+                  :disabled="isLoading"
+                  class="px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium border border-red-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Mark All Absent
+                </button>
+                <button
+                  @click="clearAll"
+                  :disabled="isLoading"
+                  class="px-4 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium border border-slate-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Clear All
+                </button>
               </div>
             </div>
 
-            <div class="flex flex-wrap gap-3">
-              <button
-                @click="markAllPresent"
-                class="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 transition-colors text-sm font-medium border border-emerald-200"
-              >
-                Mark All Present
-              </button>
-              <button
-                @click="markAllAbsent"
-                class="px-4 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 transition-colors text-sm font-medium border border-red-200"
-              >
-                Mark All Absent
-              </button>
-              <button
-                @click="clearAll"
-                class="px-4 py-2 bg-slate-50 text-slate-700 rounded-lg hover:bg-slate-100 transition-colors text-sm font-medium border border-slate-200"
-              >
-                Clear All
-              </button>
-            </div>
-          </div>
-
-          <div class="p-6">
-            <div class="overflow-x-auto">
-              <table class="w-full">
-                <thead>
-                  <tr class="border-b border-slate-200">
-                    <th
-                      class="text-left py-4 px-4 font-semibold text-slate-700"
+            <div class="p-6">
+              <div class="overflow-x-auto">
+                <table class="w-full">
+                  <thead>
+                    <tr class="border-b border-slate-200">
+                      <th
+                        class="text-left py-4 px-4 font-semibold text-slate-700"
+                      >
+                        Roll No.
+                      </th>
+                      <th
+                        class="text-left py-4 px-4 font-semibold text-slate-700"
+                      >
+                        Student Name
+                      </th>
+                      <th
+                        class="text-center py-4 px-4 font-semibold text-slate-700"
+                      >
+                        Attendance Status
+                      </th>
+                      <th
+                        class="text-center py-4 px-4 font-semibold text-slate-700"
+                      >
+                        Remarks
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="student in students"
+                      :key="student._id"
+                      :class="[
+                        'border-b transition-colors',
+                        attendance[student._id] === 'present'
+                          ? 'bg-green-50 hover:bg-green-100'
+                          : attendance[student._id] === 'absent'
+                          ? 'bg-red-50 hover:bg-red-100'
+                          : attendance[student._id] === 'late'
+                          ? 'bg-yellow-50 hover:bg-yellow-100'
+                          : 'hover:bg-slate-50',
+                      ]"
                     >
-                      Roll No.
-                    </th>
-                    <th
-                      class="text-left py-4 px-4 font-semibold text-slate-700"
-                    >
-                      Student Name
-                    </th>
-                    <th
-                      class="text-center py-4 px-4 font-semibold text-slate-700"
-                    >
-                      Attendance Status
-                    </th>
-                    <th
-                      class="text-center py-4 px-4 font-semibold text-slate-700"
-                    >
-                      Remarks
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="student in students"
-                    :key="student._id"
-                    :class="[
-                      'border-b transition-colors',
-                      attendance[student._id] === 'present'
-                        ? 'bg-green-50 hover:bg-green-100'
-                        : attendance[student._id] === 'absent'
-                        ? 'bg-red-50 hover:bg-red-100'
-                        : attendance[student._id] === 'late'
-                        ? 'bg-yellow-50 hover:bg-yellow-100'
-                        : 'hover:bg-slate-50',
-                    ]"
-                  >
-                    <td
-                      class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
-                    >
-                      <div class="flex items-center gap-2">
-                        <IdCard class="w-8 h-8 text-blue-600" />
-                        <span>{{ student.rollNumber }}</span>
-                      </div>
-                    </td>
-
-                    <td class="py-4 px-4">
-                      <div class="flex items-center">
-                        <div
-                          class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3"
-                        >
-                          <span class="text-sm font-semibold text-white">
-                            {{ student.name.charAt(0).toUpperCase() }}
+                      <td
+                        class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"
+                      >
+                        <div class="flex items-center gap-2">
+                          <IdCard class="w-8 h-8 text-blue-600" />
+                          <span>{{ student.rollNumber }}</span>
+                        </div>
+                      </td>
+                      <td class="py-4 px-4">
+                        <div class="flex items-center">
+                          <div
+                            class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3"
+                          >
+                            <span class="text-sm font-semibold text-white">
+                              {{ student.name.charAt(0).toUpperCase() }}
+                            </span>
+                          </div>
+                          <span class="font-medium text-slate-900">
+                            {{ student.name }}
+                            <span
+                              v-if="alreadyMarked[student._id]"
+                              class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
+                            >
+                              (Marked)
+                            </span>
                           </span>
                         </div>
-                        <span class="font-medium text-slate-900">
-                          {{ student.name }}
-                          <span
-                            v-if="alreadyMarked[student._id]"
-                            class="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded-full"
+                      </td>
+                      <td class="py-4 px-4">
+                        <div class="flex justify-center space-x-2">
+                          <button
+                            @click="setAttendance(student._id, 'present')"
+                            :disabled="isLoading"
+                            :class="[
+                              'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                              attendance[student._id] === 'present'
+                                ? 'bg-emerald-500 text-white shadow-md'
+                                : alreadyMarked[student._id]
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
+                                : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200',
+                              'disabled:opacity-50 disabled:cursor-not-allowed',
+                            ]"
                           >
-                            (Marked)
-                          </span>
-                        </span>
-                      </div>
-                    </td>
+                            Present
+                          </button>
+                          <button
+                            @click="setAttendance(student._id, 'absent')"
+                            :disabled="isLoading"
+                            :class="[
+                              'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                              attendance[student._id] === 'absent'
+                                ? 'bg-red-500 text-white shadow-md'
+                                : alreadyMarked[student._id]
+                                ? 'bg-red-50 text-red-700 border border-red-300'
+                                : 'bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-700 border border-slate-200',
+                              'disabled:opacity-50 disabled:cursor-not-allowed',
+                            ]"
+                          >
+                            Absent
+                          </button>
+                          <button
+                            @click="setAttendance(student._id, 'late')"
+                            :disabled="isLoading"
+                            :class="[
+                              'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+                              attendance[student._id] === 'late'
+                                ? 'bg-amber-500 text-white shadow-md'
+                                : alreadyMarked[student._id]
+                                ? 'bg-amber-50 text-amber-700 border border-amber-300'
+                                : 'bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-700 border border-slate-200',
+                              'disabled:opacity-50 disabled:cursor-not-allowed',
+                            ]"
+                          >
+                            Late
+                          </button>
+                        </div>
+                      </td>
+                      <td class="py-4 px-4">
+                        <input
+                          type="text"
+                          v-model="remarks[student._id]"
+                          placeholder="Add remarks..."
+                          :disabled="isLoading"
+                          class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
 
-                    <td class="py-4 px-4">
-                      <div class="flex justify-center space-x-2">
-                        <button
-                          @click="setAttendance(student._id, 'present')"
-                          :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                            attendance[student._id] === 'present'
-                              ? 'bg-emerald-500 text-white shadow-md'
-                              : alreadyMarked[student._id]
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-300'
-                              : 'bg-slate-100 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200',
-                          ]"
-                        >
-                          Present
-                        </button>
-
-                        <button
-                          @click="setAttendance(student._id, 'absent')"
-                          :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                            attendance[student._id] === 'absent'
-                              ? 'bg-red-500 text-white shadow-md'
-                              : alreadyMarked[student._id]
-                              ? 'bg-red-50 text-red-700 border border-red-300'
-                              : 'bg-slate-100 text-slate-600 hover:bg-red-50 hover:text-red-700 border border-slate-200',
-                          ]"
-                        >
-                          Absent
-                        </button>
-
-                        <button
-                          @click="setAttendance(student._id, 'late')"
-                          :class="[
-                            'px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200',
-                            attendance[student._id] === 'late'
-                              ? 'bg-amber-500 text-white shadow-md'
-                              : alreadyMarked[student._id]
-                              ? 'bg-amber-50 text-amber-700 border border-amber-300'
-                              : 'bg-slate-100 text-slate-600 hover:bg-amber-50 hover:text-amber-700 border border-slate-200',
-                          ]"
-                        >
-                          Late
-                        </button>
-                      </div>
-                    </td>
-
-                    <td class="py-4 px-4">
-                      <input
-                        type="text"
-                        v-model="remarks[student._id]"
-                        placeholder="Add remarks..."
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="mt-8 flex justify-end">
-              <button
-                @click="saveAttendance"
-                :disabled="!canSubmit"
-                :class="
-                  canSubmit
-                    ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl hover:scale-105'
-                    : 'bg-slate-300 text-slate-500 cursor-not-allowed'
-                "
-                class="px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform"
-              >
-                Save Attendance Record
-              </button>
+              <div class="mt-8 flex justify-end">
+                <button
+                  @click="saveAttendance"
+                  :disabled="!canSubmit || isSaving"
+                  :class="
+                    canSubmit && !isSaving
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl hover:scale-105'
+                      : 'bg-slate-300 text-slate-500 cursor-not-allowed'
+                  "
+                  class="px-8 py-3 rounded-lg font-semibold transition-all duration-200 transform flex items-center gap-2"
+                >
+                  <div
+                    v-if="isSaving"
+                    class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  ></div>
+                  <span>{{
+                    isSaving ? "Saving..." : "Save Attendance Record"
+                  }}</span>
+                </button>
+              </div>
             </div>
           </div>
+
+          <div v-else-if="!isLoading && !isContentLoading">
+            <EmptyStateCard />
+          </div>
         </div>
-        <div v-else>
-          <EmptyStateCard />
-        </div>
+
         <!-- Pagination Section -->
         <div class="flex items-center justify-between mt-8 px-2">
           <!-- Results summary -->
           <div class="text-sm text-gray-600 font-medium">
-            Showing
-            <span class="font-bold text-gray-900">
-              {{ (currentPage - 1) * limit + 1 }}
-            </span>
-            to
-            <span class="font-bold text-gray-900">
-              {{ Math.min(currentPage * limit, totalResults) }}
-            </span>
-            of
-            <span class="font-bold text-gray-900">
-              {{ totalResults }}
-            </span>
-            results
+            <template v-if="!isLoading">
+              Showing
+              <span class="font-bold text-gray-900">
+                {{ (currentPage - 1) * limit + 1 }}
+              </span>
+              to
+              <span class="font-bold text-gray-900">
+                {{ Math.min(currentPage * limit, totalResults) }}
+              </span>
+              of
+              <span class="font-bold text-gray-900">
+                {{ totalResults }}
+              </span>
+              results
+            </template>
+            <template v-else>
+              <div class="flex items-center gap-2">
+                <div
+                  class="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"
+                ></div>
+                <span>Loading results...</span>
+              </div>
+            </template>
           </div>
 
           <!-- Pagination buttons -->
@@ -315,7 +409,7 @@
             <!-- Previous button -->
             <button
               @click="goToPage(currentPage - 1)"
-              :disabled="currentPage === 1"
+              :disabled="currentPage === 1 || isLoading"
               class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronLeft class="w-4 h-4" />
@@ -328,11 +422,13 @@
             >
               <button
                 @click="goToPage(page)"
+                :disabled="isLoading"
                 :class="[
                   'px-3 py-2 text-sm rounded-xl transition-all duration-200',
                   page === currentPage
                     ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
                     : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+                  'disabled:opacity-50 disabled:cursor-not-allowed',
                 ]"
               >
                 {{ page }}
@@ -342,7 +438,7 @@
             <!-- Next button -->
             <button
               @click="goToPage(currentPage + 1)"
-              :disabled="currentPage === totalPages"
+              :disabled="currentPage === totalPages || isLoading"
               class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ChevronRight class="w-4 h-4" />
@@ -356,6 +452,7 @@
       </div>
     </div>
 
+    <!-- Success Toast -->
     <div
       v-if="showSuccessToast"
       class="fixed bottom-6 right-6 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-8 py-6 rounded-2xl shadow-2xl transition-all duration-500 transform animate-bounce z-50"
@@ -378,7 +475,6 @@
     ChevronLeft,
     ChevronRight,
   } from "lucide-vue-next";
-
   import AttendanceCard from "@/components/Attendence/ActionButtons.vue";
   import EmptyStateCard from "@/components/Attendence/EmptyState.vue";
   import AttendanceDetails from "@/components/Attendence/AttendanceDetails.vue";
@@ -395,7 +491,13 @@
   const selectedClass = ref("1");
   const search = ref("");
   const students = ref([]);
+
+  // 🔄 Loading States
+  const isLoading = ref(false);
+  const isContentLoading = ref(false);
+  const isSearching = ref(false);
   const isSaving = ref(false);
+  const loadingMessage = ref("Loading attendance data...");
 
   // 📄 Pagination State
   const currentPage = ref(1);
@@ -405,53 +507,87 @@
 
   // ✅ Mounted: Fetch initial data
   onMounted(async () => {
-    const today = new Date();
-    attendanceDate.value = today.toISOString().split("T")[0];
-    await fetchFilteredStudents();
+    isLoading.value = true;
+    loadingMessage.value = "Initializing attendance system...";
+
+    try {
+      const today = new Date();
+      attendanceDate.value = today.toISOString().split("T")[0];
+      await fetchFilteredStudents();
+    } finally {
+      isLoading.value = false;
+    }
   });
 
   // 🔄 Fetch Students (with pagination support)
   const fetchFilteredStudents = async (page = 1) => {
-    currentPage.value = page;
+    const isInitialLoad = page === 1 && students.value.length === 0;
 
-    await store.dispatch("fetchStudents", {
-      class: selectedClass.value,
-      search: search.value.trim(),
-      page: currentPage.value,
-      limit: limit.value,
-    });
+    if (isInitialLoad) {
+      isLoading.value = true;
+      loadingMessage.value = "Loading students...";
+    } else {
+      isContentLoading.value = true;
+    }
 
-    students.value = [...store.getters.allStudents].sort(
-      (a, b) => a.rollNumber - b.rollNumber
-    );
+    try {
+      currentPage.value = page;
 
-    attendance.value = {};
-    remarks.value = {};
-    alreadyMarked.value = {};
+      await store.dispatch("fetchStudents", {
+        class: selectedClass.value,
+        search: search.value.trim(),
+        page: currentPage.value,
+        limit: limit.value,
+      });
 
-    students.value.forEach((student) => {
-      if (student.attendanceStatus) {
-        attendance.value[student._id] = student.attendanceStatus;
-        alreadyMarked.value[student._id] = true;
-      }
-      if (student.remarks) {
-        remarks.value[student._id] = student.remarks;
-      }
-    });
+      students.value = [...store.getters.allStudents].sort(
+        (a, b) => a.rollNumber - b.rollNumber
+      );
+
+      attendance.value = {};
+      remarks.value = {};
+      alreadyMarked.value = {};
+
+      students.value.forEach((student) => {
+        if (student.attendanceStatus) {
+          attendance.value[student._id] = student.attendanceStatus;
+          alreadyMarked.value[student._id] = true;
+        }
+        if (student.remarks) {
+          remarks.value[student._id] = student.remarks;
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching students:", error);
+    } finally {
+      isLoading.value = false;
+      isContentLoading.value = false;
+      isSearching.value = false;
+    }
   };
 
   // 🔁 Watch for Class or Search changes
   let searchTimeout;
   watch(search, () => {
     clearTimeout(searchTimeout);
+    isSearching.value = true;
     searchTimeout = setTimeout(() => {
       fetchFilteredStudents(1); // reset to page 1
     }, 300);
   });
 
   watch(selectedClass, () => {
+    isContentLoading.value = true;
+    loadingMessage.value = `Loading Class ${selectedClass.value} students...`;
     fetchFilteredStudents(1);
   });
+
+  // 🔄 Refresh Data
+  const refreshData = async () => {
+    isLoading.value = true;
+    loadingMessage.value = "Refreshing data...";
+    await fetchFilteredStudents(currentPage.value);
+  };
 
   // 📚 Class name display helper
   const getClassName = (classId) => `Class ${classId ?? "N/A"}`;
@@ -500,6 +636,7 @@
   // 💾 Save attendance
   const saveAttendance = async () => {
     isSaving.value = true;
+    loadingMessage.value = "Saving attendance records...";
 
     try {
       for (const student of students.value) {
@@ -531,7 +668,9 @@
 
   // 🔁 Pagination Button Click
   const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages.value) {
+    if (page >= 1 && page <= totalPages.value && !isLoading.value) {
+      isContentLoading.value = true;
+      loadingMessage.value = `Loading page ${page}...`;
       fetchFilteredStudents(page);
     }
   };
@@ -566,6 +705,32 @@
     animation: bounce 1s ease infinite;
   }
 
+  /* Enhanced spinner animation */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  /* Pulse animation for loading dots */
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   /* Smooth transitions */
   * {
     transition-property: all;
@@ -596,5 +761,23 @@
 
   .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+  }
+
+  /* Loading overlay styles */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  /* Disabled state improvements */
+  .disabled\:opacity-50:disabled {
+    opacity: 0.5;
+  }
+
+  .disabled\:cursor-not-allowed:disabled {
+    cursor: not-allowed;
+  }
+
+  .disabled\:transform-none:disabled {
+    transform: none;
   }
 </style>

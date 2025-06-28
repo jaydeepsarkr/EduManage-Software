@@ -1,4 +1,44 @@
 <template>
+  <!-- Loading Overlay -->
+  <div
+    v-if="isInitialLoading"
+    class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center"
+  >
+    <div class="text-center">
+      <div class="relative mb-6">
+        <!-- Main Spinner -->
+        <div
+          class="w-20 h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"
+        ></div>
+        <!-- Inner Spinner -->
+        <div
+          class="absolute inset-0 w-20 h-20 border-4 border-transparent border-r-indigo-400 rounded-full animate-spin mx-auto"
+          style="animation-direction: reverse; animation-duration: 1.5s"
+        ></div>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-xl font-semibold text-gray-800">
+          {{ loadingMessage }}
+        </h3>
+        <p class="text-sm text-gray-600">
+          Please wait while we load student data...
+        </p>
+        <!-- Loading Progress Dots -->
+        <div class="flex justify-center space-x-1 mt-4">
+          <div class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></div>
+          <div
+            class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"
+            style="animation-delay: 0.1s"
+          ></div>
+          <div
+            class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"
+            style="animation-delay: 0.2s"
+          ></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div
     class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 p-6"
   >
@@ -6,8 +46,18 @@
       <!-- Enhanced Stats Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
         >
+          <!-- Stats Loading Overlay -->
+          <div
+            v-if="isStatsLoading"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+          >
+            <div
+              class="w-6 h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
+            ></div>
+          </div>
+
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -16,7 +66,10 @@
                 Total Students
               </p>
               <p class="text-3xl font-bold text-slate-800 mt-2">
-                {{ students.length }}
+                <template v-if="!isStatsLoading">{{
+                  students.length
+                }}</template>
+                <template v-else>--</template>
               </p>
             </div>
             <div
@@ -28,8 +81,18 @@
         </div>
 
         <div
-          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
         >
+          <!-- Stats Loading Overlay -->
+          <div
+            v-if="isStatsLoading"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+          >
+            <div
+              class="w-6 h-6 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"
+            ></div>
+          </div>
+
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -38,7 +101,8 @@
                 Active
               </p>
               <p class="text-3xl font-bold text-emerald-600 mt-2">
-                {{ activeStudents }}
+                <template v-if="!isStatsLoading">{{ activeStudents }}</template>
+                <template v-else>--</template>
               </p>
             </div>
             <div
@@ -50,8 +114,18 @@
         </div>
 
         <div
-          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
         >
+          <!-- Stats Loading Overlay -->
+          <div
+            v-if="isStatsLoading"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+          >
+            <div
+              class="w-6 h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
+            ></div>
+          </div>
+
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -60,7 +134,10 @@
                 Graduated
               </p>
               <p class="text-3xl font-bold text-indigo-600 mt-2">
-                {{ graduatedStudents }}
+                <template v-if="!isStatsLoading">{{
+                  graduatedStudents
+                }}</template>
+                <template v-else>--</template>
               </p>
             </div>
             <div
@@ -72,8 +149,18 @@
         </div>
 
         <div
-          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+          class="bg-white rounded-2xl p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
         >
+          <!-- Stats Loading Overlay -->
+          <div
+            v-if="isStatsLoading"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+          >
+            <div
+              class="w-6 h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"
+            ></div>
+          </div>
+
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -82,7 +169,10 @@
                 Inactive
               </p>
               <p class="text-3xl font-bold text-red-600 mt-2">
-                {{ inactiveStudents }}
+                <template v-if="!isStatsLoading">{{
+                  inactiveStudents
+                }}</template>
+                <template v-else>--</template>
               </p>
             </div>
             <div
@@ -98,12 +188,26 @@
       <Header
         @search-text="handleSearch"
         @selected-class="handleClassSelect"
+        :disabled="isLoading"
       />
 
       <!-- Enhanced Table -->
       <div
-        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden"
+        class="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative"
       >
+        <!-- Table Loading Overlay -->
+        <div
+          v-if="isTableLoading"
+          class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center"
+        >
+          <div class="text-center">
+            <div
+              class="w-8 h-8 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-2"
+            ></div>
+            <p class="text-sm text-gray-600">{{ tableLoadingMessage }}</p>
+          </div>
+        </div>
+
         <div class="bg-gradient-to-r from-slate-800 to-slate-900 px-6 py-4">
           <h3 class="text-xl font-bold text-white">Student Directory</h3>
           <p class="text-slate-300 text-sm mt-1">
@@ -112,7 +216,77 @@
         </div>
 
         <div class="overflow-x-auto">
-          <table class="w-full">
+          <!-- Table Skeleton Loading -->
+          <div
+            v-if="isTableLoading"
+            class="p-6"
+          >
+            <div class="space-y-4">
+              <div
+                v-for="i in 8"
+                :key="i"
+                class="flex items-center space-x-4 py-4"
+              >
+                <!-- Roll Number Skeleton -->
+                <div class="flex items-center space-x-3">
+                  <div
+                    class="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"
+                  ></div>
+                  <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                </div>
+                <!-- Student Info Skeleton -->
+                <div class="flex items-center space-x-4 flex-1">
+                  <div
+                    class="w-12 h-12 bg-gray-200 rounded-full animate-pulse"
+                  ></div>
+                  <div class="space-y-2">
+                    <div
+                      class="h-4 bg-gray-200 rounded w-32 animate-pulse"
+                    ></div>
+                    <div
+                      class="h-3 bg-gray-200 rounded w-24 animate-pulse"
+                    ></div>
+                  </div>
+                </div>
+                <!-- Contact Skeleton -->
+                <div class="space-y-2">
+                  <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
+                  <div class="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
+                </div>
+                <!-- Academic Skeleton -->
+                <div class="flex items-center space-x-2">
+                  <div
+                    class="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"
+                  ></div>
+                  <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                </div>
+                <!-- Status Skeleton -->
+                <div
+                  class="h-6 bg-gray-200 rounded-full w-20 animate-pulse"
+                ></div>
+                <!-- Date Skeleton -->
+                <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+                <!-- Actions Skeleton -->
+                <div class="flex space-x-2">
+                  <div
+                    class="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"
+                  ></div>
+                  <div
+                    class="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"
+                  ></div>
+                  <div
+                    class="w-8 h-8 bg-gray-200 rounded-lg animate-pulse"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actual Table -->
+          <table
+            v-else
+            class="w-full"
+          >
             <thead
               class="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200"
             >
@@ -122,6 +296,7 @@
                 >
                   <button
                     class="flex items-center gap-2 hover:text-slate-800 transition-colors group"
+                    :disabled="isLoading"
                   >
                     <span>Roll No</span>
                     <svg
@@ -144,6 +319,7 @@
                 >
                   <button
                     class="flex items-center gap-2 hover:text-slate-800 transition-colors group"
+                    :disabled="isLoading"
                   >
                     <span>Student</span>
                     <svg
@@ -206,7 +382,6 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center gap-4">
                     <div class="flex-shrink-0">
@@ -231,7 +406,6 @@
                     </div>
                   </div>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="space-y-2">
                     <div class="flex items-center gap-2 text-sm text-slate-700">
@@ -259,7 +433,6 @@
                     </div>
                   </div>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <div
@@ -272,7 +445,6 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <span
                     :class="getStatusClass(student.status)"
@@ -282,7 +454,6 @@
                     {{ student.status }}
                   </span>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2 text-sm text-slate-600">
                     <div class="p-1 bg-indigo-100 rounded">
@@ -293,11 +464,11 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-6 py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <button
-                      class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                      :disabled="isLoading"
+                      class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                       title="View Details"
                     >
                       <svg
@@ -322,13 +493,15 @@
                     </button>
                     <button
                       @click="editStudent(student)"
-                      class="p-2 text-emerald-600 hover:text-white hover:bg-emerald-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                      :disabled="isLoading"
+                      class="p-2 text-emerald-600 hover:text-white hover:bg-emerald-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Edit"
                     >
                       <Pencil class="w-4 h-4" />
                     </button>
                     <button
-                      class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                      :disabled="isLoading"
+                      class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
                       title="Delete"
                     >
                       <svg
@@ -350,6 +523,24 @@
               </tr>
             </tbody>
           </table>
+
+          <!-- Empty State -->
+          <div
+            v-if="!isTableLoading && students.length === 0"
+            class="text-center py-16"
+          >
+            <div
+              class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+            >
+              <Users class="w-10 h-10 text-indigo-500" />
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              No students found
+            </h3>
+            <p class="text-gray-600">
+              Try adjusting your search criteria or add new students.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -361,17 +552,30 @@
         <div
           class="bg-white w-full max-w-2xl max-h-[90vh] rounded-3xl shadow-2xl relative animate-fade-in border border-slate-200 flex flex-col"
         >
+          <!-- Modal Loading Overlay -->
+          <div
+            v-if="isSaving"
+            class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-3xl"
+          >
+            <div class="text-center">
+              <div
+                class="w-8 h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-2"
+              ></div>
+              <p class="text-sm text-gray-600">Saving changes...</p>
+            </div>
+          </div>
+
           <!-- Fixed Header -->
           <div class="flex-shrink-0 p-6 md:p-8 border-b border-slate-200">
             <!-- Close Button -->
             <button
               @click="closeModal"
-              class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200"
+              :disabled="isSaving"
+              class="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Close"
             >
               <X class="w-5 h-5" />
             </button>
-
             <!-- Header -->
             <div class="flex items-center gap-3">
               <div
@@ -397,22 +601,22 @@
                 >
                 <input
                   v-model="editingStudent.name"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter full name"
                 />
               </div>
-
               <div class="space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Roll Number</label
                 >
                 <input
                   v-model="editingStudent.rollNumber"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter roll number"
                 />
               </div>
-
               <div class="space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Email Address</label
@@ -420,47 +624,47 @@
                 <input
                   v-model="editingStudent.email"
                   type="email"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter email address"
                 />
               </div>
-
               <div class="space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Class</label
                 >
                 <input
                   v-model="editingStudent.class"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter class"
                 />
               </div>
-
               <div class="space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Phone Number</label
                 >
                 <input
                   v-model="editingStudent.phone"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter phone number"
                 />
               </div>
-
               <div class="space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Status</label
                 >
                 <select
                   v-model="editingStudent.status"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Leaved</option>
                   <option value="Graduated">Passed Out</option>
                 </select>
               </div>
-
               <div class="md:col-span-2 space-y-2">
                 <label class="block text-sm font-semibold text-slate-700"
                   >Address</label
@@ -468,7 +672,8 @@
                 <textarea
                   v-model="editingStudent.address"
                   rows="3"
-                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base"
+                  :disabled="isSaving"
+                  class="w-full rounded-xl border-2 border-slate-200 px-4 py-3 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter full address"
                 ></textarea>
               </div>
@@ -482,38 +687,58 @@
             >
               <button
                 @click="closeModal"
-                class="px-6 py-3 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition-all duration-200 transform hover:scale-105 text-sm md:text-base"
+                :disabled="isSaving"
+                class="px-6 py-3 bg-slate-200 text-slate-700 font-semibold rounded-xl hover:bg-slate-300 transition-all duration-200 transform hover:scale-105 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 Cancel
               </button>
               <button
                 @click="saveStudent"
-                class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm md:text-base"
+                :disabled="isSaving"
+                class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
-                <Save class="w-4 h-4" />
-                Save Changes
+                <div
+                  v-if="isSaving"
+                  class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                ></div>
+                <Save
+                  v-else
+                  class="w-4 h-4"
+                />
+                <span>{{ isSaving ? "Saving..." : "Save Changes" }}</span>
               </button>
             </div>
           </div>
         </div>
       </div>
+
       <!-- Pagination Section -->
       <div class="flex items-center justify-between mt-8 px-2">
         <!-- Results summary -->
         <div class="text-sm text-gray-600 font-medium">
-          Showing
-          <span class="font-bold text-gray-900">
-            {{ (currentPage - 1) * limit + 1 }}
-          </span>
-          to
-          <span class="font-bold text-gray-900">
-            {{ Math.min(currentPage * limit, totalResults) }}
-          </span>
-          of
-          <span class="font-bold text-gray-900">
-            {{ totalResults }}
-          </span>
-          results
+          <template v-if="!isTableLoading">
+            Showing
+            <span class="font-bold text-gray-900">
+              {{ (currentPage - 1) * limit + 1 }}
+            </span>
+            to
+            <span class="font-bold text-gray-900">
+              {{ Math.min(currentPage * limit, totalResults) }}
+            </span>
+            of
+            <span class="font-bold text-gray-900">
+              {{ totalResults }}
+            </span>
+            results
+          </template>
+          <template v-else>
+            <div class="flex items-center gap-2">
+              <div
+                class="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"
+              ></div>
+              <span>Loading results...</span>
+            </div>
+          </template>
         </div>
 
         <!-- Pagination buttons -->
@@ -521,7 +746,7 @@
           <!-- Previous button -->
           <button
             @click="goToPage(currentPage - 1)"
-            :disabled="currentPage === 1"
+            :disabled="currentPage === 1 || isTableLoading"
             class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft class="w-4 h-4" />
@@ -534,11 +759,13 @@
           >
             <button
               @click="goToPage(page)"
+              :disabled="isTableLoading"
               :class="[
                 'px-3 py-2 text-sm rounded-xl transition-all duration-200',
                 page === currentPage
                   ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
                   : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+                'disabled:opacity-50 disabled:cursor-not-allowed',
               ]"
             >
               {{ page }}
@@ -548,7 +775,7 @@
           <!-- Next button -->
           <button
             @click="goToPage(currentPage + 1)"
-            :disabled="currentPage === totalPages"
+            :disabled="currentPage === totalPages || isTableLoading"
             class="px-3 py-2 text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight class="w-4 h-4" />
@@ -580,12 +807,20 @@
     ChevronLeft,
     ChevronRight,
   } from "lucide-vue-next";
-
   import Header from "@/components/Students/HeaderStudent.vue";
 
   // Vuex store
   const store = useStore();
   const students = computed(() => store.getters.allStudents);
+
+  // Loading States
+  const isInitialLoading = ref(false);
+  const isLoading = ref(false);
+  const isStatsLoading = ref(false);
+  const isTableLoading = ref(false);
+  const isSaving = ref(false);
+  const loadingMessage = ref("Loading student data...");
+  const tableLoadingMessage = ref("Loading students...");
 
   // 📄 Pagination State
   const currentPage = ref(1);
@@ -596,12 +831,22 @@
   // Local state
   const editingStudent = ref(null);
   const showEditModal = ref(false);
-  const loading = ref(false);
   const error = ref("");
 
   // Filters
   const searchTerm = ref("");
   const selectedClass = ref(null);
+
+  // Computed stats
+  const activeStudents = computed(
+    () => students.value.filter((s) => s.status === "active").length
+  );
+  const graduatedStudents = computed(
+    () => students.value.filter((s) => s.status === "passedout").length
+  );
+  const inactiveStudents = computed(
+    () => students.value.filter((s) => s.status === "leaved").length
+  );
 
   // Handle events from Header
   const handleSearch = (value) => {
@@ -614,8 +859,22 @@
 
   // Fetch students with filters
   const fetchStudents = async () => {
+    const isInitialLoad =
+      currentPage.value === 1 && students.value.length === 0;
+
+    if (isInitialLoad) {
+      isInitialLoading.value = true;
+      loadingMessage.value = "Loading student directory...";
+    } else {
+      isTableLoading.value = true;
+      tableLoadingMessage.value =
+        currentPage.value === 1
+          ? "Filtering students..."
+          : `Loading page ${currentPage.value}...`;
+    }
+
     try {
-      loading.value = true;
+      isLoading.value = true;
       await store.dispatch("fetchStudents", {
         search: searchTerm.value,
         class: selectedClass.value,
@@ -624,18 +883,51 @@
       });
     } catch (err) {
       error.value = "Failed to fetch students.";
+      console.error("Error fetching students:", err);
     } finally {
-      loading.value = false;
+      isLoading.value = false;
+      isTableLoading.value = false;
+      isInitialLoading.value = false;
+    }
+  };
+
+  // Fetch stats
+  const fetchStats = async () => {
+    isStatsLoading.value = true;
+    try {
+      // Simulate stats loading - replace with actual API call
+      await new Promise((resolve) => setTimeout(resolve, 800));
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    } finally {
+      isStatsLoading.value = false;
     }
   };
 
   // Fetch on mount
-  onMounted(() => {
-    fetchStudents();
+  onMounted(async () => {
+    isInitialLoading.value = true;
+    loadingMessage.value = "Initializing student management...";
+
+    try {
+      await Promise.all([fetchStudents(), fetchStats()]);
+    } finally {
+      isInitialLoading.value = false;
+    }
   });
 
-  // Watch filters and refetch
-  watch([searchTerm, selectedClass], () => {
+  // Watch filters and refetch with debouncing
+  let searchTimeout;
+  watch(searchTerm, () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentPage.value = 1;
+      fetchStudents();
+    }, 300);
+  });
+
+  watch(selectedClass, () => {
+    currentPage.value = 1;
     fetchStudents();
   });
 
@@ -676,24 +968,40 @@
     showEditModal.value = true;
   };
 
-  const saveStudent = () => {
-    const index = students.value.findIndex(
-      (s) => s._id === editingStudent.value._id
-    );
-    if (index !== -1) {
-      students.value[index] = { ...editingStudent.value };
-      // Optional: Dispatch an update action to Vuex/server
+  const saveStudent = async () => {
+    isSaving.value = true;
+
+    try {
+      // Simulate save operation - replace with actual API call
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const index = students.value.findIndex(
+        (s) => s._id === editingStudent.value._id
+      );
+      if (index !== -1) {
+        students.value[index] = { ...editingStudent.value };
+        // Optional: Dispatch an update action to Vuex/server
+      }
+      showEditModal.value = false;
+    } catch (error) {
+      console.error("Error saving student:", error);
+    } finally {
+      isSaving.value = false;
     }
-    showEditModal.value = false;
   };
 
   const closeModal = () => {
-    showEditModal.value = false;
+    if (!isSaving.value) {
+      showEditModal.value = false;
+    }
   };
+
   const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages.value) {
+    if (page >= 1 && page <= totalPages.value && !isTableLoading.value) {
       currentPage.value = page;
-      fetchStudents(); // ✅ correct function
+      isTableLoading.value = true;
+      tableLoadingMessage.value = `Loading page ${page}...`;
+      fetchStudents();
     }
   };
 </script>
@@ -714,6 +1022,31 @@
     animation: fade-in 0.3s ease-out;
   }
 
+  /* Custom animations */
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
   /* Custom scrollbar */
   .overflow-x-auto::-webkit-scrollbar {
     height: 6px;
@@ -731,5 +1064,23 @@
 
   .overflow-x-auto::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+  }
+
+  /* Loading overlay styles */
+  .backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+  }
+
+  /* Disabled state improvements */
+  .disabled\:opacity-50:disabled {
+    opacity: 0.5;
+  }
+
+  .disabled\:cursor-not-allowed:disabled {
+    cursor: not-allowed;
+  }
+
+  .disabled\:transform-none:disabled {
+    transform: none;
   }
 </style>
