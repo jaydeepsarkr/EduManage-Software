@@ -1,7 +1,7 @@
 import { createStore } from "vuex";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-
+const baseURL = process.env.VUE_APP_BASE_URL;
 export default createStore({
   state: {
     students: [],
@@ -105,7 +105,7 @@ export default createStore({
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get("http://localhost:5000/api/students", {
+        const res = await axios.get(`${baseURL}/api/students`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -129,12 +129,9 @@ export default createStore({
 
       try {
         const token = localStorage.getItem("token");
-        const res = await axios.get(
-          `http://localhost:5000/api/users/${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const res = await axios.get(`${baseURL}/api/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         const user = res.data;
         commit("SET_USER_CACHE", { userId, user });
         return user;
@@ -155,7 +152,7 @@ export default createStore({
           class: classFilter = "",
         } = filters;
 
-        const res = await axios.get("http://localhost:5000/api/students", {
+        const res = await axios.get(`${baseURL}/api/students`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -212,10 +209,7 @@ export default createStore({
           role: "student",
         };
 
-        const res = await axios.post(
-          "http://localhost:5000/api/auth/register",
-          payload
-        );
+        const res = await axios.post(`${baseURL}/api/auth/register`, payload);
         console.log("Student registered successfully:", res.data);
         return res.data;
       } catch (err) {
@@ -233,7 +227,7 @@ export default createStore({
         if (!token) throw new Error("Token not found");
 
         const res = await axios.post(
-          "http://localhost:5000/api/attendance/manual",
+          `${baseURL}/api/attendance/manual`,
           {
             studentId,
             status,
@@ -274,24 +268,21 @@ export default createStore({
           class: classFilter = "", // ✅ Add class filter
         } = filters;
 
-        const res = await axios.get(
-          "http://localhost:5000/api/attendance/history",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            params: {
-              studentId,
-              startDate,
-              endDate,
-              page,
-              limit,
-              self: self ? "true" : "false",
-              search, // ✅ Pass search query
-              class: classFilter, // ✅ Pass class filter (as 'class')
-            },
-          }
-        );
+        const res = await axios.get(`${baseURL}/api/attendance/history`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            studentId,
+            startDate,
+            endDate,
+            page,
+            limit,
+            self: self ? "true" : "false",
+            search, // ✅ Pass search query
+            class: classFilter, // ✅ Pass class filter (as 'class')
+          },
+        });
 
         const attendance = res.data.attendance || [];
         const pagination = res.data.pagination || {};
@@ -322,14 +313,11 @@ export default createStore({
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(
-          "http://localhost:5000/api/attendance/stats",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await axios.get(`${baseURL}/api/attendance/stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         commit("SET_ATTENDANCE_STATS", res.data || {});
       } catch (err) {
