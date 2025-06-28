@@ -1,7 +1,8 @@
 import { createStore } from "vuex";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
-const baseURL = process.env.VUE_APP_BASE_URL;
+const baseURL =
+  process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
 export default createStore({
   state: {
     students: [],

@@ -225,18 +225,17 @@
   const showPassword = ref(false);
   const isLoading = ref(false);
 
+  const BASE_URL = process.env.VUE_APP_BASE_URL;
+
   const handleLogin = async () => {
     errorMessage.value = "";
     isLoading.value = true;
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
-        {
-          email: email.value,
-          password: password.value,
-        }
-      );
+      const response = await axios.post(`${BASE_URL}/api/auth/login`, {
+        email: email.value,
+        password: password.value,
+      });
 
       // Save token & redirect
       localStorage.setItem("token", response.data.token);

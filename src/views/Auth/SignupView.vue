@@ -660,6 +660,8 @@
   const showPassword = ref(false);
   const showConfirmPassword = ref(false);
 
+  const BASE_URL = process.env.VUE_APP_BASE_URL;
+
   const passwordMismatch = computed(() => {
     return (
       formData.value.password &&
