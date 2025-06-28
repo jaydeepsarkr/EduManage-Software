@@ -361,4 +361,4 @@ const u=({size:t,strokeWidth:e=2,absoluteStrokeWidth:n,color:i,iconNode:u,name:l
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
  */const o=(0,r.A)("x",[["path",{d:"M18 6 6 18",key:"1bl5f8"}],["path",{d:"m6 6 12 12",key:"d8bk6v"}]])}}]);
-//# sourceMappingURL=chunk-vendors.9294c5a5.js.map
+//# sourceMappingURL=chunk-vendors.bea1be77.js.map
