@@ -2,13 +2,13 @@
   <!-- Loading Overlay - Mobile Optimized -->
   <div
     v-if="isInitialLoading"
-    class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-white z-50 flex items-center justify-center p-4"
   >
     <div class="text-center max-w-sm mx-auto">
       <div class="relative mb-4 sm:mb-6">
         <!-- Main Spinner -->
         <div
-          class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"
+          class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mx-auto"
         ></div>
         <!-- Inner Spinner -->
         <div
@@ -39,31 +39,30 @@
     </div>
   </div>
 
-  <div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+  <div class="min-h-screen bg-gray-50">
+    <div
+      class="max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8"
+    >
       <!-- Header - Mobile Responsive -->
       <div class="mb-6 sm:mb-8">
-        <h1
-          class="text-[17px] sm:text-3xl font-bold text-gray-900 mb-2 truncate"
-        >
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
           Attendance Dashboard
         </h1>
-
-        <p class="text-[10px] sm:text-base text-gray-600 truncate">
+        <p class="text-sm sm:text-base text-gray-600">
           Track and manage student attendance with ease
         </p>
       </div>
 
       <!-- Filter Section - Mobile First -->
       <div
-        class="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-white/20 mb-6 sm:mb-8 hover:shadow-xl transition-all duration-300"
+        class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 mb-6 sm:mb-8"
       >
         <!-- Mobile Filter Toggle -->
         <div class="flex items-center justify-between mb-4 sm:hidden">
           <h3 class="text-lg font-semibold text-gray-900">Filters</h3>
           <button
             @click="showMobileFilters = !showMobileFilters"
-            class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+            class="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
           >
             <svg
               v-if="!showMobileFilters"
@@ -113,14 +112,14 @@
               <!-- Search Input -->
               <div class="relative flex-1 sm:w-80 group">
                 <Search
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-indigo-500 transition-colors"
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"
                 />
                 <input
                   v-model="search"
                   type="text"
                   placeholder="Search student by name..."
                   :disabled="isLoading"
-                  class="w-full pl-10 pr-10 py-3 sm:py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  class="w-full pl-10 pr-10 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 />
                 <!-- Search Loading Indicator -->
                 <div
@@ -128,7 +127,7 @@
                   class="absolute right-3 top-1/2 transform -translate-y-1/2"
                 >
                   <div
-                    class="w-4 h-4 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
+                    class="w-4 h-4 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
                   ></div>
                 </div>
               </div>
@@ -136,12 +135,12 @@
               <!-- Class Dropdown -->
               <div class="relative group sm:w-40">
                 <GraduationCap
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-indigo-500 transition-colors"
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"
                 />
                 <select
                   v-model="selectedClass"
                   :disabled="isLoading"
-                  class="w-full pl-10 pr-8 py-3 sm:py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 appearance-none disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  class="w-full pl-10 pr-8 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white appearance-none disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   <option value="">All Classes</option>
                   <option
@@ -160,13 +159,13 @@
               <!-- Date Picker -->
               <div class="relative group sm:w-44">
                 <Calendar
-                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-indigo-500 transition-colors"
+                  class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"
                 />
                 <input
                   v-model="selectedDate"
                   type="date"
                   :disabled="isLoading"
-                  class="w-full pl-10 pr-4 py-3 sm:py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  class="w-full pl-10 pr-4 py-3 sm:py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 />
               </div>
             </div>
@@ -175,10 +174,10 @@
             <div class="flex items-center gap-2 sm:gap-3">
               <button
                 :class="[
-                  'flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium transition-all duration-200 min-h-[44px]',
+                  'flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 min-h-[44px] border',
                   isMineOnly
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50',
                   isLoading ? 'opacity-50 cursor-not-allowed' : '',
                 ]"
                 @click="toggleView"
@@ -186,11 +185,10 @@
               >
                 {{ isMineOnly ? "Mine Only" : "All Records" }}
               </button>
-
               <button
                 @click="refreshData"
                 :disabled="isLoading"
-                class="p-3 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px]"
+                class="p-3 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[44px] min-w-[44px] border border-gray-300"
               >
                 <RefreshCw
                   :class="['w-4 h-4', isLoading ? 'animate-spin' : '']"
@@ -207,40 +205,40 @@
       >
         <!-- Present Students -->
         <div
-          class="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group relative overflow-hidden"
+          class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
           <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <div
-              class="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl group-hover:bg-white/30 transition-colors"
-            >
-              <UserCheck class="w-5 h-5 sm:w-6 sm:h-6" />
+            <div class="p-2 sm:p-3 bg-green-100 rounded-lg">
+              <UserCheck class="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
             </div>
             <span
-              class="text-xs font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full"
+              class="text-xs font-medium bg-gray-100 text-gray-600 px-2 sm:px-3 py-1 rounded-full"
               >Today</span
             >
           </div>
 
-          <h3 class="text-base sm:text-lg font-semibold mb-2">
+          <h3 class="text-base sm:text-lg font-semibold mb-2 text-gray-900">
             Present Students
           </h3>
-          <p class="text-2xl sm:text-3xl font-bold mb-2">
+
+          <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
             <template v-if="!isStatsLoading">{{
               stats.today?.present || 0
             }}</template>
             <template v-else>--</template>
           </p>
-          <p class="text-emerald-100 text-sm">
+
+          <p class="text-gray-600 text-sm">
             Out of
             <template v-if="!isStatsLoading">{{
               stats.today?.total || 0
@@ -252,40 +250,40 @@
 
         <!-- Absent Students -->
         <div
-          class="bg-gradient-to-br from-red-500 to-red-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group relative overflow-hidden"
+          class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
           <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <div
-              class="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl group-hover:bg-white/30 transition-colors"
-            >
-              <UserX class="w-5 h-5 sm:w-6 sm:h-6" />
+            <div class="p-2 sm:p-3 bg-red-100 rounded-lg">
+              <UserX class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
             </div>
             <span
-              class="text-xs font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full"
+              class="text-xs font-medium bg-gray-100 text-gray-600 px-2 sm:px-3 py-1 rounded-full"
               >Today</span
             >
           </div>
 
-          <h3 class="text-base sm:text-lg font-semibold mb-2">
+          <h3 class="text-base sm:text-lg font-semibold mb-2 text-gray-900">
             Absent Students
           </h3>
-          <p class="text-2xl sm:text-3xl font-bold mb-2">
+
+          <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
             <template v-if="!isStatsLoading">{{
               stats.today?.absent || 0
             }}</template>
             <template v-else>--</template>
           </p>
-          <p class="text-red-100 text-sm">
+
+          <p class="text-gray-600 text-sm">
             <template v-if="!isStatsLoading"
               >{{ getAttendancePercentage() }}%</template
             >
@@ -296,91 +294,93 @@
 
         <!-- Late Students -->
         <div
-          class="bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group relative overflow-hidden"
+          class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
           <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <div
-              class="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl group-hover:bg-white/30 transition-colors"
-            >
-              <Clock class="w-5 h-5 sm:w-6 sm:h-6" />
+            <div class="p-2 sm:p-3 bg-yellow-100 rounded-lg">
+              <Clock class="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
             </div>
             <span
-              class="text-xs font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full"
+              class="text-xs font-medium bg-gray-100 text-gray-600 px-2 sm:px-3 py-1 rounded-full"
               >Today</span
             >
           </div>
 
-          <h3 class="text-base sm:text-lg font-semibold mb-2">Late</h3>
-          <p class="text-2xl sm:text-3xl font-bold mb-2">
+          <h3 class="text-base sm:text-lg font-semibold mb-2 text-gray-900">
+            Late
+          </h3>
+
+          <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
             <template v-if="!isStatsLoading">{{
               stats.today?.late || 0
             }}</template>
             <template v-else>--</template>
           </p>
-          <p class="text-amber-100 text-sm">late students</p>
+
+          <p class="text-gray-600 text-sm">late students</p>
         </div>
 
         <!-- Average Attendance -->
         <div
-          class="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl p-4 sm:p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group relative overflow-hidden"
+          class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
           <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-gray-300 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <div
-              class="p-2 sm:p-3 bg-white/20 rounded-lg sm:rounded-xl group-hover:bg-white/30 transition-colors"
-            >
-              <TrendingUp class="w-5 h-5 sm:w-6 sm:h-6" />
+            <div class="p-2 sm:p-3 bg-blue-100 rounded-lg">
+              <TrendingUp class="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
             </div>
             <span
-              class="text-xs font-medium bg-white/20 px-2 sm:px-3 py-1 rounded-full"
+              class="text-xs font-medium bg-gray-100 text-gray-600 px-2 sm:px-3 py-1 rounded-full"
               >7 Days</span
             >
           </div>
 
-          <h3 class="text-base sm:text-lg font-semibold mb-2">
+          <h3 class="text-base sm:text-lg font-semibold mb-2 text-gray-900">
             Avg Attendance
           </h3>
-          <p class="text-2xl sm:text-3xl font-bold mb-2">
+
+          <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
             <template v-if="!isStatsLoading"
               >{{ getWeeklyAverage() }}%</template
             >
             <template v-else>--%</template>
           </p>
-          <p class="text-blue-100 text-sm">Past week average</p>
+
+          <p class="text-gray-600 text-sm">Past week average</p>
         </div>
       </div>
 
       <!-- Attendance History Table - Mobile Responsive -->
       <div
-        class="bg-white/70 backdrop-blur-sm rounded-xl sm:rounded-2xl shadow-lg border border-white/20 overflow-hidden hover:shadow-xl transition-all duration-300 relative"
+        class="bg-white border border-gray-200 rounded-lg overflow-hidden relative"
       >
         <!-- Table Loading Overlay -->
         <div
           v-if="isTableLoading"
-          class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center"
+          class="absolute inset-0 bg-white bg-opacity-90 z-10 flex items-center justify-center"
         >
           <div class="text-center">
             <div
-              class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
+              class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-gray-300 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
             ></div>
             <p class="text-xs sm:text-sm text-gray-600">
               {{ tableLoadingMessage }}
@@ -389,24 +389,22 @@
         </div>
 
         <!-- Table Header -->
-        <div class="p-4 sm:p-6 border-b border-gray-200/50">
+        <div class="p-4 sm:p-6 border-b border-gray-200">
           <div
             class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0"
           >
             <div>
-              <h3
-                class="text-[17px] sm:text-3xl font-bold text-gray-900 mb-2 truncate"
-              >
+              <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1">
                 Recent Attendance Records
               </h3>
-              <p class="text-[10px] sm:text-base text-gray-600 truncate">
+              <p class="text-sm text-gray-600">
                 Latest attendance entries and updates
               </p>
             </div>
             <div class="flex items-center gap-2">
               <button
                 :disabled="isLoading"
-                class="p-2 text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="p-2 text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <MoreVertical class="w-4 h-4" />
               </button>
@@ -424,7 +422,7 @@
             <div
               v-for="i in 5"
               :key="i"
-              class="bg-white/50 rounded-lg p-4 space-y-3"
+              class="bg-gray-50 rounded-lg p-4 space-y-3 border border-gray-200"
             >
               <div class="flex items-center justify-between">
                 <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
@@ -448,27 +446,24 @@
           <!-- Mobile Cards -->
           <div
             v-else
-            class="p-4 space-y-4"
+            class="px-2 sm:px-4 space-y-4"
           >
             <div
               v-for="entry in history"
               :key="entry._id"
-              class="bg-white/50 rounded-lg p-4 hover:bg-indigo-50/50 transition-all duration-200 border border-gray-200/50"
+              class="bg-white rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-colors"
             >
               <!-- Card Header -->
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <Calendar class="w-4 h-4 text-gray-400" />
-                  <span
-                    class="text-[9px] sm:text-sm font-semibold text-gray-900"
-                  >
+                  <span class="text-xs sm:text-sm font-semibold text-gray-900">
                     {{ formatDate(entry.date) }}
                   </span>
                 </div>
-
                 <span
                   :class="getStatusClass(entry.status)"
-                  class="inline-flex items-center gap-1 px-2 py-1 text-[7px] sm:text-xs font-bold rounded-full"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-bold rounded-full"
                 >
                   <div
                     class="w-2 h-2 rounded-full"
@@ -481,16 +476,13 @@
               <!-- Student Info -->
               <div class="flex items-center gap-3 mb-3">
                 <div
-                  class="h-[25px] w-[25px] sm:h-10 sm:w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md"
+                  class="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-sm"
                 >
-                  <span class="text-[10px] sm:text-sm font-bold text-white">
-                    {{ getInitials(entry.studentName) }}
-                  </span>
+                  {{ getInitials(entry.studentName) }}
                 </div>
-
-                <span class="text-sm font-semibold text-gray-900">{{
-                  entry.studentName || "N/A"
-                }}</span>
+                <span class="text-sm font-semibold text-gray-900">
+                  {{ entry.studentName || "N/A" }}
+                </span>
               </div>
 
               <!-- Additional Info -->
@@ -506,15 +498,15 @@
               </div>
             </div>
 
-            <!-- Mobile Empty State -->
+            <!-- Empty State -->
             <div
               v-if="!isTableLoading && (!history || history.length === 0)"
               class="text-center py-12"
             >
               <div
-                class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
               >
-                <ClipboardList class="w-8 h-8 text-indigo-500" />
+                <ClipboardList class="w-8 h-8 text-blue-500" />
               </div>
               <h3 class="text-lg font-bold text-gray-900 mb-2">
                 No attendance records found
@@ -560,7 +552,7 @@
             v-else
             class="w-full"
           >
-            <thead class="bg-gray-50/50 border-b border-gray-200/50">
+            <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th
                   class="px-4 lg:px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
@@ -589,17 +581,15 @@
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white/50 divide-y divide-gray-200/50">
+            <tbody class="bg-white divide-y divide-gray-200">
               <tr
                 v-for="entry in history"
                 :key="entry._id"
-                class="hover:bg-indigo-50/50 transition-all duration-200 group"
+                class="hover:bg-gray-50 transition-colors"
               >
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-2">
-                    <Calendar
-                      class="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors"
-                    />
+                    <Calendar class="w-4 h-4 text-gray-400" />
                     <span class="text-sm font-semibold text-gray-900">{{
                       formatDate(entry.date)
                     }}</span>
@@ -608,7 +598,7 @@
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-3">
                     <div
-                      class="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-md"
+                      class="h-8 w-8 lg:h-10 lg:w-10 rounded-full bg-blue-600 flex items-center justify-center"
                     >
                       <span class="text-xs lg:text-sm font-bold text-white">{{
                         getInitials(entry.studentName)
@@ -622,7 +612,7 @@
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <span
                     :class="getStatusClass(entry.status)"
-                    class="inline-flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-2 text-xs font-bold rounded-full shadow-sm"
+                    class="inline-flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-2 text-xs font-bold rounded-full"
                   >
                     <div
                       class="w-2 h-2 rounded-full"
@@ -633,9 +623,7 @@
                 </td>
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-2">
-                    <User
-                      class="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors"
-                    />
+                    <User class="w-4 h-4 text-gray-400" />
                     <span class="text-sm font-medium text-gray-700">{{
                       entry.teacherName || "N/A"
                     }}</span>
@@ -643,9 +631,7 @@
                 </td>
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-2">
-                    <Clock
-                      class="w-4 h-4 text-gray-400 group-hover:text-indigo-500 transition-colors"
-                    />
+                    <Clock class="w-4 h-4 text-gray-400" />
                     <span class="text-sm font-medium text-gray-700">{{
                       formatTime(entry.date)
                     }}</span>
@@ -661,9 +647,9 @@
             class="text-center py-16"
           >
             <div
-              class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4"
             >
-              <ClipboardList class="w-10 h-10 text-indigo-500" />
+              <ClipboardList class="w-10 h-10 text-blue-500" />
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">
               No attendance records found
@@ -716,7 +702,7 @@
           <button
             @click="goToPage(currentPage - 1)"
             :disabled="currentPage === 1 || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px]"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
           >
             <ChevronLeft class="w-4 h-4" />
           </button>
@@ -730,10 +716,10 @@
               @click="goToPage(page)"
               :disabled="isTableLoading"
               :class="[
-                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-xl transition-all duration-200 min-h-[36px] min-w-[36px]',
+                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border',
                 page === currentPage
-                  ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
-                  : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+                  ? 'font-bold bg-blue-600 text-white border-blue-600'
+                  : 'font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-gray-300',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
               ]"
             >
@@ -745,7 +731,7 @@
           <button
             @click="goToPage(currentPage + 1)"
             :disabled="currentPage === totalPages || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px]"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
           >
             <ChevronRight class="w-4 h-4" />
           </button>
@@ -819,26 +805,26 @@
   const getStatusClass = (status) => {
     switch (status) {
       case "present":
-        return "bg-emerald-100 text-emerald-800 border border-emerald-200";
+        return "bg-green-100 text-green-800 border border-green-200";
       case "absent":
         return "bg-red-100 text-red-800 border border-red-200";
       case "late":
         return "bg-yellow-100 text-yellow-800 border border-yellow-200";
       default:
-        return "bg-slate-100 text-slate-800 border border-slate-200";
+        return "bg-gray-100 text-gray-800 border border-gray-200";
     }
   };
 
   const getStatusDotClass = (status) => {
     switch (status) {
       case "present":
-        return "bg-emerald-500";
+        return "bg-green-500";
       case "absent":
         return "bg-red-500";
       case "late":
         return "bg-yellow-500";
       default:
-        return "bg-slate-500";
+        return "bg-gray-500";
     }
   };
 
@@ -1052,11 +1038,6 @@
     background-image: none;
   }
 
-  /* Loading overlay styles */
-  .backdrop-blur-sm {
-    backdrop-filter: blur(4px);
-  }
-
   /* Disabled state improvements */
   .disabled\:opacity-50:disabled {
     opacity: 0.5;
@@ -1064,22 +1045,6 @@
 
   .disabled\:cursor-not-allowed:disabled {
     cursor: not-allowed;
-  }
-
-  /* Skeleton loading animation */
-  @keyframes skeleton-loading {
-    0% {
-      background-position: -200px 0;
-    }
-    100% {
-      background-position: calc(200px + 100%) 0;
-    }
-  }
-
-  .skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200px 100%;
-    animation: skeleton-loading 1.5s infinite;
   }
 
   /* Mobile-specific optimizations */
@@ -1116,31 +1081,6 @@
 
     .gap-3 {
       gap: 0.75rem;
-    }
-  }
-
-  /* Desktop optimizations */
-  @media (min-width: 1024px) {
-    /* Enhanced hover effects for desktop */
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .hover\:scale-105:hover {
-      transform: scale(1.05);
-    }
-  }
-
-  /* High DPI display optimizations */
-  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    /* Sharper borders and shadows */
-    .border {
-      border-width: 0.5px;
-    }
-
-    .shadow-lg {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
   }
 

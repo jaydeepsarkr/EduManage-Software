@@ -2,17 +2,17 @@
   <!-- Loading Overlay - Mobile Optimized -->
   <div
     v-if="isInitialLoading"
-    class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-white z-50 flex items-center justify-center p-4"
   >
     <div class="text-center max-w-sm mx-auto">
       <div class="relative mb-4 sm:mb-6">
         <!-- Main Spinner -->
         <div
-          class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto"
+          class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"
         ></div>
         <!-- Inner Spinner -->
         <div
-          class="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 border-4 border-transparent border-r-indigo-400 rounded-full animate-spin mx-auto"
+          class="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 border-4 border-transparent border-r-blue-400 rounded-full animate-spin mx-auto"
           style="animation-direction: reverse; animation-duration: 1.5s"
         ></div>
       </div>
@@ -25,13 +25,13 @@
         </p>
         <!-- Loading Progress Dots -->
         <div class="flex justify-center space-x-1 mt-4">
-          <div class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"></div>
+          <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
           <div
-            class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"
+            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
             style="animation-delay: 0.1s"
           ></div>
           <div
-            class="w-2 h-2 bg-indigo-600 rounded-full animate-pulse"
+            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
             style="animation-delay: 0.2s"
           ></div>
         </div>
@@ -39,22 +39,22 @@
     </div>
   </div>
 
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50"
-  >
-    <div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8">
+  <div class="min-h-screen bg-gray-50">
+    <div
+      class="max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8"
+    >
       <!-- Enhanced Stats Cards - Mobile Responsive Grid -->
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
       >
         <!-- Total Students -->
         <div
-          class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
@@ -64,12 +64,12 @@
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide"
+                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Total Students
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-slate-800 mt-1 sm:mt-2"
+                class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1 sm:mt-2"
               >
                 <template v-if="!isStatsLoading">{{
                   students.length
@@ -78,7 +78,7 @@
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg sm:rounded-xl shadow-lg"
+              class="p-3 sm:p-4 bg-blue-600 rounded-lg border border-blue-600"
             >
               <Users class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
@@ -87,34 +87,34 @@
 
         <!-- Active Students -->
         <div
-          class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide"
+                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Active
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-emerald-600 mt-1 sm:mt-2"
+                class="text-2xl sm:text-3xl font-bold text-green-600 mt-1 sm:mt-2"
               >
                 <template v-if="!isStatsLoading">{{ activeStudents }}</template>
                 <template v-else>--</template>
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg sm:rounded-xl shadow-lg"
+              class="p-3 sm:p-4 bg-green-600 rounded-lg border border-green-600"
             >
               <UserCheck class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
@@ -123,27 +123,27 @@
 
         <!-- Graduated Students -->
         <div
-          class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"
+              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
 
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide"
+                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Graduated
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-indigo-600 mt-1 sm:mt-2"
+                class="text-2xl sm:text-3xl font-bold text-blue-600 mt-1 sm:mt-2"
               >
                 <template v-if="!isStatsLoading">{{
                   graduatedStudents
@@ -152,7 +152,7 @@
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-lg sm:rounded-xl shadow-lg"
+              class="p-3 sm:p-4 bg-blue-600 rounded-lg border border-blue-600"
             >
               <GraduationCap class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
@@ -161,12 +161,12 @@
 
         <!-- Inactive Students -->
         <div
-          class="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg border border-slate-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
             v-if="isStatsLoading"
-            class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center"
+            class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"
@@ -176,7 +176,7 @@
           <div class="flex items-center justify-between">
             <div>
               <p
-                class="text-xs sm:text-sm font-semibold text-slate-500 uppercase tracking-wide"
+                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Inactive
               </p>
@@ -189,9 +189,7 @@
                 <template v-else>--</template>
               </p>
             </div>
-            <div
-              class="p-3 sm:p-4 bg-gradient-to-br from-red-500 to-red-600 rounded-lg sm:rounded-xl shadow-lg"
-            >
+            <div class="p-3 sm:p-4 bg-red-600 rounded-lg border border-red-600">
               <UserX class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
             </div>
           </div>
@@ -207,16 +205,16 @@
 
       <!-- Enhanced Table - Mobile Responsive -->
       <div
-        class="bg-white rounded-xl sm:rounded-2xl shadow-xl border border-slate-200 overflow-hidden relative"
+        class="bg-white rounded-lg border border-gray-200 overflow-hidden relative"
       >
         <!-- Table Loading Overlay -->
         <div
           v-if="isTableLoading"
-          class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center"
+          class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center"
         >
           <div class="text-center">
             <div
-              class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mx-auto mb-2"
+              class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
             ></div>
             <p class="text-xs sm:text-sm text-gray-600">
               {{ tableLoadingMessage }}
@@ -226,12 +224,12 @@
 
         <!-- Table Header -->
         <div
-          class="bg-gradient-to-r from-slate-800 to-slate-900 px-4 sm:px-6 py-3 sm:py-4"
+          class="bg-gray-800 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200"
         >
           <h3 class="text-lg sm:text-xl font-bold text-white">
             Student Directory
           </h3>
-          <p class="text-slate-300 text-xs sm:text-sm mt-1">
+          <p class="text-gray-300 text-xs sm:text-sm mt-1">
             Manage and view all student information
           </p>
         </div>
@@ -278,23 +276,23 @@
             <div
               v-for="student in students"
               :key="student.id"
-              class="bg-white border border-gray-200 rounded-lg p-4 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+              class="bg-white border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-all duration-200"
             >
               <!-- Card Header -->
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <div
-                    class="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md"
+                    class="p-2 bg-purple-600 rounded-lg border border-purple-600"
                   >
                     <IdCard class="w-4 h-4 text-white" />
                   </div>
-                  <span class="text-sm font-bold text-slate-800">{{
+                  <span class="text-sm font-bold text-gray-800">{{
                     student.rollNumber
                   }}</span>
                 </div>
                 <span
                   :class="getStatusClass(student.status)"
-                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full border"
                 >
                   <FileChartLine class="w-3 h-3" />
                   {{ student.status }}
@@ -305,7 +303,7 @@
               <div class="flex items-center gap-3 mb-3">
                 <div class="flex-shrink-0">
                   <div
-                    class="h-6 w-6 sm:h-12 sm:w-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg ring-2 sm:ring-4 ring-blue-100"
+                    class="h-6 w-6 sm:h-12 sm:w-12 rounded-full bg-blue-600 flex items-center justify-center border border-blue-600"
                   >
                     <span class="text-[10px] sm:text-sm font-bold text-white">
                       {{ getInitials(student.name) }}
@@ -313,11 +311,11 @@
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-bold text-slate-800 truncate">
+                  <div class="text-sm font-bold text-gray-800 truncate">
                     {{ student.name }}
                   </div>
                   <div
-                    class="text-[10px] sm:text-xs text-slate-500 flex items-center gap-1 mt-1"
+                    class="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1 mt-1"
                   >
                     <Mail class="w-3 h-3 flex-shrink-0" />
                     <span class="truncate">{{ student.email }}</span>
@@ -328,16 +326,18 @@
               <!-- Contact & Academic Info -->
               <div class="grid grid-cols-2 gap-3 mb-3">
                 <div class="space-y-2">
-                  <div class="flex items-center gap-2 text-xs text-slate-700">
-                    <div class="p-1 bg-green-100 rounded">
+                  <div class="flex items-center gap-2 text-xs text-gray-700">
+                    <div
+                      class="p-1 bg-green-100 rounded border border-green-200"
+                    >
                       <Phone class="w-3 h-3 text-green-600" />
                     </div>
                     <span class="font-medium truncate">{{
                       student.phone
                     }}</span>
                   </div>
-                  <div class="flex items-center gap-2 text-xs text-slate-500">
-                    <div class="p-1 bg-blue-100 rounded">
+                  <div class="flex items-center gap-2 text-xs text-gray-500">
+                    <div class="p-1 bg-blue-100 rounded border border-blue-200">
                       <MapPinHouse class="w-3 h-3 text-blue-600" />
                     </div>
                     <span
@@ -357,19 +357,19 @@
                 <div class="space-y-2">
                   <div class="flex items-center gap-2">
                     <div
-                      class="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-md"
+                      class="p-2 bg-green-600 rounded-lg border border-green-600"
                     >
                       <School class="w-3 h-3 text-white" />
                     </div>
-                    <span class="text-sm font-semibold text-slate-800">{{
+                    <span class="text-sm font-semibold text-gray-800">{{
                       student.class
                     }}</span>
                   </div>
                   <div
-                    class="flex items-center gap-2 text-[8px] sm:text-xs text-slate-600"
+                    class="flex items-center gap-2 text-[8px] sm:text-xs text-gray-600"
                   >
-                    <div class="p-1 bg-indigo-100 rounded">
-                      <Calendar class="w-3 h-3 text-indigo-600" />
+                    <div class="p-1 bg-blue-100 rounded border border-blue-200">
+                      <Calendar class="w-3 h-3 text-blue-600" />
                     </div>
                     <span class="font-medium">
                       {{ formatDate(student.enrollmentDate) }}
@@ -384,7 +384,7 @@
               >
                 <button
                   :disabled="isLoading"
-                  class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600"
                   title="View Details"
                 >
                   <svg
@@ -407,17 +407,19 @@
                     ></path>
                   </svg>
                 </button>
+
                 <button
                   @click="editStudent(student)"
                   :disabled="isLoading"
-                  class="p-2 text-emerald-600 hover:text-white hover:bg-emerald-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
                   title="Edit"
                 >
                   <Pencil class="w-4 h-4" />
                 </button>
+
                 <button
                   :disabled="isLoading"
-                  class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
                   title="Delete"
                 >
                   <svg
@@ -443,9 +445,9 @@
               class="text-center py-12"
             >
               <div
-                class="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200"
               >
-                <Users class="w-8 h-8 text-indigo-500" />
+                <Users class="w-8 h-8 text-blue-500" />
               </div>
               <h3 class="text-lg font-bold text-gray-900 mb-2">
                 No students found
@@ -477,6 +479,7 @@
                   ></div>
                   <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
                 </div>
+
                 <!-- Student Info Skeleton -->
                 <div class="flex items-center space-x-4 flex-1">
                   <div
@@ -491,11 +494,13 @@
                     ></div>
                   </div>
                 </div>
+
                 <!-- Contact Skeleton -->
                 <div class="space-y-2">
                   <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
                   <div class="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
                 </div>
+
                 <!-- Academic Skeleton -->
                 <div class="flex items-center space-x-2">
                   <div
@@ -503,12 +508,15 @@
                   ></div>
                   <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
                 </div>
+
                 <!-- Status Skeleton -->
                 <div
                   class="h-6 bg-gray-200 rounded-full w-20 animate-pulse"
                 ></div>
+
                 <!-- Date Skeleton -->
                 <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
+
                 <!-- Actions Skeleton -->
                 <div class="flex space-x-2">
                   <div
@@ -530,15 +538,13 @@
             v-else
             class="w-full"
           >
-            <thead
-              class="bg-gradient-to-r from-slate-50 to-slate-100 border-b border-slate-200"
-            >
+            <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   <button
-                    class="flex items-center gap-2 hover:text-slate-800 transition-colors group"
+                    class="flex items-center gap-2 hover:text-gray-800 transition-colors group"
                     :disabled="isLoading"
                   >
                     <span>Roll No</span>
@@ -558,10 +564,10 @@
                   </button>
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   <button
-                    class="flex items-center gap-2 hover:text-slate-800 transition-colors group"
+                    class="flex items-center gap-2 hover:text-gray-800 transition-colors group"
                     :disabled="isLoading"
                   >
                     <span>Student</span>
@@ -581,55 +587,56 @@
                   </button>
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Contact Info
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Academic
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Status
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Enrollment
                 </th>
                 <th
-                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-slate-600 uppercase tracking-wider"
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-slate-100">
+            <tbody class="bg-white divide-y divide-gray-100">
               <tr
                 v-for="student in students"
                 :key="student.id"
-                class="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 transition-all duration-200"
+                class="hover:bg-gray-50 transition-all duration-200"
               >
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-3">
                     <div
-                      class="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg shadow-md"
+                      class="p-2 bg-purple-600 rounded-lg border border-purple-600"
                     >
                       <IdCard class="w-4 h-4 lg:w-5 lg:h-5 text-white" />
                     </div>
-                    <span class="text-sm font-bold text-slate-800">{{
+                    <span class="text-sm font-bold text-gray-800">{{
                       student.rollNumber
                     }}</span>
                   </div>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-4">
                     <div class="flex-shrink-0">
                       <div
-                        class="h-10 w-10 lg:h-12 lg:w-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg ring-4 ring-blue-100"
+                        class="h-10 w-10 lg:h-12 lg:w-12 rounded-full bg-blue-600 flex items-center justify-center border border-blue-600"
                       >
                         <span class="text-xs lg:text-sm font-bold text-white">{{
                           getInitials(student.name)
@@ -637,11 +644,11 @@
                       </div>
                     </div>
                     <div>
-                      <div class="text-sm font-bold text-slate-800">
+                      <div class="text-sm font-bold text-gray-800">
                         {{ student.name }}
                       </div>
                       <div
-                        class="text-xs text-slate-500 flex items-center gap-1 mt-1"
+                        class="text-xs text-gray-500 flex items-center gap-1 mt-1"
                       >
                         <Mail class="w-3 h-3" />
                         {{ student.email }}
@@ -649,16 +656,21 @@
                     </div>
                   </div>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="space-y-2">
-                    <div class="flex items-center gap-2 text-sm text-slate-700">
-                      <div class="p-1 bg-green-100 rounded">
+                    <div class="flex items-center gap-2 text-sm text-gray-700">
+                      <div
+                        class="p-1 bg-green-100 rounded border border-green-200"
+                      >
                         <Phone class="w-3 h-3 text-green-600" />
                       </div>
                       <span class="font-medium">{{ student.phone }}</span>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-slate-500">
-                      <div class="p-1 bg-blue-100 rounded">
+                    <div class="flex items-center gap-2 text-xs text-gray-500">
+                      <div
+                        class="p-1 bg-blue-100 rounded border border-blue-200"
+                      >
                         <MapPinHouse class="w-3 h-3 text-blue-600" />
                       </div>
                       <span
@@ -676,42 +688,46 @@
                     </div>
                   </div>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <div
-                      class="p-2 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg shadow-md"
+                      class="p-2 bg-green-600 rounded-lg border border-green-600"
                     >
                       <School class="w-3 h-3 lg:w-4 lg:h-4 text-white" />
                     </div>
-                    <span class="text-sm font-semibold text-slate-800">{{
+                    <span class="text-sm font-semibold text-gray-800">{{
                       student.class
                     }}</span>
                   </div>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <span
                     :class="getStatusClass(student.status)"
-                    class="inline-flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-2 text-xs font-bold rounded-full shadow-sm"
+                    class="inline-flex items-center gap-2 px-2 lg:px-3 py-1 lg:py-2 text-xs font-bold rounded-full border"
                   >
                     <FileChartLine class="w-3 h-3" />
                     {{ student.status }}
                   </span>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
-                  <div class="flex items-center gap-2 text-sm text-slate-600">
-                    <div class="p-1 bg-indigo-100 rounded">
-                      <Calendar class="w-3 h-3 lg:w-4 lg:h-4 text-indigo-600" />
+                  <div class="flex items-center gap-2 text-sm text-gray-600">
+                    <div class="p-1 bg-blue-100 rounded border border-blue-200">
+                      <Calendar class="w-3 h-3 lg:w-4 lg:h-4 text-blue-600" />
                     </div>
                     <span class="font-medium">{{
                       formatDate(student.enrollmentDate)
                     }}</span>
                   </div>
                 </td>
+
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <button
                       :disabled="isLoading"
-                      class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600"
                       title="View Details"
                     >
                       <svg
@@ -734,17 +750,19 @@
                         ></path>
                       </svg>
                     </button>
+
                     <button
                       @click="editStudent(student)"
                       :disabled="isLoading"
-                      class="p-2 text-emerald-600 hover:text-white hover:bg-emerald-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
                       title="Edit"
                     >
                       <Pencil class="w-4 h-4" />
                     </button>
+
                     <button
                       :disabled="isLoading"
-                      class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 hover:shadow-lg transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
                       title="Delete"
                     >
                       <svg
@@ -773,9 +791,9 @@
             class="text-center py-16"
           >
             <div
-              class="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mx-auto mb-4"
+              class="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200"
             >
-              <Users class="w-10 h-10 text-indigo-500" />
+              <Users class="w-10 h-10 text-blue-500" />
             </div>
             <h3 class="text-xl font-bold text-gray-900 mb-2">
               No students found
@@ -790,33 +808,31 @@
       <!-- Enhanced Edit Student Modal - Mobile Responsive -->
       <div
         v-if="showEditModal"
-        class="fixed inset-0 z-50 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
       >
         <div
-          class="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl sm:rounded-3xl shadow-2xl relative animate-fade-in border border-slate-200 flex flex-col"
+          class="bg-white w-full max-w-2xl max-h-[90vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
         >
           <!-- Modal Loading Overlay -->
           <div
             v-if="isSaving"
-            class="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center rounded-2xl sm:rounded-3xl"
+            class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center rounded-lg"
           >
             <div class="text-center">
               <div
-                class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-emerald-200 border-t-emerald-600 rounded-full animate-spin mx-auto mb-2"
+                class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-green-200 border-t-green-600 rounded-full animate-spin mx-auto mb-2"
               ></div>
               <p class="text-xs sm:text-sm text-gray-600">Saving changes...</p>
             </div>
           </div>
 
           <!-- Fixed Header -->
-          <div
-            class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-b border-slate-200"
-          >
+          <div class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-b border-gray-200">
             <!-- Close Button -->
             <button
               @click="closeModal"
               :disabled="isSaving"
-              class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               title="Close"
             >
               <X class="w-4 h-4 sm:w-5 sm:h-5" />
@@ -825,17 +841,17 @@
             <!-- Header -->
             <div class="flex items-center gap-3">
               <div
-                class="p-2 sm:p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg sm:rounded-xl shadow-lg"
+                class="p-2 sm:p-3 bg-green-600 rounded-lg border border-green-600"
               >
                 <Pencil class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div>
                 <h2
-                  class="text-lg sm:text-xl md:text-2xl font-bold text-slate-800"
+                  class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800"
                 >
                   Edit Student
                 </h2>
-                <p class="text-slate-500 text-xs sm:text-sm">
+                <p class="text-gray-500 text-xs sm:text-sm">
                   Update student information
                 </p>
               </div>
@@ -849,90 +865,96 @@
             >
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Full Name</label
                 >
                 <input
                   v-model="editingStudent.name"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter full name"
                 />
               </div>
+
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Roll Number</label
                 >
                 <input
                   v-model="editingStudent.rollNumber"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter roll number"
                 />
               </div>
+
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Email Address</label
                 >
                 <input
                   v-model="editingStudent.email"
                   type="email"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter email address"
                 />
               </div>
+
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Class</label
                 >
                 <input
                   v-model="editingStudent.class"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter class"
                 />
               </div>
+
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Phone Number</label
                 >
                 <input
                   v-model="editingStudent.phone"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter phone number"
                 />
               </div>
+
               <div class="space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Status</label
                 >
                 <select
                   v-model="editingStudent.status"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <option value="Active">Active</option>
                   <option value="Inactive">Leaved</option>
                   <option value="Graduated">Passed Out</option>
                 </select>
               </div>
+
               <div class="md:col-span-2 space-y-2">
                 <label
-                  class="block text-xs sm:text-sm font-semibold text-slate-700"
+                  class="block text-xs sm:text-sm font-semibold text-gray-700"
                   >Address</label
                 >
                 <textarea
                   v-model="editingStudent.address"
                   rows="3"
                   :disabled="isSaving"
-                  class="w-full rounded-lg sm:rounded-xl border-2 border-slate-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 sm:focus:ring-4 focus:ring-emerald-100 focus:border-emerald-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                   placeholder="Enter full address"
                 ></textarea>
               </div>
@@ -940,23 +962,22 @@
           </div>
 
           <!-- Fixed Footer -->
-          <div
-            class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-t border-slate-200"
-          >
+          <div class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-t border-gray-200">
             <div
               class="flex flex-col-reverse sm:flex-row justify-end gap-3 md:gap-4"
             >
               <button
                 @click="closeModal"
                 :disabled="isSaving"
-                class="px-4 sm:px-6 py-2 sm:py-3 bg-slate-200 text-slate-700 font-semibold rounded-lg sm:rounded-xl hover:bg-slate-300 transition-all duration-200 transform hover:scale-105 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300"
               >
                 Cancel
               </button>
+
               <button
                 @click="saveStudent"
                 :disabled="isSaving"
-                class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 text-white font-semibold rounded-lg sm:rounded-xl hover:from-emerald-700 hover:to-emerald-800 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
               >
                 <div
                   v-if="isSaving"
@@ -1014,7 +1035,7 @@
           <button
             @click="goToPage(currentPage - 1)"
             :disabled="currentPage === 1 || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg sm:rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px]"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
           >
             <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
@@ -1028,10 +1049,10 @@
               @click="goToPage(page)"
               :disabled="isTableLoading"
               :class="[
-                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg sm:rounded-xl transition-all duration-200 min-h-[36px] min-w-[36px]',
+                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border',
                 page === currentPage
-                  ? 'font-bold bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-md hover:shadow-lg'
-                  : 'font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50',
+                  ? 'font-bold bg-blue-600 text-white border-blue-600'
+                  : 'font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-gray-300',
                 'disabled:opacity-50 disabled:cursor-not-allowed',
               ]"
             >
@@ -1043,7 +1064,7 @@
           <button
             @click="goToPage(currentPage + 1)"
             :disabled="currentPage === totalPages || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg sm:rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px]"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
           >
             <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
@@ -1119,6 +1140,7 @@
   const handleSearch = (value) => {
     searchTerm.value = value;
   };
+
   const handleClassSelect = (value) => {
     selectedClass.value = value;
   };
@@ -1216,13 +1238,13 @@
   const getStatusClass = (status) => {
     switch (status) {
       case "active":
-        return "bg-gradient-to-r from-emerald-100 to-emerald-200 text-emerald-800 border border-emerald-300";
+        return "bg-green-100 text-green-800 border-green-300";
       case "leaved":
-        return "bg-gradient-to-r from-red-100 to-red-200 text-red-800 border border-red-300";
+        return "bg-red-100 text-red-800 border-red-300";
       case "passedout":
-        return "bg-gradient-to-r from-indigo-100 to-indigo-200 text-indigo-800 border border-indigo-300";
+        return "bg-blue-100 text-blue-800 border-blue-300";
       default:
-        return "bg-gradient-to-r from-slate-100 to-slate-200 text-slate-800 border border-slate-300";
+        return "bg-gray-100 text-gray-800 border-gray-300";
     }
   };
 
@@ -1328,11 +1350,6 @@
     background: #94a3b8;
   }
 
-  /* Loading overlay styles */
-  .backdrop-blur-sm {
-    backdrop-filter: blur(4px);
-  }
-
   /* Disabled state improvements */
   .disabled\:opacity-50:disabled {
     opacity: 0.5;
@@ -1381,31 +1398,6 @@
 
     .gap-3 {
       gap: 0.75rem;
-    }
-  }
-
-  /* Desktop optimizations */
-  @media (min-width: 1024px) {
-    /* Enhanced hover effects for desktop */
-    button:hover {
-      transform: translateY(-1px);
-    }
-
-    .hover\:scale-105:hover {
-      transform: scale(1.05);
-    }
-  }
-
-  /* High DPI display optimizations */
-  @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    /* Sharper borders and shadows */
-    .border {
-      border-width: 0.5px;
-    }
-
-    .shadow-lg {
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
   }
 
