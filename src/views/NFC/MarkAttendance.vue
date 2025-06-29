@@ -218,6 +218,9 @@
   } from "lucide-vue-next";
   import axios from "axios";
 
+  // Get base URL from .env
+  const BASE_URL = process.env.VUE_APP_BASE_URL;
+
   const route = useRoute();
   const studentId = route.params.studentId;
 
@@ -244,21 +247,18 @@
       success.value = false;
       error.value = "";
 
-      // Get student name using new /students/:id route
-      const res = await axios.get(
-        `http://localhost:5000/api/students/${studentId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // Get student name
+      const res = await axios.get(`${BASE_URL}/api/students/${studentId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       studentName.value = res.data.name;
 
       // Mark attendance
       await axios.post(
-        "http://localhost:5000/api/attendance/manual",
+        `${BASE_URL}/api/attendance/manual`,
         {
           studentId,
           status: "present",
