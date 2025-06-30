@@ -11,6 +11,7 @@ import UnderConstraction from "../views/UnderConstration.vue";
 import Students from "../views/Students.vue";
 import Attendance from "../views/Attendance.vue";
 import MarkAttendance from "../views/NFC/MarkAttendance.vue";
+import HelpSupport from "../views/Help&Support.vue";
 
 const routes = [
   // Public Routes
@@ -59,6 +60,12 @@ const routes = [
     path: "/mark-attendance/:studentId",
     name: "MarkAttendance",
     component: MarkAttendance,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/HelpSupport",
+    name: "HelpSupport",
+    component: HelpSupport,
     meta: { requiresAuth: true },
   },
 ];

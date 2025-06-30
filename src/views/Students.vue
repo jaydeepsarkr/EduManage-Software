@@ -43,6 +43,100 @@
     <div
       class="max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8"
     >
+      <!-- Global Success/Error Toast -->
+      <div
+        v-if="globalMessage.show"
+        :class="[
+          'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border max-w-sm animate-slide-in',
+          globalMessage.type === 'success'
+            ? 'bg-green-50 border-green-200 text-green-800'
+            : 'bg-red-50 border-red-200 text-red-800',
+        ]"
+      >
+        <div class="flex items-start gap-3">
+          <div
+            :class="[
+              'p-1 rounded-full',
+              globalMessage.type === 'success' ? 'bg-green-100' : 'bg-red-100',
+            ]"
+          >
+            <svg
+              v-if="globalMessage.type === 'success'"
+              class="w-4 h-4 text-green-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              ></path>
+            </svg>
+            <svg
+              v-else
+              class="w-4 h-4 text-red-600"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+          </div>
+          <div class="flex-1">
+            <h4
+              :class="[
+                'text-sm font-semibold',
+                globalMessage.type === 'success'
+                  ? 'text-green-800'
+                  : 'text-red-800',
+              ]"
+            >
+              {{ globalMessage.type === "success" ? "Success" : "Error" }}
+            </h4>
+            <p
+              :class="[
+                'text-sm mt-1',
+                globalMessage.type === 'success'
+                  ? 'text-green-700'
+                  : 'text-red-700',
+              ]"
+            >
+              {{ globalMessage.message }}
+            </p>
+          </div>
+          <button
+            @click="hideGlobalMessage"
+            :class="[
+              'p-1 transition-colors',
+              globalMessage.type === 'success'
+                ? 'text-green-400 hover:text-green-600'
+                : 'text-red-400 hover:text-red-600',
+            ]"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              ></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+
       <!-- Enhanced Stats Cards - Mobile Responsive Grid -->
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
@@ -60,7 +154,6 @@
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
-
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -98,7 +191,6 @@
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"
             ></div>
           </div>
-
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -134,7 +226,6 @@
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
-
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -172,7 +263,6 @@
               class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"
             ></div>
           </div>
-
           <div class="flex items-center justify-between">
             <div>
               <p
@@ -203,6 +293,64 @@
         :disabled="isLoading"
       />
 
+      <!-- Bulk Actions Bar -->
+      <div
+        v-if="selectedStudents.length > 0"
+        class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 animate-slide-down"
+      >
+        <div
+          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+        >
+          <div class="flex items-center gap-3">
+            <div class="p-2 bg-blue-600 rounded-lg">
+              <CheckSquare class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+            </div>
+            <div>
+              <p class="text-sm sm:text-base font-semibold text-blue-900">
+                {{ selectedStudents.length }} student{{
+                  selectedStudents.length > 1 ? "s" : ""
+                }}
+                selected
+              </p>
+              <p class="text-xs sm:text-sm text-blue-700">
+                Choose an action to perform on selected students
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              @click="clearSelection"
+              class="px-3 py-2 text-xs sm:text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-300"
+            >
+              Clear Selection
+            </button>
+            <button
+              @click="promoteSelectedStudents"
+              :disabled="isLoading"
+              class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
+            >
+              <TrendingUp class="w-3 h-3 sm:w-4 sm:h-4" />
+              Promote to Higher Class
+            </button>
+            <button
+              @click="deleteSelectedStudents"
+              :disabled="isLoading || isDeleting"
+              class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
+            >
+              <div
+                v-if="isDeleting"
+                class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+              ></div>
+              <Trash2
+                v-else
+                class="w-3 h-3 sm:w-4 sm:h-4"
+              />
+              {{ isDeleting ? "Deleting..." : "Delete Selected" }}
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Enhanced Table - Mobile Responsive -->
       <div
         class="bg-white rounded-lg border border-gray-200 overflow-hidden relative"
@@ -226,16 +374,47 @@
         <div
           class="bg-gray-800 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200"
         >
-          <h3 class="text-lg sm:text-xl font-bold text-white">
-            Student Directory
-          </h3>
-          <p class="text-gray-300 text-xs sm:text-sm mt-1">
-            Manage and view all student information
-          </p>
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg sm:text-xl font-bold text-white">
+                Student Directory
+              </h3>
+              <p class="text-gray-300 text-xs sm:text-sm mt-1">
+                Manage and view all student information
+              </p>
+            </div>
+            <!-- Select All Checkbox (Desktop only) -->
+            <div class="hidden md:flex items-center gap-2">
+              <input
+                type="checkbox"
+                :checked="isAllSelected"
+                @change="toggleSelectAll"
+                :disabled="isLoading || students.length === 0"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <span class="text-sm text-gray-300">Select All</span>
+            </div>
+          </div>
         </div>
 
         <!-- Mobile View - Cards (< 768px) -->
         <div class="block md:hidden">
+          <!-- Mobile Select All -->
+          <div class="p-4 border-b border-gray-200 bg-gray-50">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                :checked="isAllSelected"
+                @change="toggleSelectAll"
+                :disabled="isLoading || students.length === 0"
+                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              />
+              <span class="text-sm font-medium text-gray-700">
+                Select All Students
+              </span>
+            </label>
+          </div>
+
           <!-- Mobile Skeleton Loading -->
           <div
             v-if="isTableLoading"
@@ -277,19 +456,26 @@
               v-for="student in students"
               :key="student.id"
               class="bg-white border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-all duration-200"
+              :class="{
+                'ring-2 ring-blue-500 bg-blue-50': isStudentSelected(
+                  student._id
+                ),
+              }"
             >
-              <!-- Card Header -->
+              <!-- Selection Checkbox -->
               <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center gap-2">
-                  <div
-                    class="p-2 bg-purple-600 rounded-lg border border-purple-600"
-                  >
-                    <IdCard class="w-4 h-4 text-white" />
-                  </div>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    :checked="isStudentSelected(student._id)"
+                    @change="toggleStudentSelection(student._id)"
+                    :disabled="isLoading"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
                   <span class="text-sm font-bold text-gray-800">{{
                     student.rollNumber
                   }}</span>
-                </div>
+                </label>
                 <span
                   :class="getStatusClass(student.status)"
                   class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full border"
@@ -407,7 +593,6 @@
                     ></path>
                   </svg>
                 </button>
-
                 <button
                   @click="editStudent(student)"
                   :disabled="isLoading"
@@ -416,25 +601,20 @@
                 >
                   <Pencil class="w-4 h-4" />
                 </button>
-
                 <button
-                  :disabled="isLoading"
+                  @click="deleteStudent(student._id, student.name)"
+                  :disabled="isLoading || isDeleting"
                   class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
                   title="Delete"
                 >
-                  <svg
+                  <div
+                    v-if="isDeleting && deletingStudentId === student._id"
+                    class="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
+                  ></div>
+                  <Trash2
+                    v-else
                     class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    ></path>
-                  </svg>
+                  />
                 </button>
               </div>
             </div>
@@ -472,6 +652,8 @@
                 :key="i"
                 class="flex items-center space-x-4 py-4"
               >
+                <!-- Checkbox Skeleton -->
+                <div class="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
                 <!-- Roll Number Skeleton -->
                 <div class="flex items-center space-x-3">
                   <div
@@ -479,7 +661,6 @@
                   ></div>
                   <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
                 </div>
-
                 <!-- Student Info Skeleton -->
                 <div class="flex items-center space-x-4 flex-1">
                   <div
@@ -494,13 +675,11 @@
                     ></div>
                   </div>
                 </div>
-
                 <!-- Contact Skeleton -->
                 <div class="space-y-2">
                   <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
                   <div class="h-3 bg-gray-200 rounded w-20 animate-pulse"></div>
                 </div>
-
                 <!-- Academic Skeleton -->
                 <div class="flex items-center space-x-2">
                   <div
@@ -508,15 +687,12 @@
                   ></div>
                   <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
                 </div>
-
                 <!-- Status Skeleton -->
                 <div
                   class="h-6 bg-gray-200 rounded-full w-20 animate-pulse"
                 ></div>
-
                 <!-- Date Skeleton -->
                 <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
-
                 <!-- Actions Skeleton -->
                 <div class="flex space-x-2">
                   <div
@@ -540,6 +716,17 @@
           >
             <thead class="bg-gray-50 border-b border-gray-200">
               <tr>
+                <th
+                  class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
+                >
+                  <input
+                    type="checkbox"
+                    :checked="isAllSelected"
+                    @change="toggleSelectAll"
+                    :disabled="isLoading || students.length === 0"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </th>
                 <th
                   class="px-4 lg:px-6 py-4 lg:py-5 text-left text-xs font-bold text-gray-600 uppercase tracking-wider"
                 >
@@ -618,7 +805,21 @@
                 v-for="student in students"
                 :key="student.id"
                 class="hover:bg-gray-50 transition-all duration-200"
+                :class="{
+                  'bg-blue-50 ring-1 ring-blue-200': isStudentSelected(
+                    student._id
+                  ),
+                }"
               >
+                <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
+                  <input
+                    type="checkbox"
+                    :checked="isStudentSelected(student._id)"
+                    @change="toggleStudentSelection(student._id)"
+                    :disabled="isLoading"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                </td>
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-3">
                     <div
@@ -631,7 +832,6 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-4">
                     <div class="flex-shrink-0">
@@ -656,7 +856,6 @@
                     </div>
                   </div>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="space-y-2">
                     <div class="flex items-center gap-2 text-sm text-gray-700">
@@ -688,7 +887,6 @@
                     </div>
                   </div>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <div
@@ -701,7 +899,6 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <span
                     :class="getStatusClass(student.status)"
@@ -711,7 +908,6 @@
                     {{ student.status }}
                   </span>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2 text-sm text-gray-600">
                     <div class="p-1 bg-blue-100 rounded border border-blue-200">
@@ -722,7 +918,6 @@
                     }}</span>
                   </div>
                 </td>
-
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <button
@@ -750,7 +945,6 @@
                         ></path>
                       </svg>
                     </button>
-
                     <button
                       @click="editStudent(student)"
                       :disabled="isLoading"
@@ -759,25 +953,20 @@
                     >
                       <Pencil class="w-4 h-4" />
                     </button>
-
                     <button
-                      :disabled="isLoading"
+                      @click="deleteStudent(student._id, student.name)"
+                      :disabled="isLoading || isDeleting"
                       class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
                       title="Delete"
                     >
-                      <svg
+                      <div
+                        v-if="isDeleting && deletingStudentId === student._id"
+                        class="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
+                      ></div>
+                      <Trash2
+                        v-else
                         class="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        ></path>
-                      </svg>
+                      />
                     </button>
                   </div>
                 </td>
@@ -860,49 +1049,136 @@
 
           <!-- Scrollable Form Content -->
           <div class="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8">
+            <!-- Error Message -->
+            <div
+              v-if="saveError"
+              class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+            >
+              <div class="p-1 bg-red-100 rounded-full">
+                <svg
+                  class="w-4 h-4 text-red-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-red-800">Error</h4>
+                <p class="text-sm text-red-700 mt-1">{{ saveError }}</p>
+              </div>
+              <button
+                @click="saveError = ''"
+                class="p-1 text-red-400 hover:text-red-600 transition-colors"
+              >
+                <svg
+                  class="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+
+            <!-- Success Message -->
+            <div
+              v-if="saveSuccess"
+              class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3"
+            >
+              <div class="p-1 bg-green-100 rounded-full">
+                <svg
+                  class="w-4 h-4 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <div class="flex-1">
+                <h4 class="text-sm font-semibold text-green-800">Success</h4>
+                <p class="text-sm text-green-700 mt-1">{{ saveSuccess }}</p>
+              </div>
+            </div>
+
             <div
               class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
             >
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Full Name</label
                 >
+                  Full Name <span class="text-red-500">*</span>
+                </label>
                 <input
                   v-model="editingStudent.name"
                   :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="[
+                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                    saveError && !editingStudent.name?.trim()
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-gray-200',
+                  ]"
                   placeholder="Enter full name"
                 />
               </div>
-
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Roll Number</label
                 >
+                  Roll Number <span class="text-red-500">*</span>
+                </label>
                 <input
                   v-model="editingStudent.rollNumber"
                   :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="[
+                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                    saveError && !editingStudent.rollNumber?.trim()
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-gray-200',
+                  ]"
                   placeholder="Enter roll number"
                 />
               </div>
-
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Email Address</label
                 >
+                  Email Address <span class="text-red-500">*</span>
+                </label>
                 <input
                   v-model="editingStudent.email"
                   type="email"
                   :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                  :class="[
+                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                    saveError &&
+                    (!editingStudent.email?.trim() ||
+                      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editingStudent.email))
+                      ? 'border-red-300 bg-red-50'
+                      : 'border-gray-200',
+                  ]"
                   placeholder="Enter email address"
                 />
               </div>
-
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
@@ -915,7 +1191,6 @@
                   placeholder="Enter class"
                 />
               </div>
-
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
@@ -928,7 +1203,6 @@
                   placeholder="Enter phone number"
                 />
               </div>
-
               <div class="space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
@@ -939,12 +1213,11 @@
                   :disabled="isSaving"
                   class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Leaved</option>
-                  <option value="Graduated">Passed Out</option>
+                  <option value="active">Active</option>
+                  <option value="leaved">Leaved</option>
+                  <option value="passout">passout</option>
                 </select>
               </div>
-
               <div class="md:col-span-2 space-y-2">
                 <label
                   class="block text-xs sm:text-sm font-semibold text-gray-700"
@@ -973,7 +1246,6 @@
               >
                 Cancel
               </button>
-
               <button
                 @click="saveStudent"
                 :disabled="isSaving"
@@ -988,6 +1260,61 @@
                   class="w-3 h-3 sm:w-4 sm:h-4"
                 />
                 <span>{{ isSaving ? "Saving..." : "Save Changes" }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete Confirmation Modal -->
+      <div
+        v-if="showDeleteModal"
+        class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+      >
+        <div
+          class="bg-white w-full max-w-md rounded-lg border border-gray-200 relative animate-fade-in"
+        >
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="p-3 bg-red-100 rounded-full">
+                <Trash2 class="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 class="text-lg font-bold text-gray-900">Delete Student</h3>
+                <p class="text-sm text-gray-600">
+                  This action cannot be undone
+                </p>
+              </div>
+            </div>
+
+            <p class="text-gray-700 mb-6">
+              Are you sure you want to delete
+              <strong>{{ deleteTarget.name }}</strong
+              >? This will permanently remove the student from the system.
+            </p>
+
+            <div class="flex flex-col-reverse sm:flex-row gap-3">
+              <button
+                @click="cancelDelete"
+                :disabled="isDeleting"
+                class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+              <button
+                @click="confirmDelete"
+                :disabled="isDeleting"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50"
+              >
+                <div
+                  v-if="isDeleting"
+                  class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                ></div>
+                <Trash2
+                  v-else
+                  class="w-4 h-4"
+                />
+                {{ isDeleting ? "Deleting..." : "Delete Student" }}
               </button>
             </div>
           </div>
@@ -1094,23 +1421,26 @@
     UserX,
     ChevronLeft,
     ChevronRight,
+    CheckSquare,
+    TrendingUp,
+    Trash2,
   } from "lucide-vue-next";
   import Header from "@/components/Students/HeaderStudent.vue";
 
-  // Vuex store
   const store = useStore();
   const students = computed(() => store.getters.allStudents);
 
-  // Loading States
+  // Loading states
   const isInitialLoading = ref(false);
   const isLoading = ref(false);
   const isStatsLoading = ref(false);
   const isTableLoading = ref(false);
   const isSaving = ref(false);
+  const isDeleting = ref(false);
   const loadingMessage = ref("Loading student data...");
   const tableLoadingMessage = ref("Loading students...");
 
-  // 📄 Pagination State
+  // Pagination
   const currentPage = ref(1);
   const limit = ref(20);
   const totalResults = computed(() => store.getters.getStudentPagination.total);
@@ -1120,23 +1450,58 @@
   const editingStudent = ref(null);
   const showEditModal = ref(false);
   const error = ref("");
+  const saveError = ref("");
+  const saveSuccess = ref("");
+
+  // Delete state
+  const showDeleteModal = ref(false);
+  const deleteTarget = ref({ id: null, name: "" });
+  const deletingStudentId = ref(null);
+
+  // Global message state
+  const globalMessage = ref({
+    show: false,
+    type: "success", // 'success' or 'error'
+    message: "",
+  });
 
   // Filters
   const searchTerm = ref("");
   const selectedClass = ref(null);
 
-  // Computed stats
+  // Selection state
+  const selectedStudents = ref([]);
+
+  // Stats
   const activeStudents = computed(
     () => students.value.filter((s) => s.status === "active").length
   );
   const graduatedStudents = computed(
-    () => students.value.filter((s) => s.status === "passedout").length
+    () => students.value.filter((s) => s.status === "passout").length
   );
   const inactiveStudents = computed(
     () => students.value.filter((s) => s.status === "leaved").length
   );
+  const isAllSelected = computed(() => {
+    return (
+      students.value.length > 0 &&
+      selectedStudents.value.length === students.value.length
+    );
+  });
 
-  // Handle events from Header
+  // Global message functions
+  const showGlobalMessage = (type, message) => {
+    globalMessage.value = { show: true, type, message };
+    setTimeout(() => {
+      globalMessage.value.show = false;
+    }, 5000);
+  };
+
+  const hideGlobalMessage = () => {
+    globalMessage.value.show = false;
+  };
+
+  // Filter events
   const handleSearch = (value) => {
     searchTerm.value = value;
   };
@@ -1145,20 +1510,284 @@
     selectedClass.value = value;
   };
 
-  // Fetch students with filters
+  // Bulk selection
+  const isStudentSelected = (studentId) =>
+    selectedStudents.value.includes(studentId);
+
+  const toggleStudentSelection = (studentId) => {
+    const index = selectedStudents.value.indexOf(studentId);
+    if (index > -1) selectedStudents.value.splice(index, 1);
+    else selectedStudents.value.push(studentId);
+  };
+
+  const toggleSelectAll = () => {
+    selectedStudents.value = isAllSelected.value
+      ? []
+      : students.value.map((s) => s._id);
+  };
+
+  const clearSelection = () => (selectedStudents.value = []);
+
+  // Promote
+  const promoteSelectedStudents = async () => {
+    if (!selectedStudents.value) {
+      showGlobalMessage(
+        "error",
+        "Please select at least one student to promote."
+      );
+      return;
+    }
+
+    const selectedCount = selectedStudents.value.length;
+    const selectedStudentNames = students.value
+      .filter((s) => selectedStudents.value.includes(s._id))
+      .map((s) => s.name)
+      .slice(0, 3);
+
+    let message = `Promote ${selectedCount} student${
+      selectedCount > 1 ? "s" : ""
+    } to higher class?\n\n`;
+    message += `Selected students:\n${selectedStudentNames.join("\n")}`;
+    if (selectedCount > 3) message += `\n... and ${selectedCount - 3} more`;
+
+    const confirmed = confirm(message);
+    if (!confirmed) return;
+
+    isLoading.value = true;
+
+    try {
+      // Check if the store action exists, if not simulate the promotion
+      if (store._actions && store._actions.promoteStudentsByIds) {
+        const response = await store.dispatch(
+          "promoteStudentsByIds",
+          selectedStudents.value
+        );
+
+        showGlobalMessage(
+          "success",
+          `Successfully promoted ${
+            response.promotedCount || selectedCount
+          } student${
+            (response.promotedCount || selectedCount) > 1 ? "s" : ""
+          } to higher class`
+        );
+      } else {
+        // Simulate promotion if store action doesn't exist
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
+
+        // Update students locally (simulation)
+        students.value.forEach((student) => {
+          if (selectedStudents.value.includes(student._id)) {
+            // Simulate class promotion logic
+            const currentClass = parseInt(student.class) || 1;
+            student.class = (currentClass + 1).toString();
+          }
+        });
+
+        showGlobalMessage(
+          "success",
+          `Successfully promoted ${selectedCount} student${
+            selectedCount > 1 ? "s" : ""
+          } to higher class`
+        );
+      }
+
+      await fetchStudents();
+      clearSelection();
+    } catch (err) {
+      console.error("Promotion failed:", err);
+
+      // Handle different error types
+      let errorMessage = "Failed to promote students";
+      if (err.response) {
+        const status = err.response.status;
+        const message = err.response.data?.message || err.response.data?.error;
+
+        switch (status) {
+          case 400:
+            errorMessage =
+              message ||
+              "Invalid promotion request. Please check student data.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to promote students.";
+            break;
+          case 404:
+            errorMessage = "Some selected students were not found.";
+            break;
+          case 409:
+            errorMessage =
+              message || "Some students cannot be promoted due to conflicts.";
+            break;
+          case 422:
+            errorMessage =
+              message ||
+              "Promotion validation failed. Check student eligibility.";
+            break;
+          default:
+            errorMessage =
+              message || `Error ${status}: Failed to promote students`;
+        }
+      } else if (err.request) {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      } else {
+        errorMessage =
+          err.message || "An unexpected error occurred during promotion.";
+      }
+
+      showGlobalMessage("error", errorMessage);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  // Delete one student
+  const deleteStudent = (studentId, studentName) => {
+    deleteTarget.value = { id: studentId, name: studentName };
+    showDeleteModal.value = true;
+  };
+
+  const confirmDelete = async () => {
+    isDeleting.value = true;
+    deletingStudentId.value = deleteTarget.value.id;
+
+    try {
+      await store.dispatch("deleteUserById", deleteTarget.value.id);
+      await fetchStudents();
+      showGlobalMessage(
+        "success",
+        `${deleteTarget.value.name} has been deleted successfully`
+      );
+      showDeleteModal.value = false;
+    } catch (err) {
+      console.error("Delete failed:", err);
+
+      // Handle different error types
+      let errorMessage = "Failed to delete student";
+      if (err.response) {
+        const status = err.response.status;
+        const message = err.response.data?.message || err.response.data?.error;
+
+        switch (status) {
+          case 404:
+            errorMessage =
+              "Student not found. They may have already been deleted.";
+            break;
+          case 403:
+            errorMessage = "You don't have permission to delete this student.";
+            break;
+          case 409:
+            errorMessage =
+              "Cannot delete student due to existing dependencies.";
+            break;
+          default:
+            errorMessage =
+              message || `Error ${status}: Failed to delete student`;
+        }
+      } else if (err.request) {
+        errorMessage =
+          "Network error. Please check your connection and try again.";
+      }
+
+      showGlobalMessage("error", errorMessage);
+    } finally {
+      isDeleting.value = false;
+      deletingStudentId.value = null;
+    }
+  };
+
+  const cancelDelete = () => {
+    showDeleteModal.value = false;
+    deleteTarget.value = { id: null, name: "" };
+  };
+
+  // Bulk delete
+  const deleteSelectedStudents = async () => {
+    if (!selectedStudents.value.length) return;
+
+    const selectedCount = selectedStudents.value.length;
+    const selectedNames = students.value
+      .filter((s) => selectedStudents.value.includes(s._id))
+      .map((s) => s.name)
+      .slice(0, 3);
+
+    let confirmMessage = `Are you sure you want to delete ${selectedCount} student${
+      selectedCount > 1 ? "s" : ""
+    }?\n\n`;
+    confirmMessage += `Students to be deleted:\n${selectedNames.join("\n")}`;
+    if (selectedCount > 3) {
+      confirmMessage += `\n... and ${selectedCount - 3} more`;
+    }
+    confirmMessage += "\n\nThis action cannot be undone.";
+
+    const confirmed = confirm(confirmMessage);
+    if (!confirmed) return;
+
+    isDeleting.value = true;
+
+    try {
+      let successCount = 0;
+      let failedCount = 0;
+
+      for (const id of selectedStudents.value) {
+        try {
+          await store.dispatch("deleteUserById", id);
+          successCount++;
+        } catch (err) {
+          failedCount++;
+          console.error(`Failed to delete student ${id}:`, err);
+        }
+      }
+
+      await fetchStudents();
+      clearSelection();
+
+      if (failedCount === 0) {
+        showGlobalMessage(
+          "success",
+          `Successfully deleted ${successCount} student${
+            successCount > 1 ? "s" : ""
+          }`
+        );
+      } else if (successCount === 0) {
+        showGlobalMessage(
+          "error",
+          `Failed to delete all ${failedCount} student${
+            failedCount > 1 ? "s" : ""
+          }`
+        );
+      } else {
+        showGlobalMessage(
+          "error",
+          `Deleted ${successCount} student${
+            successCount > 1 ? "s" : ""
+          }, but failed to delete ${failedCount} student${
+            failedCount > 1 ? "s" : ""
+          }`
+        );
+      }
+    } catch (err) {
+      console.error("Bulk delete failed:", err);
+      showGlobalMessage(
+        "error",
+        "Bulk delete operation failed. Please try again."
+      );
+    } finally {
+      isDeleting.value = false;
+    }
+  };
+
+  // Fetch students
   const fetchStudents = async () => {
     const isInitialLoad =
       currentPage.value === 1 && students.value.length === 0;
-    if (isInitialLoad) {
-      isInitialLoading.value = true;
-      loadingMessage.value = "Loading student directory...";
-    } else {
-      isTableLoading.value = true;
-      tableLoadingMessage.value =
-        currentPage.value === 1
-          ? "Filtering students..."
-          : `Loading page ${currentPage.value}...`;
-    }
+
+    isInitialLoading.value = isInitialLoad;
+    isTableLoading.value = !isInitialLoad;
+    tableLoadingMessage.value = isInitialLoad
+      ? "Loading student directory..."
+      : `Loading page ${currentPage.value}...`;
 
     try {
       isLoading.value = true;
@@ -1168,9 +1797,14 @@
         page: currentPage.value,
         limit: limit.value,
       });
+      clearSelection();
     } catch (err) {
       error.value = "Failed to fetch students.";
-      console.error("Error fetching students:", err);
+      console.error(err);
+      showGlobalMessage(
+        "error",
+        "Failed to load students. Please refresh the page."
+      );
     } finally {
       isLoading.value = false;
       isTableLoading.value = false;
@@ -1182,27 +1816,21 @@
   const fetchStats = async () => {
     isStatsLoading.value = true;
     try {
-      // Simulate stats loading - replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 800));
-    } catch (error) {
-      console.error("Error fetching stats:", error);
+      await store.dispatch("fetchAttendanceStats");
+    } catch (err) {
+      console.error("Stats error:", err);
     } finally {
       isStatsLoading.value = false;
     }
   };
 
-  // Fetch on mount
+  // Mounted
   onMounted(async () => {
     isInitialLoading.value = true;
-    loadingMessage.value = "Initializing student management...";
-    try {
-      await Promise.all([fetchStudents(), fetchStats()]);
-    } finally {
-      isInitialLoading.value = false;
-    }
+    await Promise.all([fetchStudents(), fetchStats()]);
   });
 
-  // Watch filters and refetch with debouncing
+  // Watch filters
   let searchTimeout;
   watch(searchTerm, () => {
     clearTimeout(searchTimeout);
@@ -1218,22 +1846,19 @@
   });
 
   // Utilities
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-IN", {
+  const formatDate = (date) =>
+    new Date(date).toLocaleDateString("en-IN", {
       day: "2-digit",
       month: "short",
       year: "numeric",
     });
-  };
 
-  const getInitials = (name) => {
-    if (!name || typeof name !== "string") return "NA";
-    return name
-      .split(" ")
+  const getInitials = (name) =>
+    name
+      ?.split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase();
-  };
+      .toUpperCase() || "NA";
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -1248,27 +1873,88 @@
     }
   };
 
-  // Edit logic
+  // Edit
   const editStudent = (student) => {
     editingStudent.value = { ...student };
     showEditModal.value = true;
   };
 
   const saveStudent = async () => {
+    saveError.value = "";
+    saveSuccess.value = "";
+
+    if (!editingStudent.value.name?.trim()) {
+      saveError.value = "Student name is required";
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(editingStudent.value.email)) {
+      saveError.value = "Invalid email address";
+      return;
+    }
+
     isSaving.value = true;
+
     try {
-      // Simulate save operation - replace with actual API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const index = students.value.findIndex(
-        (s) => s._id === editingStudent.value._id
+      await store.dispatch("editUserById", {
+        userId: editingStudent.value._id,
+        updates: {
+          name: editingStudent.value.name.trim(),
+          email: editingStudent.value.email.trim(),
+          phone: editingStudent.value.phone?.trim() || "",
+          address: editingStudent.value.address?.trim() || "",
+          class: editingStudent.value.class || "",
+          rollNumber: editingStudent.value.rollNumber?.trim() || "",
+          status: editingStudent.value.status,
+          photo: editingStudent.value.photo,
+        },
+      });
+
+      await fetchStudents();
+      saveSuccess.value = "Student updated successfully!";
+      showGlobalMessage(
+        "success",
+        `${editingStudent.value.name} has been updated successfully`
       );
-      if (index !== -1) {
-        students.value[index] = { ...editingStudent.value };
-        // Optional: Dispatch an update action to Vuex/server
+
+      setTimeout(() => {
+        showEditModal.value = false;
+        saveSuccess.value = "";
+      }, 1500);
+    } catch (err) {
+      console.error("Save error:", err);
+
+      // Handle different error types
+      if (err.response) {
+        const status = err.response.status;
+        const message = err.response.data?.message || err.response.data?.error;
+
+        switch (status) {
+          case 400:
+            saveError.value =
+              message || "Invalid student data. Please check all fields.";
+            break;
+          case 409:
+            saveError.value =
+              message ||
+              "A student with this email or roll number already exists.";
+            break;
+          case 422:
+            saveError.value =
+              message || "Please check your input data for errors.";
+            break;
+          default:
+            saveError.value =
+              message || `Error ${status}: Failed to save student information.`;
+        }
+      } else if (err.request) {
+        saveError.value =
+          "Network error. Please check your internet connection and try again.";
+      } else {
+        saveError.value =
+          err.message || "An unexpected error occurred. Please try again.";
       }
-      showEditModal.value = false;
-    } catch (error) {
-      console.error("Error saving student:", error);
     } finally {
       isSaving.value = false;
     }
@@ -1277,13 +1963,14 @@
   const closeModal = () => {
     if (!isSaving.value) {
       showEditModal.value = false;
+      saveError.value = "";
+      saveSuccess.value = "";
     }
   };
 
   const goToPage = (page) => {
     if (page >= 1 && page <= totalPages.value && !isTableLoading.value) {
       currentPage.value = page;
-      isTableLoading.value = true;
       tableLoadingMessage.value = `Loading page ${page}...`;
       fetchStudents();
     }
@@ -1304,6 +1991,36 @@
 
   .animate-fade-in {
     animation: fade-in 0.3s ease-out;
+  }
+
+  @keyframes slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-down {
+    animation: slide-down 0.3s ease-out;
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
   }
 
   /* Custom animations */

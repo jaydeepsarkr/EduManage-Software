@@ -325,5 +325,69 @@ export default createStore({
         console.error("Failed to fetch attendance stats:", err);
       }
     },
+
+    async editUserById(_, { userId, updates }) {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.put(`${baseURL}/api/users/${userId}`, updates, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("User updated successfully:", res.data);
+        return res.data; // returns updated user
+      } catch (err) {
+        console.error(
+          "Failed to update user:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
+
+    async deleteUserById(_, userId) {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.delete(`${baseURL}/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        console.log("User deleted successfully:", res.data);
+        return res.data; // Contains { message, user }
+      } catch (err) {
+        console.error(
+          "Failed to delete user:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
+
+    async promoteStudentsByIds(_, studentIds) {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.post(
+          `${baseURL}/api/users/promote`,
+          { studentIds }, // send array of IDs instead of class
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Students promoted successfully:", res.data);
+        return res.data;
+      } catch (err) {
+        console.error(
+          "Failed to promote students:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
   },
 });

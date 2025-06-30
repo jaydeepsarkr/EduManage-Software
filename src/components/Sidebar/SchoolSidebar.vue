@@ -419,7 +419,7 @@
       description:
         "Access help documentation, tutorials, and technical support.",
       quickAction: "Contact Support",
-      route: "/working",
+      route: "/HelpSupport",
     },
     {
       id: "logout",
