@@ -1000,7 +1000,7 @@
         class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
       >
         <div
-          class="bg-white w-full max-w-2xl max-h-[90vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
+          class="bg-white w-full max-w-4xl max-h-[90vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
         >
           <!-- Modal Loading Overlay -->
           <div
@@ -1041,7 +1041,7 @@
                   Edit Student
                 </h2>
                 <p class="text-gray-500 text-xs sm:text-sm">
-                  Update student information
+                  Update student information and documents
                 </p>
               </div>
             </div>
@@ -1119,117 +1119,501 @@
               </div>
             </div>
 
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
-            >
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
+            <!-- Form Sections -->
+            <div class="space-y-8">
+              <!-- Basic Information Section -->
+              <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
                 >
-                  Full Name <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="editingStudent.name"
-                  :disabled="isSaving"
-                  :class="[
-                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
-                    saveError && !editingStudent.name?.trim()
-                      ? 'border-red-300 bg-red-50'
-                      : 'border-gray-200',
-                  ]"
-                  placeholder="Enter full name"
-                />
+                  <svg
+                    class="w-5 h-5 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    ></path>
+                  </svg>
+                  Basic Information
+                </h3>
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
+                >
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Full Name <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      v-model="editingStudent.name"
+                      :disabled="isSaving"
+                      :class="[
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        saveError && !editingStudent.name?.trim()
+                          ? 'border-red-300 bg-red-50'
+                          : 'border-gray-200',
+                      ]"
+                      placeholder="Enter full name"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Roll Number <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      v-model="editingStudent.rollNumber"
+                      :disabled="isSaving"
+                      :class="[
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        saveError && !editingStudent.rollNumber?.trim()
+                          ? 'border-red-300 bg-red-50'
+                          : 'border-gray-200',
+                      ]"
+                      placeholder="Enter roll number"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <input
+                      v-model="editingStudent.email"
+                      type="email"
+                      :disabled="isSaving"
+                      :class="[
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        saveError &&
+                        (!editingStudent.email?.trim() ||
+                          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                            editingStudent.email
+                          ))
+                          ? 'border-red-300 bg-red-50'
+                          : 'border-gray-200',
+                      ]"
+                      placeholder="Enter email address"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Phone Number
+                    </label>
+                    <input
+                      v-model="editingStudent.phone"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Class
+                    </label>
+                    <input
+                      v-model="editingStudent.class"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter class"
+                    />
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Status
+                    </label>
+                    <select
+                      v-model="editingStudent.status"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="active">Active</option>
+                      <option value="leaved">Leaved</option>
+                      <option value="passout">Passout</option>
+                    </select>
+                  </div>
+
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Enrollment Date
+                    </label>
+                    <input
+                      v-model="editingStudent.enrollmentDate"
+                      type="date"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+
+                  <div class="md:col-span-2 space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Address
+                    </label>
+                    <textarea
+                      v-model="editingStudent.address"
+                      rows="3"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      placeholder="Enter full address"
+                    ></textarea>
+                  </div>
+                </div>
               </div>
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
+
+              <!-- Photo Section -->
+              <div class="bg-blue-50 rounded-lg p-4 sm:p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
                 >
-                  Roll Number <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="editingStudent.rollNumber"
-                  :disabled="isSaving"
-                  :class="[
-                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
-                    saveError && !editingStudent.rollNumber?.trim()
-                      ? 'border-red-300 bg-red-50'
-                      : 'border-gray-200',
-                  ]"
-                  placeholder="Enter roll number"
-                />
+                  <svg
+                    class="w-5 h-5 text-blue-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path>
+                  </svg>
+                  Student Photo
+                </h3>
+                <div class="space-y-4">
+                  <!-- Current Photo Display -->
+                  <div
+                    v-if="editingStudent.photo"
+                    class="flex items-center gap-4"
+                  >
+                    <img
+                      :src="editingStudent.photo"
+                      alt="Student Photo"
+                      class="w-16 h-16 rounded-lg object-cover border border-gray-300"
+                    />
+                    <div>
+                      <p class="text-sm font-medium text-gray-700">
+                        Current Photo
+                      </p>
+                      <button
+                        @click="editingStudent.photo = ''"
+                        :disabled="isSaving"
+                        class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50"
+                      >
+                        Remove Photo
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Photo Upload -->
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Upload New Photo
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      @change="handlePhotoUpload"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                    <p class="text-xs text-gray-500">
+                      Supported formats: JPG, PNG, GIF (Max: 5MB)
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
+
+              <!-- Documents Section -->
+              <div class="bg-yellow-50 rounded-lg p-4 sm:p-6">
+                <h3
+                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
                 >
-                  Email Address <span class="text-red-500">*</span>
-                </label>
-                <input
-                  v-model="editingStudent.email"
-                  type="email"
-                  :disabled="isSaving"
-                  :class="[
-                    'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
-                    saveError &&
-                    (!editingStudent.email?.trim() ||
-                      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(editingStudent.email))
-                      ? 'border-red-300 bg-red-50'
-                      : 'border-gray-200',
-                  ]"
-                  placeholder="Enter email address"
-                />
-              </div>
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Class</label
-                >
-                <input
-                  v-model="editingStudent.class"
-                  :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Enter class"
-                />
-              </div>
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Phone Number</label
-                >
-                <input
-                  v-model="editingStudent.phone"
-                  :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Enter phone number"
-                />
-              </div>
-              <div class="space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Status</label
-                >
-                <select
-                  v-model="editingStudent.status"
-                  :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <option value="active">Active</option>
-                  <option value="leaved">Leaved</option>
-                  <option value="passout">passout</option>
-                </select>
-              </div>
-              <div class="md:col-span-2 space-y-2">
-                <label
-                  class="block text-xs sm:text-sm font-semibold text-gray-700"
-                  >Address</label
-                >
-                <textarea
-                  v-model="editingStudent.address"
-                  rows="3"
-                  :disabled="isSaving"
-                  class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
-                  placeholder="Enter full address"
-                ></textarea>
+                  <svg
+                    class="w-5 h-5 text-yellow-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  Documents
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <!-- Aadhaar Card -->
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Aadhaar Card
+                    </label>
+                    <div
+                      v-if="editingStudent.aadhaarCard"
+                      class="mb-2"
+                    >
+                      <div
+                        class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
+                      >
+                        <svg
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
+                        </svg>
+                        <span class="text-sm text-green-700"
+                          >Document uploaded</span
+                        >
+                        <button
+                          @click="editingStudent.aadhaarCard = ''"
+                          :disabled="isSaving"
+                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      @change="handleDocumentUpload($event, 'aadhaarCard')"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+
+                  <!-- Birth Certificate -->
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Birth Certificate
+                    </label>
+                    <div
+                      v-if="editingStudent.birthCertificate"
+                      class="mb-2"
+                    >
+                      <div
+                        class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
+                      >
+                        <svg
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
+                        </svg>
+                        <span class="text-sm text-green-700"
+                          >Document uploaded</span
+                        >
+                        <button
+                          @click="editingStudent.birthCertificate = ''"
+                          :disabled="isSaving"
+                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      @change="handleDocumentUpload($event, 'birthCertificate')"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+
+                  <!-- Transfer Certificate -->
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Transfer Certificate
+                    </label>
+                    <div
+                      v-if="editingStudent.transferCertificate"
+                      class="mb-2"
+                    >
+                      <div
+                        class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
+                      >
+                        <svg
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
+                        </svg>
+                        <span class="text-sm text-green-700"
+                          >Document uploaded</span
+                        >
+                        <button
+                          @click="editingStudent.transferCertificate = ''"
+                          :disabled="isSaving"
+                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      @change="
+                        handleDocumentUpload($event, 'transferCertificate')
+                      "
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+
+                  <!-- Marksheet -->
+                  <div class="space-y-2">
+                    <label
+                      class="block text-xs sm:text-sm font-semibold text-gray-700"
+                    >
+                      Marksheet
+                    </label>
+                    <div
+                      v-if="editingStudent.marksheet"
+                      class="mb-2"
+                    >
+                      <div
+                        class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
+                      >
+                        <svg
+                          class="w-4 h-4 text-green-600"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                          ></path>
+                        </svg>
+                        <span class="text-sm text-green-700"
+                          >Document uploaded</span
+                        >
+                        <button
+                          @click="editingStudent.marksheet = ''"
+                          :disabled="isSaving"
+                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                        >
+                          <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      @change="handleDocumentUpload($event, 'marksheet')"
+                      :disabled="isSaving"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+                <p class="text-xs text-gray-500 mt-4">
+                  Supported formats: PDF, JPG, PNG (Max: 10MB per file)
+                </p>
               </div>
             </div>
           </div>
@@ -1286,13 +1670,11 @@
                 </p>
               </div>
             </div>
-
             <p class="text-gray-700 mb-6">
               Are you sure you want to delete
               <strong>{{ deleteTarget.name }}</strong
               >? This will permanently remove the student from the system.
             </p>
-
             <div class="flex flex-col-reverse sm:flex-row gap-3">
               <button
                 @click="cancelDelete"
@@ -1482,12 +1864,48 @@
   const inactiveStudents = computed(
     () => students.value.filter((s) => s.status === "leaved").length
   );
+
   const isAllSelected = computed(() => {
     return (
       students.value.length > 0 &&
       selectedStudents.value.length === students.value.length
     );
   });
+
+  // File upload handlers
+  const handlePhotoUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB limit
+        saveError.value = "Photo file size must be less than 5MB";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        editingStudent.value.photo = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleDocumentUpload = (event, documentType) => {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.size > 10 * 1024 * 1024) {
+        // 10MB limit
+        saveError.value = "Document file size must be less than 10MB";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        editingStudent.value[documentType] = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   // Global message functions
   const showGlobalMessage = (type, message) => {
@@ -1554,7 +1972,6 @@
     if (!confirmed) return;
 
     isLoading.value = true;
-
     try {
       // Check if the store action exists, if not simulate the promotion
       if (store._actions && store._actions.promoteStudentsByIds) {
@@ -1562,7 +1979,6 @@
           "promoteStudentsByIds",
           selectedStudents.value
         );
-
         showGlobalMessage(
           "success",
           `Successfully promoted ${
@@ -1574,7 +1990,6 @@
       } else {
         // Simulate promotion if store action doesn't exist
         await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API call
-
         // Update students locally (simulation)
         students.value.forEach((student) => {
           if (selectedStudents.value.includes(student._id)) {
@@ -1583,7 +1998,6 @@
             student.class = (currentClass + 1).toString();
           }
         });
-
         showGlobalMessage(
           "success",
           `Successfully promoted ${selectedCount} student${
@@ -1591,18 +2005,15 @@
           } to higher class`
         );
       }
-
       await fetchStudents();
       clearSelection();
     } catch (err) {
       console.error("Promotion failed:", err);
-
       // Handle different error types
       let errorMessage = "Failed to promote students";
       if (err.response) {
         const status = err.response.status;
         const message = err.response.data?.message || err.response.data?.error;
-
         switch (status) {
           case 400:
             errorMessage =
@@ -1635,7 +2046,6 @@
         errorMessage =
           err.message || "An unexpected error occurred during promotion.";
       }
-
       showGlobalMessage("error", errorMessage);
     } finally {
       isLoading.value = false;
@@ -1651,7 +2061,6 @@
   const confirmDelete = async () => {
     isDeleting.value = true;
     deletingStudentId.value = deleteTarget.value.id;
-
     try {
       await store.dispatch("deleteUserById", deleteTarget.value.id);
       await fetchStudents();
@@ -1662,13 +2071,11 @@
       showDeleteModal.value = false;
     } catch (err) {
       console.error("Delete failed:", err);
-
       // Handle different error types
       let errorMessage = "Failed to delete student";
       if (err.response) {
         const status = err.response.status;
         const message = err.response.data?.message || err.response.data?.error;
-
         switch (status) {
           case 404:
             errorMessage =
@@ -1689,7 +2096,6 @@
         errorMessage =
           "Network error. Please check your connection and try again.";
       }
-
       showGlobalMessage("error", errorMessage);
     } finally {
       isDeleting.value = false;
@@ -1725,11 +2131,9 @@
     if (!confirmed) return;
 
     isDeleting.value = true;
-
     try {
       let successCount = 0;
       let failedCount = 0;
-
       for (const id of selectedStudents.value) {
         try {
           await store.dispatch("deleteUserById", id);
@@ -1782,7 +2186,6 @@
   const fetchStudents = async () => {
     const isInitialLoad =
       currentPage.value === 1 && students.value.length === 0;
-
     isInitialLoading.value = isInitialLoad;
     isTableLoading.value = !isInitialLoad;
     tableLoadingMessage.value = isInitialLoad
@@ -1875,7 +2278,17 @@
 
   // Edit
   const editStudent = (student) => {
-    editingStudent.value = { ...student };
+    editingStudent.value = {
+      ...student,
+      enrollmentDate: student.enrollmentDate
+        ? new Date(student.enrollmentDate).toISOString().split("T")[0]
+        : "",
+      photo: student.photo || "",
+      aadhaarCard: student.aadhaarCard || "",
+      birthCertificate: student.birthCertificate || "",
+      transferCertificate: student.transferCertificate || "",
+      marksheet: student.marksheet || "",
+    };
     showEditModal.value = true;
   };
 
@@ -1895,7 +2308,6 @@
     }
 
     isSaving.value = true;
-
     try {
       await store.dispatch("editUserById", {
         userId: editingStudent.value._id,
@@ -1907,7 +2319,12 @@
           class: editingStudent.value.class || "",
           rollNumber: editingStudent.value.rollNumber?.trim() || "",
           status: editingStudent.value.status,
-          photo: editingStudent.value.photo,
+          enrollmentDate: editingStudent.value.enrollmentDate || null,
+          photo: editingStudent.value.photo || "",
+          aadhaarCard: editingStudent.value.aadhaarCard || "",
+          birthCertificate: editingStudent.value.birthCertificate || "",
+          transferCertificate: editingStudent.value.transferCertificate || "",
+          marksheet: editingStudent.value.marksheet || "",
         },
       });
 
@@ -1917,19 +2334,16 @@
         "success",
         `${editingStudent.value.name} has been updated successfully`
       );
-
       setTimeout(() => {
         showEditModal.value = false;
         saveSuccess.value = "";
       }, 1500);
     } catch (err) {
       console.error("Save error:", err);
-
       // Handle different error types
       if (err.response) {
         const status = err.response.status;
         const message = err.response.data?.message || err.response.data?.error;
-
         switch (status) {
           case 400:
             saveError.value =
