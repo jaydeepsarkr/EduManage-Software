@@ -137,7 +137,12 @@
             <p class="text-sm text-red-700 mt-1">{{ generalError }}</p>
           </div>
           <button
-            @click="generalError = ''"
+            @click="
+              () => {
+                closeAddModal();
+                generalError = '';
+              }
+            "
             class="p-1 text-red-400 hover:text-red-600 transition-colors"
           >
             <X class="w-4 h-4" />
@@ -627,6 +632,29 @@
     showToast.value = false;
   };
 
+  const closeAddModal = () => {
+    showAddModal.value = false;
+    // Reset form data
+    newStudent.value = {
+      rollNumber: "",
+      name: "",
+      email: "",
+      class: "",
+      phone: "",
+      address: "",
+      status: "",
+      enrollmentDate: "",
+      photo: "",
+      aadhaarCard: "",
+      birthCertificate: "",
+      transferCertificate: "",
+      marksheet: "",
+    };
+    // Clear errors
+    formErrors.value = {};
+    generalError.value = "";
+  };
+
   // Image compression utility
   const compressImage = (
     file,
@@ -809,7 +837,7 @@
 
       // Show success toast
       showSuccessToast();
-      showAddModal.value = false;
+      closeAddModal();
     } catch (error) {
       console.error("Add student error:", error);
       if (

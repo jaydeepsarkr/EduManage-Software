@@ -569,6 +569,7 @@
                 class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100"
               >
                 <button
+                  @click="viewStudentDetails(student)"
                   :disabled="isLoading"
                   class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600"
                   title="View Details"
@@ -921,6 +922,7 @@
                 <td class="px-4 lg:px-6 py-4 lg:py-5 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <button
+                      @click="viewStudentDetails(student)"
                       :disabled="isLoading"
                       class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600"
                       title="View Details"
@@ -997,7 +999,7 @@
       <!-- Enhanced Edit Student Modal - Mobile Responsive -->
       <div
         v-if="showEditModal"
-        class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+        class="fixed z-[9999] inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4"
       >
         <div
           class="bg-white w-full max-w-4xl max-h-[90vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
@@ -1779,6 +1781,614 @@
           </button>
         </div>
       </div>
+      <div>
+        <!-- Student Details Modal -->
+        <div
+          v-if="showDetailsModal"
+          class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+        >
+          <div
+            class="bg-white w-full max-w-6xl max-h-[95vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
+          >
+            <!-- Modal Loading Overlay -->
+            <div
+              v-if="isDetailsLoading"
+              class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center rounded-lg"
+            >
+              <div class="text-center">
+                <div
+                  class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
+                ></div>
+                <p class="text-xs sm:text-sm text-gray-600">
+                  Loading student details...
+                </p>
+              </div>
+            </div>
+
+            <!-- Fixed Header -->
+            <div class="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200">
+              <!-- Close Button -->
+              <button
+                @click="closeDetailsModal"
+                :disabled="isDetailsLoading"
+                class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Close"
+              >
+                <X class="w-4 h-4 sm:w-5 sm:h-5" />
+              </button>
+
+              <!-- Header -->
+              <div class="flex items-center gap-4">
+                <!-- Student Photo/Avatar -->
+                <div class="flex-shrink-0">
+                  <div
+                    v-if="viewingStudent?.photo"
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-blue-200"
+                  >
+                    <img
+                      :src="viewingStudent.photo"
+                      :alt="viewingStudent.name"
+                      class="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div
+                    v-else
+                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-600 flex items-center justify-center border-4 border-blue-200"
+                  >
+                    <span class="text-lg sm:text-xl font-bold text-white">
+                      {{ getInitials(viewingStudent?.name || "") }}
+                    </span>
+                  </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h2
+                    class="text-xl sm:text-2xl font-bold text-gray-800 truncate"
+                  >
+                    {{ viewingStudent?.name || "Student Details" }}
+                  </h2>
+                  <div class="flex flex-wrap items-center gap-2 mt-2">
+                    <span
+                      :class="getStatusClass(viewingStudent?.status)"
+                      class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full border"
+                    >
+                      <FileChartLine class="w-3 h-3" />
+                      {{ viewingStudent?.status }}
+                    </span>
+                    <span class="text-sm text-gray-600">
+                      Roll No: {{ viewingStudent?.rollNumber }}
+                    </span>
+                    <span class="text-sm text-gray-600">
+                      Class: {{ viewingStudent?.class }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Personal Information -->
+                <div class="bg-blue-50 rounded-lg p-4 sm:p-6">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                  >
+                    <User class="w-5 h-5 text-blue-600" />
+                    Personal Information
+                  </h3>
+                  <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Full Name</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.name || "N/A" }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Roll Number</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.rollNumber || "N/A" }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Email</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.email || "N/A" }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Phone</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.phone || "N/A" }}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        class="block text-sm font-medium text-gray-700 mb-1"
+                        >Address</label
+                      >
+                      <p
+                        class="text-sm text-gray-900 bg-white p-2 rounded border min-h-[60px]"
+                      >
+                        {{ viewingStudent?.address || "N/A" }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Academic Information -->
+                <div class="bg-green-50 rounded-lg p-4 sm:p-6">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                  >
+                    <GraduationCap class="w-5 h-5 text-green-600" />
+                    Academic Information
+                  </h3>
+                  <div class="space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Class</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.class || "N/A" }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Status</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{ viewingStudent?.status || "N/A" }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Enrollment Date</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                        >
+                          {{
+                            viewingStudent?.enrollmentDate
+                              ? formatDate(viewingStudent.enrollmentDate)
+                              : "N/A"
+                          }}
+                        </p>
+                      </div>
+                      <div>
+                        <label
+                          class="block text-sm font-medium text-gray-700 mb-1"
+                          >Student ID</label
+                        >
+                        <p
+                          class="text-sm text-gray-900 bg-white p-2 rounded border font-mono"
+                        >
+                          {{ viewingStudent?._id || "N/A" }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Documents Section -->
+                <div class="lg:col-span-2 bg-gray-50 rounded-lg p-4 sm:p-6">
+                  <h3
+                    class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2"
+                  >
+                    <FileText class="w-5 h-5 text-gray-600" />
+                    Documents
+                  </h3>
+                  <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                  >
+                    <!-- Aadhaar Card -->
+                    <div
+                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                    >
+                      <div class="flex items-center gap-2 mb-3">
+                        <div class="p-2 bg-blue-100 rounded-lg">
+                          <IdCard class="w-4 h-4 text-blue-600" />
+                        </div>
+                        <h4 class="text-sm font-semibold text-gray-800">
+                          Aadhaar Card
+                        </h4>
+                      </div>
+                      <div
+                        v-if="viewingStudent?.aadhaarCard"
+                        class="space-y-3"
+                      >
+                        <div
+                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                        >
+                          <CheckCircle class="w-3 h-3" />
+                          <span>Available</span>
+                        </div>
+                        <div class="flex gap-2">
+                          <button
+                            @click="
+                              viewDocument(
+                                viewingStudent.aadhaarCard,
+                                'Aadhaar Card'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          >
+                            <Eye class="w-3 h-3" />
+                            View
+                          </button>
+                          <button
+                            @click="
+                              downloadDocument(
+                                viewingStudent.aadhaarCard,
+                                'aadhaar-card'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                          >
+                            <Download class="w-3 h-3" />
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        class="text-center py-6"
+                      >
+                        <div class="text-xs text-gray-500">Not available</div>
+                      </div>
+                    </div>
+
+                    <!-- Birth Certificate -->
+                    <div
+                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                    >
+                      <div class="flex items-center gap-2 mb-3">
+                        <div class="p-2 bg-green-100 rounded-lg">
+                          <FileText class="w-4 h-4 text-green-600" />
+                        </div>
+                        <h4 class="text-sm font-semibold text-gray-800">
+                          Birth Certificate
+                        </h4>
+                      </div>
+                      <div
+                        v-if="viewingStudent?.birthCertificate"
+                        class="space-y-3"
+                      >
+                        <div
+                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                        >
+                          <CheckCircle class="w-3 h-3" />
+                          <span>Available</span>
+                        </div>
+                        <div class="flex gap-2">
+                          <button
+                            @click="
+                              viewDocument(
+                                viewingStudent.birthCertificate,
+                                'Birth Certificate'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          >
+                            <Eye class="w-3 h-3" />
+                            View
+                          </button>
+                          <button
+                            @click="
+                              downloadDocument(
+                                viewingStudent.birthCertificate,
+                                'birth-certificate'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                          >
+                            <Download class="w-3 h-3" />
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        class="text-center py-6"
+                      >
+                        <div class="text-xs text-gray-500">Not available</div>
+                      </div>
+                    </div>
+
+                    <!-- Transfer Certificate -->
+                    <div
+                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                    >
+                      <div class="flex items-center gap-2 mb-3">
+                        <div class="p-2 bg-purple-100 rounded-lg">
+                          <FileText class="w-4 h-4 text-purple-600" />
+                        </div>
+                        <h4 class="text-sm font-semibold text-gray-800">
+                          Transfer Certificate
+                        </h4>
+                      </div>
+                      <div
+                        v-if="viewingStudent?.transferCertificate"
+                        class="space-y-3"
+                      >
+                        <div
+                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                        >
+                          <CheckCircle class="w-3 h-3" />
+                          <span>Available</span>
+                        </div>
+                        <div class="flex gap-2">
+                          <button
+                            @click="
+                              viewDocument(
+                                viewingStudent.transferCertificate,
+                                'Transfer Certificate'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          >
+                            <Eye class="w-3 h-3" />
+                            View
+                          </button>
+                          <button
+                            @click="
+                              downloadDocument(
+                                viewingStudent.transferCertificate,
+                                'transfer-certificate'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                          >
+                            <Download class="w-3 h-3" />
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        class="text-center py-6"
+                      >
+                        <div class="text-xs text-gray-500">Not available</div>
+                      </div>
+                    </div>
+
+                    <!-- Marksheet -->
+                    <div
+                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                    >
+                      <div class="flex items-center gap-2 mb-3">
+                        <div class="p-2 bg-red-100 rounded-lg">
+                          <FileText class="w-4 h-4 text-red-600" />
+                        </div>
+                        <h4 class="text-sm font-semibold text-gray-800">
+                          Marksheet
+                        </h4>
+                      </div>
+                      <div
+                        v-if="viewingStudent?.marksheet"
+                        class="space-y-3"
+                      >
+                        <div
+                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                        >
+                          <CheckCircle class="w-3 h-3" />
+                          <span>Available</span>
+                        </div>
+                        <div class="flex gap-2">
+                          <button
+                            @click="
+                              viewDocument(
+                                viewingStudent.marksheet,
+                                'Marksheet'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                          >
+                            <Eye class="w-3 h-3" />
+                            View
+                          </button>
+                          <button
+                            @click="
+                              downloadDocument(
+                                viewingStudent.marksheet,
+                                'marksheet'
+                              )
+                            "
+                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                          >
+                            <Download class="w-3 h-3" />
+                            Download
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        v-else
+                        class="text-center py-6"
+                      >
+                        <div class="text-xs text-gray-500">Not available</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fixed Footer -->
+            <div class="flex-shrink-0 p-4 sm:p-6 border-t border-gray-200">
+              <div class="flex justify-end gap-3">
+                <button
+                  @click="closeDetailsModal"
+                  class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200"
+                >
+                  Close
+                </button>
+                <button
+                  @click="editStudent(viewingStudent)"
+                  class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200"
+                >
+                  <Pencil class="w-4 h-4" />
+                  Edit Student
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Document Viewer Modal - Professional Styling with Highest Z-Index -->
+        <div
+          v-if="showDocumentViewer"
+          class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in-0 duration-300"
+        >
+          <div
+            class="bg-white w-full max-w-5xl max-h-[95vh] rounded-xl shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
+          >
+            <!-- Document Viewer Header - Enhanced Professional Design -->
+            <div
+              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-200/80 flex items-center justify-between"
+            >
+              <div class="flex items-center gap-3">
+                <div class="p-2 bg-blue-100 rounded-lg">
+                  <FileText class="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-900">
+                    {{ currentDocumentTitle }}
+                  </h3>
+                  <p class="text-sm text-gray-500">Document Viewer</p>
+                </div>
+              </div>
+              <button
+                @click="closeDocumentViewer"
+                class="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105"
+                title="Close Document Viewer"
+              >
+                <X class="w-5 h-5" />
+              </button>
+            </div>
+
+            <!-- Document Content - Enhanced Container -->
+            <div class="flex-1 overflow-hidden bg-gray-50">
+              <div
+                v-if="currentDocumentUrl"
+                class="w-full h-full"
+              >
+                <!-- PDF Viewer - Enhanced -->
+                <iframe
+                  v-if="
+                    currentDocumentUrl.includes('pdf') ||
+                    currentDocumentTitle.toLowerCase().includes('pdf')
+                  "
+                  :src="currentDocumentUrl"
+                  class="w-full h-full border-0 bg-white"
+                  title="Document Viewer"
+                ></iframe>
+                <!-- Image Viewer - Enhanced -->
+                <div
+                  v-else
+                  class="w-full h-full flex items-center justify-center p-6"
+                >
+                  <div
+                    class="max-w-full max-h-full bg-white rounded-lg shadow-lg overflow-hidden"
+                  >
+                    <img
+                      :src="currentDocumentUrl"
+                      :alt="currentDocumentTitle"
+                      class="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+              <!-- Loading State - Enhanced -->
+              <div
+                v-else
+                class="w-full h-full flex items-center justify-center"
+              >
+                <div class="text-center">
+                  <div class="relative">
+                    <div
+                      class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"
+                    ></div>
+                    <div
+                      class="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-blue-300 rounded-full animate-spin mx-auto"
+                      style="
+                        animation-direction: reverse;
+                        animation-duration: 1.5s;
+                      "
+                    ></div>
+                  </div>
+                  <p class="text-base font-medium text-gray-700 mb-1">
+                    Loading document...
+                  </p>
+                  <p class="text-sm text-gray-500">
+                    Please wait while we prepare your document
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document Actions - Enhanced Professional Footer -->
+            <div
+              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-t border-gray-200/80 flex items-center justify-between"
+            >
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <div
+                  class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                ></div>
+                <span>Document loaded successfully</span>
+              </div>
+              <div class="flex gap-3">
+                <button
+                  @click="closeDocumentViewer"
+                  class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                >
+                  Close
+                </button>
+                <button
+                  @click="
+                    downloadDocument(
+                      currentDocumentUrl,
+                      currentDocumentTitle.toLowerCase().replace(/\s+/g, '-')
+                    )
+                  "
+                  class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-200 shadow-lg hover:shadow-xl"
+                >
+                  <Download class="w-4 h-4" />
+                  Download Document
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -1806,6 +2416,10 @@
     CheckSquare,
     TrendingUp,
     Trash2,
+    User,
+    FileText,
+    CheckCircle,
+    Download,
   } from "lucide-vue-next";
   import Header from "@/components/Students/HeaderStudent.vue";
 
@@ -1821,6 +2435,14 @@
   const isDeleting = ref(false);
   const loadingMessage = ref("Loading student data...");
   const tableLoadingMessage = ref("Loading students...");
+
+  //view details
+  const showDetailsModal = ref(false);
+  const viewingStudent = ref(null);
+  const isDetailsLoading = ref(false);
+  const showDocumentViewer = ref(false);
+  const currentDocumentUrl = ref("");
+  const currentDocumentTitle = ref("");
 
   // Pagination
   const currentPage = ref(1);
@@ -2387,6 +3009,79 @@
       currentPage.value = page;
       tableLoadingMessage.value = `Loading page ${page}...`;
       fetchStudents();
+    }
+  };
+
+  // View Student Details
+  const viewStudentDetails = async (student) => {
+    isDetailsLoading.value = true;
+    showDetailsModal.value = true;
+
+    try {
+      const detailedStudent = await store.dispatch(
+        "fetchUserById",
+        student._id
+      );
+
+      // ✅ Assign all fields correctly
+      viewingStudent.value = {
+        ...detailedStudent,
+        aadhaarCard: detailedStudent.aadhaarCard || "",
+        birthCertificate: detailedStudent.birthCertificate || "",
+        transferCertificate: detailedStudent.transferCertificate || "",
+        marksheet: detailedStudent.marksheet || "",
+      };
+
+      // console.log("Aadhaar:", viewingStudent.value.aadhaarCard);
+      // console.log("Birth:", viewingStudent.value.birthCertificate);
+      // console.log("Transfer:", viewingStudent.value.transferCertificate);
+      // console.log("Marksheet:", viewingStudent.value.marksheet);
+    } catch (err) {
+      console.error("Failed to load student details:", err);
+      showGlobalMessage("error", "Failed to load student details");
+    } finally {
+      isDetailsLoading.value = false;
+    }
+  };
+
+  const closeDetailsModal = () => {
+    showDetailsModal.value = false;
+    viewingStudent.value = null;
+  };
+
+  // ✅ View Document
+  const viewDocument = (documentUrl, title) => {
+    const fullUrl = documentUrl;
+    // console.log("Viewing:", fullUrl);
+    currentDocumentUrl.value = fullUrl;
+    currentDocumentTitle.value = title;
+    showDocumentViewer.value = true;
+  };
+
+  // ✅ Close Document Viewer
+  const closeDocumentViewer = () => {
+    showDocumentViewer.value = false;
+    currentDocumentUrl.value = "";
+    currentDocumentTitle.value = "";
+  };
+
+  // ✅ Download Document
+  const downloadDocument = (documentUrl, filename) => {
+    try {
+      const fullUrl = documentUrl;
+      console.log("Downloading:", fullUrl); // Optional debug log
+
+      const link = document.createElement("a");
+      link.href = fullUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showGlobalMessage("success", "Document download started");
+    } catch (err) {
+      console.error("Download failed:", err);
+      showGlobalMessage("error", "Failed to download document");
     }
   };
 </script>

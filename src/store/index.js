@@ -24,6 +24,7 @@ export default createStore({
     },
 
     userCache: {},
+    currentUser: null,
     attendancePagination: {
       page: 1,
       limit: 20,
@@ -87,8 +88,17 @@ export default createStore({
     SET_ATTENDANCE_STATS(state, stats) {
       state.attendanceStats = stats;
     },
+    // SET_USER_CACHE(state, { userId, user }) {
+    //   state.userCache[userId] = user;
+    // },
     SET_USER_CACHE(state, { userId, user }) {
-      state.userCache[userId] = user;
+      state.userCache = {
+        ...state.userCache,
+        [userId]: user,
+      };
+    },
+    SET_CURRENT_USER(state, user) {
+      state.currentUser = user;
     },
     SET_STUDENT_PAGINATION(state, pagination) {
       state.studentPagination = pagination;
@@ -123,8 +133,9 @@ export default createStore({
       }
     },
     async fetchUserById({ state, commit }, userId) {
-      // ✅ Use cache if already available
+      // ✅ Return cached user if available
       if (state.userCache[userId]) {
+        commit("SET_CURRENT_USER", state.userCache[userId]); // Optional: set current user
         return state.userCache[userId];
       }
 
@@ -134,7 +145,10 @@ export default createStore({
           headers: { Authorization: `Bearer ${token}` },
         });
         const user = res.data;
+
+        // ✅ Store in cache and current user
         commit("SET_USER_CACHE", { userId, user });
+        commit("SET_CURRENT_USER", user);
         return user;
       } catch (err) {
         console.error("Failed to fetch user:", err);
