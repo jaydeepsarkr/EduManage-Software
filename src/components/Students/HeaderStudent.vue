@@ -472,7 +472,14 @@
                     class="block text-sm font-semibold text-slate-700 capitalize"
                   >
                     {{ doc.replace(/([A-Z])/g, " $1") }}
+                    <span
+                      v-if="['transferCertificate', 'marksheet'].includes(doc)"
+                      class="text-gray-500 font-normal"
+                    >
+                      (optional)
+                    </span>
                   </label>
+
                   <!-- If file uploaded -->
                   <div
                     v-if="newStudent[doc]"
@@ -494,6 +501,7 @@
                       </button>
                     </div>
                   </div>
+
                   <input
                     type="file"
                     accept=".pdf,.jpg,.jpeg,.png"

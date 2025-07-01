@@ -1497,7 +1497,9 @@
                       class="block text-xs sm:text-sm font-semibold text-gray-700"
                     >
                       Transfer Certificate
+                      <span class="text-gray-500 font-normal">(optional)</span>
                     </label>
+
                     <div
                       v-if="editingStudent.transferCertificate"
                       class="mb-2"
@@ -1559,6 +1561,7 @@
                       class="block text-xs sm:text-sm font-semibold text-gray-700"
                     >
                       Marksheet
+                      <span class="text-gray-500 font-normal">(optional)</span>
                     </label>
                     <div
                       v-if="editingStudent.marksheet"
@@ -2900,17 +2903,30 @@
 
   // Edit
   const editStudent = (student) => {
+    if (!student) {
+      console.warn("Invalid student object passed to editStudent");
+      return;
+    }
+
     editingStudent.value = {
+      ...editingStudent.value, // optional: preserve existing data
       ...student,
       enrollmentDate: student.enrollmentDate
         ? new Date(student.enrollmentDate).toISOString().split("T")[0]
-        : "",
-      photo: student.photo || "",
-      aadhaarCard: student.aadhaarCard || "",
-      birthCertificate: student.birthCertificate || "",
-      transferCertificate: student.transferCertificate || "",
-      marksheet: student.marksheet || "",
+        : editingStudent.value?.enrollmentDate || "",
+      photo: (student.photo ?? editingStudent.value?.photo) || "",
+      aadhaarCard:
+        (student.aadhaarCard ?? editingStudent.value?.aadhaarCard) || "",
+      birthCertificate:
+        (student.birthCertificate ?? editingStudent.value?.birthCertificate) ||
+        "",
+      transferCertificate:
+        (student.transferCertificate ??
+          editingStudent.value?.transferCertificate) ||
+        "",
+      marksheet: (student.marksheet ?? editingStudent.value?.marksheet) || "",
     };
+
     showEditModal.value = true;
   };
 
@@ -2930,39 +2946,56 @@
     }
 
     isSaving.value = true;
+
     try {
+      const updates = {
+        name: editingStudent.value.name.trim(),
+        email: editingStudent.value.email.trim(),
+        phone: editingStudent.value.phone?.trim() || "",
+        address: editingStudent.value.address?.trim() || "",
+        class: editingStudent.value.class || "",
+        rollNumber: editingStudent.value.rollNumber?.trim() || "",
+        status: editingStudent.value.status,
+        enrollmentDate: editingStudent.value.enrollmentDate || null,
+      };
+
+      // Only include document URLs if they are defined (not "")
+      const documentFields = [
+        "photo",
+        "aadhaarCard",
+        "birthCertificate",
+        "transferCertificate",
+        "marksheet",
+      ];
+      for (const field of documentFields) {
+        const value = editingStudent.value[field];
+        if (value) {
+          updates[field] = value;
+        }
+      }
+
       await store.dispatch("editUserById", {
         userId: editingStudent.value._id,
-        updates: {
-          name: editingStudent.value.name.trim(),
-          email: editingStudent.value.email.trim(),
-          phone: editingStudent.value.phone?.trim() || "",
-          address: editingStudent.value.address?.trim() || "",
-          class: editingStudent.value.class || "",
-          rollNumber: editingStudent.value.rollNumber?.trim() || "",
-          status: editingStudent.value.status,
-          enrollmentDate: editingStudent.value.enrollmentDate || null,
-          photo: editingStudent.value.photo || "",
-          aadhaarCard: editingStudent.value.aadhaarCard || "",
-          birthCertificate: editingStudent.value.birthCertificate || "",
-          transferCertificate: editingStudent.value.transferCertificate || "",
-          marksheet: editingStudent.value.marksheet || "",
-        },
+        updates,
       });
 
       await fetchStudents();
+
       saveSuccess.value = "Student updated successfully!";
+      showEditModal.value = false;
+      showDetailsModal.value = false;
+
       showGlobalMessage(
         "success",
         `${editingStudent.value.name} has been updated successfully`
       );
+
       setTimeout(() => {
-        showEditModal.value = false;
         saveSuccess.value = "";
-      }, 1500);
+        window.location.reload();
+      }, 2000);
     } catch (err) {
       console.error("Save error:", err);
-      // Handle different error types
       if (err.response) {
         const status = err.response.status;
         const message = err.response.data?.message || err.response.data?.error;
