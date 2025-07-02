@@ -14,7 +14,7 @@
 </template>
 
 <script>
-  import { mapState, mapGetters } from "vuex";
+  import { mapState } from "vuex";
   import { Users, UserCheck, ClipboardCheck } from "lucide-vue-next";
   import MiniStat from "@/components/Header/TodaysData/MiniStat/MiniStat.vue";
 
@@ -30,25 +30,25 @@
     },
     computed: {
       ...mapState(["attendanceStats"]),
-      ...mapGetters(["getTotalStudentCount"]), // ✅ use new getter for total count
       miniStats() {
-        const today = this.attendanceStats?.today || {};
+        const todayStats = this.attendanceStats?.today?.overall || {};
+
         return [
           {
             icon: Users,
-            value: this.getTotalStudentCount || 0, // ✅ total student count from Vuex
+            value: todayStats.totalStudents || 0,
             label: "Total Students",
             iconColor: "text-green-600",
           },
           {
             icon: UserCheck,
-            value: 80, // Replace with dynamic staff count if needed
-            label: "Teaching Staff",
+            value: todayStats.totalPresent || 0,
+            label: "Present Today",
             iconColor: "text-blue-600",
           },
           {
             icon: ClipboardCheck,
-            value: today.averageAttendance || "0%",
+            value: todayStats.overallAttendancePercentage || "0%",
             label: "Attendance Today",
             iconColor: "text-orange-600",
           },
@@ -58,12 +58,11 @@
     methods: {
       fetchStats() {
         this.$store.dispatch("fetchAttendanceStats");
-        this.$store.dispatch("fetchTotalStudentCount"); // ✅ new action that only gets total
       },
     },
     mounted() {
-      this.fetchStats(); // Initial fetch
-      this.interval = setInterval(this.fetchStats, 10000); // Repeat every 10s
+      this.fetchStats();
+      this.interval = setInterval(this.fetchStats, 1000);
     },
     beforeUnmount() {
       clearInterval(this.interval);

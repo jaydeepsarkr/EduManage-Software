@@ -324,22 +324,32 @@ export default createStore({
       }
     },
     // ✅ Fetch Attendance Stats
-    async fetchAttendanceStats({ commit }) {
+    async fetchAttendanceStats(
+      { commit },
+      { classFilter = null, date = null } = {}
+    ) {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await axios.get(`${baseURL}/api/attendance/stats`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // Build query string
+        const params = new URLSearchParams();
+        if (classFilter !== null) params.append("class", classFilter);
+        if (date) params.append("date", date);
+
+        const res = await axios.get(
+          `${baseURL}/api/attendance/stats?${params.toString()}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         commit("SET_ATTENDANCE_STATS", res.data || {});
       } catch (err) {
         console.error("Failed to fetch attendance stats:", err);
       }
     },
-
     async editUserById(_, { userId, updates }) {
       try {
         const token = localStorage.getItem("token");

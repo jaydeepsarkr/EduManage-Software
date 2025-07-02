@@ -200,6 +200,7 @@
       </div>
 
       <!-- Stats Cards - Mobile Responsive Grid -->
+      <!-- Stats Cards - Mobile Responsive Grid -->
       <div
         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
       >
@@ -207,7 +208,6 @@
         <div
           class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
-          <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
@@ -232,17 +232,27 @@
           </h3>
 
           <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
-            <template v-if="!isStatsLoading">{{
-              stats.today?.present || 0
-            }}</template>
+            <template v-if="!isStatsLoading">
+              {{
+                selectedClass
+                  ? stats.today?.classWise?.[String(selectedClass)]?.present ||
+                    0
+                  : stats.today?.overall?.totalPresent || 0
+              }}
+            </template>
             <template v-else>--</template>
           </p>
 
           <p class="text-gray-600 text-sm">
             Out of
-            <template v-if="!isStatsLoading">{{
-              stats.today?.total || 0
-            }}</template>
+            <template v-if="!isStatsLoading">
+              {{
+                selectedClass
+                  ? stats.today?.classWise?.[String(selectedClass)]
+                      ?.totalStudents || 0
+                  : stats.today?.overall?.totalStudents || 0
+              }}
+            </template>
             <template v-else>--</template>
             students
           </p>
@@ -252,7 +262,6 @@
         <div
           class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
-          <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
@@ -277,9 +286,13 @@
           </h3>
 
           <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
-            <template v-if="!isStatsLoading">{{
-              stats.today?.absent || 0
-            }}</template>
+            <template v-if="!isStatsLoading">
+              {{
+                selectedClass
+                  ? stats.today?.classWise?.[String(selectedClass)]?.absent || 0
+                  : stats.today?.overall?.totalAbsent || 0
+              }}
+            </template>
             <template v-else>--</template>
           </p>
 
@@ -296,7 +309,6 @@
         <div
           class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
-          <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
@@ -321,9 +333,13 @@
           </h3>
 
           <p class="text-2xl sm:text-3xl font-bold mb-2 text-gray-900">
-            <template v-if="!isStatsLoading">{{
-              stats.today?.late || 0
-            }}</template>
+            <template v-if="!isStatsLoading">
+              {{
+                selectedClass
+                  ? stats.today?.classWise?.[String(selectedClass)]?.late || 0
+                  : stats.today?.overall?.totalLate || 0
+              }}
+            </template>
             <template v-else>--</template>
           </p>
 
@@ -334,7 +350,6 @@
         <div
           class="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 relative"
         >
-          <!-- Loading Overlay for Stats Card -->
           <div
             v-if="isStatsLoading"
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center rounded-lg"
@@ -849,9 +864,16 @@
   };
 
   const getAttendancePercentage = () => {
-    const today = stats.value?.today;
-    if (!today || !today.total) return 0;
-    return Math.round((today.present / today.total) * 100);
+    const classKey = String(selectedClass.value);
+    const classStats = stats.value?.today?.classWise?.[classKey];
+
+    if (classStats && classStats.totalStudents > 0) {
+      return Math.round((classStats.present / classStats.totalStudents) * 100);
+    }
+
+    const overall = stats.value?.today?.overall;
+    if (!overall || overall.totalStudents === 0) return 0;
+    return Math.round((overall.totalPresent / overall.totalStudents) * 100);
   };
 
   const getWeeklyAverage = () => {
@@ -892,6 +914,7 @@
   watch([selectedClass, selectedDate, isMineOnly], () => {
     currentPage.value = 1;
     fetchFilteredHistory();
+    fetchStats();
   });
 
   watch(
@@ -902,10 +925,21 @@
   );
 
   // Fetch stats
+  // Fetch stats with filters
   async function fetchStats() {
     isStatsLoading.value = true;
     try {
-      await store.dispatch("fetchAttendanceStats");
+      const filters = {};
+
+      if (selectedClass.value) {
+        filters.classFilter = parseInt(selectedClass.value);
+      }
+
+      if (selectedDate.value) {
+        filters.date = selectedDate.value;
+      }
+
+      await store.dispatch("fetchAttendanceStats", filters);
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {
