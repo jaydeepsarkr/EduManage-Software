@@ -60,7 +60,7 @@ export default createStore({
   },
 
   mutations: {
-    SET_UPCOMING_EVENTS(state, events) {
+    setUpcomingEvents(state, events) {
       state.upcomingEvents = events;
     },
     SET_ATTENDANCE_PAGINATION(state, pagination) {
@@ -109,9 +109,20 @@ export default createStore({
   },
 
   actions: {
-    storeCalendarEvents({ commit }, events) {
-      commit("SET_UPCOMING_EVENTS", events);
+    async fetchUpcomingEvents(
+      { commit },
+      { calendarId, apiKey, timeMin, timeMax }
+    ) {
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        commit("setUpcomingEvents", data.items || []);
+      } catch (err) {
+        console.error("Error fetching calendar events", err);
+      }
     },
+
     async fetchTotalStudentCount({ commit }) {
       try {
         const token = localStorage.getItem("token");

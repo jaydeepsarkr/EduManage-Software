@@ -1,7 +1,9 @@
 <template>
   <div class="bg-white rounded-lg shadow-sm border border-gray-200">
     <div class="p-6 border-b border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900">Events This Month</h3>
+      <h3 class="text-lg font-semibold text-gray-900">
+        Events This Month ({{ currentMonthEvents.length }})
+      </h3>
     </div>
     <div class="p-6">
       <div class="space-y-4">
@@ -37,43 +39,90 @@
   </div>
 </template>
 
-<script setup>
-  import { Calendar } from "lucide-vue-next";
-  import { computed } from "vue";
+<script>
+  import { ref, computed, onMounted } from "vue";
   import { useStore } from "vuex";
+  import { Calendar } from "lucide-vue-next";
 
-  // Access Vuex store
-  const store = useStore();
+  export default {
+    name: "EventsThisMonth",
+    components: { Calendar },
+    setup() {
+      const store = useStore();
+      const currentDate = ref(new Date());
+      const events = computed(() => store.getters.getUpcomingEvents || []);
 
-  // Get all events stored in Vuex
-  const events = computed(() => store.getters.getUpcomingEvents || []);
+      const calendarId = process.env.VUE_APP_GOOGLE_CALENDAR_ID;
+      const apiKey = process.env.VUE_APP_GOOGLE_API_KEY;
 
-  // Filter events for the current month
-  const currentMonthEvents = computed(() => {
-    const now = new Date();
-    const currentMonth = now.getMonth();
-    const currentYear = now.getFullYear();
+      const fetchEventsForMonth = async () => {
+        if (!currentDate.value || isNaN(currentDate.value.getTime())) {
+          console.warn("Invalid currentDate");
+          return;
+        }
 
-    return events.value.filter((event) => {
-      const dateStr = event.start?.dateTime || event.start?.date;
-      if (!dateStr) return false;
-      const date = new Date(dateStr);
-      return (
-        date.getMonth() === currentMonth && date.getFullYear() === currentYear
-      );
-    });
-  });
+        const timeMin = new Date(
+          currentDate.value.getFullYear(),
+          currentDate.value.getMonth(),
+          1
+        ).toISOString();
 
-  // Format event start time for display
-  function formatEventTime(event) {
-    const start = event.start?.dateTime || event.start?.date;
-    const date = new Date(start);
-    return date.toLocaleDateString("en-US", {
-      weekday: "short",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
+        const timeMax = new Date(
+          currentDate.value.getFullYear(),
+          currentDate.value.getMonth() + 1,
+          0
+        ).toISOString();
+
+        try {
+          await store.dispatch("fetchUpcomingEvents", {
+            calendarId,
+            apiKey,
+            timeMin,
+            timeMax,
+          });
+        } catch (error) {
+          console.error("Error fetching calendar events:", error);
+        }
+      };
+
+      const formatEventTime = (event) => {
+        const start = event.start?.dateTime || event.start?.date;
+        const date = new Date(start);
+        return date.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const currentMonthEvents = computed(() => {
+        return events.value
+          .filter((event) => {
+            const start = event.start?.dateTime || event.start?.date;
+            if (!start) return false;
+            const date = new Date(start);
+            return (
+              date.getMonth() === currentDate.value.getMonth() &&
+              date.getFullYear() === currentDate.value.getFullYear()
+            );
+          })
+          .sort((a, b) => {
+            const aTime = new Date(a.start?.dateTime || a.start?.date);
+            const bTime = new Date(b.start?.dateTime || b.start?.date);
+            return aTime - bTime;
+          });
+      });
+
+      onMounted(() => {
+        fetchEventsForMonth();
+      });
+
+      return {
+        currentMonthEvents,
+        formatEventTime,
+      };
+    },
+  };
 </script>
