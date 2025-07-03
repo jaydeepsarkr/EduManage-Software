@@ -230,12 +230,15 @@ export default createStore({
 
     async addStudent(_, studentData) {
       try {
-        const payload = {
-          ...studentData,
-          role: "student",
-        };
-
-        const res = await axios.post(`${baseURL}/api/auth/register`, payload);
+        const res = await axios.post(
+          `${baseURL}/api/auth/register`,
+          studentData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         console.log("Student registered successfully:", res.data);
         return res.data;
       } catch (err) {

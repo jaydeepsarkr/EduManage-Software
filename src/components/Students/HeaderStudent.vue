@@ -663,64 +663,8 @@
     generalError.value = "";
   };
 
-  // Image compression utility
-  const compressImage = (
-    file,
-    quality = 0.7,
-    maxWidth = 800,
-    maxHeight = 600
-  ) => {
-    return new Promise((resolve, reject) => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-
-      img.onload = () => {
-        let { width, height } = img;
-        if (width > height && width > maxWidth) {
-          height = (height * maxWidth) / width;
-          width = maxWidth;
-        } else if (height > maxHeight) {
-          width = (width * maxHeight) / height;
-          height = maxHeight;
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        ctx.drawImage(img, 0, 0, width, height);
-
-        canvas.toBlob(
-          (blob) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(blob);
-          },
-          file.type,
-          quality
-        );
-      };
-
-      img.onerror = reject;
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
-  // Base64 utility
-  const fileToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-  };
-
   // Photo Upload
-  const handlePhotoUpload = async (event) => {
-    formErrors.value.photo = "";
-    generalError.value = "";
-
+  const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -734,20 +678,11 @@
       return;
     }
 
-    try {
-      const compressedFile = await compressImage(file);
-      newStudent.value.photo = compressedFile;
-    } catch (error) {
-      console.error("Image compression failed:", error);
-      formErrors.value.photo = "Failed to process image.";
-    }
+    newStudent.value.photo = file;
   };
 
   // Document Upload
-  const handleDocumentUpload = async (event, documentType) => {
-    formErrors.value[documentType] = "";
-    generalError.value = "";
-
+  const handleDocumentUpload = (event, documentType) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -759,37 +694,16 @@
     ];
 
     if (!allowedTypes.includes(file.type)) {
-      formErrors.value[documentType] = `${formatLabel(
-        documentType
-      )} must be a .jpg, .jpeg, .png, or .pdf file.`;
+      formErrors.value[documentType] = "Invalid file type.";
       return;
     }
 
     if (file.size > 2 * 1024 * 1024) {
-      formErrors.value[documentType] = "File must be less than 2MB.";
+      formErrors.value[documentType] = "File must be under 2MB.";
       return;
     }
 
-    try {
-      let processedFile;
-      if (file.type.startsWith("image/")) {
-        processedFile = await compressImage(file, 0.8, 1200, 1600);
-      } else {
-        processedFile = await fileToBase64(file);
-      }
-
-      newStudent.value[documentType] = processedFile;
-    } catch (error) {
-      console.error("File processing failed:", error);
-      formErrors.value[documentType] = "Failed to process file.";
-    }
-  };
-
-  // Format label for error messages
-  const formatLabel = (key) => {
-    return key
-      .replace(/([A-Z])/g, " $1")
-      .replace(/^./, (str) => str.toUpperCase());
+    newStudent.value[documentType] = file;
   };
 
   // Add Student
@@ -797,6 +711,7 @@
     formErrors.value = {};
     generalError.value = "";
 
+    // Basic validation
     if (!newStudent.value.name?.trim()) {
       formErrors.value.name = "Student name is required";
       return;
@@ -821,72 +736,53 @@
     isAdding.value = true;
 
     try {
-      const payload = {
-        name: newStudent.value.name.trim(),
-        email: newStudent.value.email.trim(),
-        password: "default123",
-        phone: newStudent.value.phone?.trim() || "",
-        class: newStudent.value.class || "",
-        rollNumber: newStudent.value.rollNumber.trim(),
-        address: newStudent.value.address?.trim() || "",
-        status: newStudent.value.status || "active",
-        enrollmentDate: newStudent.value.enrollmentDate || null,
-        photo: newStudent.value.photo || "",
-        aadhaarCard: newStudent.value.aadhaarCard || "",
-        birthCertificate: newStudent.value.birthCertificate || "",
-        transferCertificate: newStudent.value.transferCertificate || "",
-        marksheet: newStudent.value.marksheet || "",
-      };
+      const formData = new FormData();
 
-      await store.dispatch("addStudent", payload);
+      formData.append("name", newStudent.value.name.trim());
+      formData.append("email", newStudent.value.email.trim());
+      formData.append("password", "default123");
+      formData.append("phone", newStudent.value.phone || "");
+      formData.append("class", newStudent.value.class || "");
+      formData.append("rollNumber", newStudent.value.rollNumber.trim());
+      formData.append("address", newStudent.value.address || "");
+      formData.append("status", newStudent.value.status || "active");
+      formData.append("enrollmentDate", newStudent.value.enrollmentDate || "");
+
+      // Append files directly (raw File objects)
+      if (newStudent.value.photo instanceof File) {
+        formData.append("photo", newStudent.value.photo);
+      }
+
+      if (newStudent.value.aadhaarCard instanceof File) {
+        formData.append("aadhaarCard", newStudent.value.aadhaarCard);
+      }
+
+      if (newStudent.value.birthCertificate instanceof File) {
+        formData.append("birthCertificate", newStudent.value.birthCertificate);
+      }
+
+      if (newStudent.value.transferCertificate instanceof File) {
+        formData.append(
+          "transferCertificate",
+          newStudent.value.transferCertificate
+        );
+      }
+
+      if (newStudent.value.marksheet instanceof File) {
+        formData.append("marksheet", newStudent.value.marksheet);
+      }
+
+      await store.dispatch("addStudent", formData);
       await store.dispatch("fetchStudents");
 
-      // Close modal first
-
-      // Show success toast
       showSuccessToast();
       closeAddModal();
     } catch (error) {
       console.error("Add student error:", error);
-      if (
-        error.response?.status === 413 ||
-        error.message?.includes("too large") ||
-        error.message?.includes("413")
-      ) {
-        generalError.value =
-          "Files are too large. Use smaller images (under 1MB) and documents (under 2MB).";
-      } else if (error.response?.data?.errors) {
+      if (error.response?.data?.errors) {
         formErrors.value = error.response.data.errors;
-      } else if (error.response?.data?.message) {
-        generalError.value = error.response.data.message;
-      } else if (error.response) {
-        const status = error.response.status;
-        const message =
-          error.response.data?.message || error.response.data?.error;
-        switch (status) {
-          case 400:
-            generalError.value =
-              message || "Invalid student data. Please check all fields.";
-            break;
-          case 409:
-            generalError.value =
-              message ||
-              "A student with this email or roll number already exists.";
-            break;
-          case 422:
-            generalError.value =
-              message || "Please check your input data for errors.";
-            break;
-          default:
-            generalError.value =
-              message || `Error ${status}: Failed to add student.`;
-        }
-      } else if (error.request) {
-        generalError.value =
-          "Network error. Please check your internet connection.";
       } else {
-        generalError.value =
-          error.message || "An unexpected error occurred. Please try again.";
+        generalError.value = error.response?.data?.message || "Server error.";
       }
     } finally {
       isAdding.value = false;

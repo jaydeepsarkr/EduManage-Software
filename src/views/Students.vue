@@ -2307,13 +2307,16 @@
                 <!-- PDF Viewer - Enhanced -->
                 <iframe
                   v-if="
-                    currentDocumentUrl.includes('pdf') ||
+                    currentDocumentUrl.includes('.pdf') ||
                     currentDocumentTitle.toLowerCase().includes('pdf')
                   "
-                  :src="currentDocumentUrl"
+                  :src="`https://docs.google.com/gview?url=${encodeURIComponent(
+                    currentDocumentUrl
+                  )}&embedded=true`"
                   class="w-full h-full border-0 bg-white"
-                  title="Document Viewer"
+                  title="PDF Viewer"
                 ></iframe>
+
                 <!-- Image Viewer - Enhanced -->
                 <div
                   v-else
@@ -3065,10 +3068,10 @@
         marksheet: detailedStudent.marksheet || "",
       };
 
-      // console.log("Aadhaar:", viewingStudent.value.aadhaarCard);
-      // console.log("Birth:", viewingStudent.value.birthCertificate);
-      // console.log("Transfer:", viewingStudent.value.transferCertificate);
-      // console.log("Marksheet:", viewingStudent.value.marksheet);
+      console.log("Aadhaar:", viewingStudent.value.aadhaarCard);
+      console.log("Birth:", viewingStudent.value.birthCertificate);
+      console.log("Transfer:", viewingStudent.value.transferCertificate);
+      console.log("Marksheet:", viewingStudent.value.marksheet);
     } catch (err) {
       console.error("Failed to load student details:", err);
       showGlobalMessage("error", "Failed to load student details");
