@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen bg-gray-50 relative">
     <!-- Sidebar -->
-    <div class="z-40 relative">
+    <div class="z-[999] relative">
       <SchoolSidebar v-if="!isAuthRoute" />
     </div>
 

@@ -13,6 +13,7 @@ export default createStore({
     userPhoto: null,
 
     attendanceHistory: [],
+    todaysAttendancePercentage: null,
     attendanceStats: {
       daily: [],
       today: {
@@ -60,6 +61,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_TODAYS_ATTENDANCE_PERCENTAGE(state, payload) {
+      state.todaysAttendancePercentage = payload;
+    },
     setUpcomingEvents(state, events) {
       state.upcomingEvents = events;
     },
@@ -337,6 +341,7 @@ export default createStore({
         console.error("Failed to fetch attendance history:", err);
       }
     },
+
     // ✅ Fetch Attendance Stats
     async fetchAttendanceStats(
       { commit },
@@ -345,10 +350,15 @@ export default createStore({
       try {
         const token = localStorage.getItem("token");
 
-        // Build query string
+        // ✅ Build query string
         const params = new URLSearchParams();
         if (classFilter !== null) params.append("class", classFilter);
-        if (date) params.append("date", date);
+
+        if (date) {
+          // ✅ Ensure date is in YYYY-MM-DD format
+          const formattedDate = new Date(date).toISOString().split("T")[0];
+          params.append("date", formattedDate);
+        }
 
         const res = await axios.get(
           `${baseURL}/api/attendance/stats?${params.toString()}`,
@@ -362,6 +372,27 @@ export default createStore({
         commit("SET_ATTENDANCE_STATS", res.data || {});
       } catch (err) {
         console.error("Failed to fetch attendance stats:", err);
+      }
+    },
+    async fetchTodaysAttendancePercentage({ commit }) {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          `${baseURL}/api/attendance/percentage/today`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        commit("SET_TODAYS_ATTENDANCE_PERCENTAGE", res.data);
+      } catch (error) {
+        console.error(
+          "❌ Failed to fetch today's attendance percentage:",
+          error
+        );
       }
     },
     async editUserById(_, { userId, updates }) {

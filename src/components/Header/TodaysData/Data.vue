@@ -29,40 +29,45 @@
       };
     },
     computed: {
-      ...mapState(["attendanceStats"]),
+      ...mapState(["todaysAttendancePercentage"]),
       miniStats() {
-        const todayStats = this.attendanceStats?.today?.overall || {};
+        const stats = this.todaysAttendancePercentage || {
+          totalStudents: 0,
+          presentToday: 0,
+          attendancePercentage: "0%",
+        };
 
         return [
           {
             icon: Users,
-            value: todayStats.totalStudents || 0,
+            value: stats.totalStudents,
             label: "Total Students",
             iconColor: "text-green-600",
           },
           {
             icon: UserCheck,
-            value: todayStats.totalPresent || 0,
+            value: stats.presentToday,
             label: "Present Today",
             iconColor: "text-blue-600",
           },
           {
             icon: ClipboardCheck,
-            value: todayStats.overallAttendancePercentage || "0%",
+            value: stats.attendancePercentage || "0%",
             label: "Attendance Today",
             iconColor: "text-orange-600",
           },
         ];
       },
     },
+
     methods: {
-      fetchStats() {
-        this.$store.dispatch("fetchAttendanceStats");
+      fetchTodaysData() {
+        this.$store.dispatch("fetchTodaysAttendancePercentage");
       },
     },
     mounted() {
-      this.fetchStats();
-      this.interval = setInterval(this.fetchStats, 1000);
+      this.fetchTodaysData();
+      this.interval = setInterval(this.fetchTodaysData, 1000); // fetch only light data
     },
     beforeUnmount() {
       clearInterval(this.interval);

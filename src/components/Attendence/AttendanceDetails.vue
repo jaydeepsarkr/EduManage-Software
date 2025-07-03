@@ -936,8 +936,17 @@
       }
 
       if (selectedDate.value) {
-        filters.date = selectedDate.value;
+        // Format the date to YYYY-MM-DD
+        const formattedDate =
+          typeof selectedDate.value === "string"
+            ? selectedDate.value
+            : new Date(selectedDate.value).toISOString().split("T")[0];
+
+        filters.date = formattedDate;
       }
+
+      const params = new URLSearchParams(filters);
+      console.log("URL Params:", params.toString());
 
       await store.dispatch("fetchAttendanceStats", filters);
     } catch (error) {
