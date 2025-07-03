@@ -3068,10 +3068,10 @@
         marksheet: detailedStudent.marksheet || "",
       };
 
-      console.log("Aadhaar:", viewingStudent.value.aadhaarCard);
-      console.log("Birth:", viewingStudent.value.birthCertificate);
-      console.log("Transfer:", viewingStudent.value.transferCertificate);
-      console.log("Marksheet:", viewingStudent.value.marksheet);
+      // console.log("Aadhaar:", viewingStudent.value.aadhaarCard);
+      // console.log("Birth:", viewingStudent.value.birthCertificate);
+      // console.log("Transfer:", viewingStudent.value.transferCertificate);
+      // console.log("Marksheet:", viewingStudent.value.marksheet);
     } catch (err) {
       console.error("Failed to load student details:", err);
       showGlobalMessage("error", "Failed to load student details");

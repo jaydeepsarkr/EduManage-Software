@@ -1,7 +1,9 @@
 <template>
-  <div class="flex h-screen bg-gray-50">
+  <div class="flex h-screen bg-gray-50 relative">
     <!-- Sidebar -->
-    <SchoolSidebar v-if="!isAuthRoute" />
+    <div class="z-40 relative">
+      <SchoolSidebar v-if="!isAuthRoute" />
+    </div>
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -64,7 +66,7 @@
   import SchoolHeader from "./components/Header/SchoolHeader.vue";
   import SchoolSidebar from "./components/Sidebar/SchoolSidebar.vue";
 
-  // Icons (dummy SVGs or replace with real imports)
+  // Icons
   const CheckCircleIcon = {
     template: `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -81,7 +83,7 @@
   </svg>`,
   };
 
-  // Toast system
+  // Toast logic
   const toasts = ref([]);
 
   const addToast = (toast) => {
@@ -113,13 +115,11 @@
     ["/login", "/signup"].includes(route.path)
   );
 
-  // Optional resize
-  const handleResize = () => {};
-
+  // Lifecycle
   onMounted(() => {
-    window.addEventListener("resize", handleResize, { passive: true });
+    window.addEventListener("resize", () => {}, { passive: true });
 
-    if (!sessionStorage.getItem("welcome_toast_shown")) {
+    if (!isAuthRoute.value && !sessionStorage.getItem("welcome_toast_shown")) {
       addToast({
         type: "success",
         title: "Welcome 🎉",

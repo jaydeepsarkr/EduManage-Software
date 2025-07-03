@@ -562,6 +562,7 @@
 <script setup>
   import { ref } from "vue";
   import { useStore } from "vuex";
+  import { watch } from "vue";
   import {
     UserPlus,
     X,
@@ -590,6 +591,7 @@
 
   // Toast notification state
   const showToast = ref(false);
+  const defaultPassword = process.env.VUE_APP_DEFAULT_PASSWORD;
 
   const formErrors = ref({
     name: "",
@@ -662,7 +664,17 @@
     formErrors.value = {};
     generalError.value = "";
   };
-
+  watch(
+    () => newStudent.value.name,
+    (newName) => {
+      if (newName?.trim()) {
+        const email = newName.toLowerCase().replace(/\s+/g, "") + "@gmail.com";
+        newStudent.value.email = email;
+      } else {
+        newStudent.value.email = "";
+      }
+    }
+  );
   // Photo Upload
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
@@ -717,17 +729,6 @@
       return;
     }
 
-    if (!newStudent.value.email?.trim()) {
-      formErrors.value.email = "Email address is required";
-      return;
-    }
-
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newStudent.value.email)) {
-      formErrors.value.email = "Invalid email address";
-      return;
-    }
-
     if (!newStudent.value.rollNumber?.trim()) {
       formErrors.value.rollNumber = "Roll number is required";
       return;
@@ -738,36 +739,42 @@
     try {
       const formData = new FormData();
 
-      formData.append("name", newStudent.value.name.trim());
-      formData.append("email", newStudent.value.email.trim());
-      formData.append("password", "default123");
+      const trimmedName = newStudent.value.name.trim();
+
+      // Generate email from name
+      const autoEmail =
+        trimmedName.toLowerCase().replace(/\s+/g, "") + "@gmail.com";
+
+      formData.append("name", trimmedName);
+      formData.append("email", autoEmail);
+      formData.append("password", defaultPassword);
+      formData.append("role", "student");
       formData.append("phone", newStudent.value.phone || "");
       formData.append("class", newStudent.value.class || "");
       formData.append("rollNumber", newStudent.value.rollNumber.trim());
       formData.append("address", newStudent.value.address || "");
       formData.append("status", newStudent.value.status || "active");
-      formData.append("enrollmentDate", newStudent.value.enrollmentDate || "");
+      formData.append(
+        "enrollmentDate",
+        newStudent.value.enrollmentDate || new Date().toISOString()
+      );
 
-      // Append files directly (raw File objects)
+      // Append files
       if (newStudent.value.photo instanceof File) {
         formData.append("photo", newStudent.value.photo);
       }
-
       if (newStudent.value.aadhaarCard instanceof File) {
         formData.append("aadhaarCard", newStudent.value.aadhaarCard);
       }
-
       if (newStudent.value.birthCertificate instanceof File) {
         formData.append("birthCertificate", newStudent.value.birthCertificate);
       }
-
       if (newStudent.value.transferCertificate instanceof File) {
         formData.append(
           "transferCertificate",
           newStudent.value.transferCertificate
         );
       }
-
       if (newStudent.value.marksheet instanceof File) {
         formData.append("marksheet", newStudent.value.marksheet);
       }
@@ -777,6 +784,9 @@
 
       showSuccessToast();
       closeAddModal();
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000); // 1000 milliseconds = 1 second
     } catch (error) {
       console.error("Add student error:", error);
       if (error.response?.data?.errors) {

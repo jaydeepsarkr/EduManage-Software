@@ -925,11 +925,6 @@
   );
 
   // Fetch stats
-  const normalizeDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toISOString().split("T")[0]; // returns 'YYYY-MM-DD'
-  };
-
   // Fetch stats with filters
   async function fetchStats() {
     isStatsLoading.value = true;
@@ -941,9 +936,8 @@
       }
 
       if (selectedDate.value) {
-        filters.date = normalizeDate(selectedDate.value);
+        filters.date = selectedDate.value;
       }
-      console.log("📅 Sending stats request with:", filters);
 
       await store.dispatch("fetchAttendanceStats", filters);
     } catch (error) {
