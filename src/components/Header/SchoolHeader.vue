@@ -7,7 +7,7 @@
         <div class="flex items-center space-x-4 min-w-0 flex-1 sm:flex-initial">
           <div class="min-w-0 flex-1 text-center sm:text-left">
             <h2
-              class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate"
+              class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate ml-[54px]"
             >
               {{ getCurrentPageTitle() }}
             </h2>

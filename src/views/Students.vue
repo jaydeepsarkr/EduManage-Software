@@ -3337,7 +3337,7 @@
     input[type="checkbox"],
     input[type="radio"],
     select {
-      min-height: 44px;
+      /* min-height: 44px; */
       min-width: 44px;
     }
 
