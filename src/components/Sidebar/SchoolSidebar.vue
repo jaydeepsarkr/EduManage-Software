@@ -1,17 +1,51 @@
 <template>
-  <div class="flex h-screen bg-gray-50 z-[999]">
+  <div class="relative">
+    <!-- Mobile Toggle Button -->
+    <button
+      v-if="isMobile"
+      @click="toggleMobileSidebar"
+      class="fixed top-4 left-4 z-[1001] lg:hidden bg-white shadow-lg rounded-lg p-2 border border-gray-200"
+      :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
+    >
+      <Menu
+        v-if="!showMobileSidebar"
+        class="w-6 h-6 text-gray-700"
+      />
+      <X
+        v-else
+        class="w-6 h-6 text-gray-700"
+      />
+    </button>
+
+    <!-- Mobile Backdrop -->
+    <div
+      v-if="isMobile && showMobileSidebar"
+      @click="closeMobileSidebar"
+      class="fixed inset-0 bg-black bg-opacity-50 z-[999] lg:hidden"
+    ></div>
+
     <!-- Sidebar -->
     <div
       :class="[
         'bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col',
-        isCollapsed ? 'w-16' : 'w-64',
+        // Desktop styles
+        'lg:relative lg:translate-x-0',
+        isCollapsed && !isMobile ? 'lg:w-16' : 'lg:w-64',
+        // Mobile styles
+        'fixed inset-y-0 left-0 z-[1000] w-64',
+        'lg:block',
+        isMobile
+          ? showMobileSidebar
+            ? 'translate-x-0'
+            : '-translate-x-full'
+          : 'translate-x-0',
       ]"
     >
       <!-- Header -->
       <div class="p-4 border-b border-gray-200">
         <div class="flex items-center justify-between">
           <div
-            v-if="!isCollapsed"
+            v-if="!isCollapsed || isMobile"
             class="flex items-center space-x-3"
           >
             <div
@@ -26,7 +60,7 @@
           </div>
           <div
             v-else
-            class="flex justify-center"
+            class="flex justify-center w-full"
           >
             <div
               class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center"
@@ -45,33 +79,33 @@
           :key="item.id"
           :to="item.route"
           class="block"
+          @click="handleNavClick(item.id)"
         >
           <div
-            @click="setActiveItem(item.id)"
             :class="[
-              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              'w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation',
               activeItem === item.id
                 ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200',
             ]"
-            :title="isCollapsed ? item.label : ''"
+            :title="isCollapsed && !isMobile ? item.label : ''"
           >
             <component
               :is="item.icon"
               :class="[
                 'flex-shrink-0 transition-colors duration-200',
-                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                isCollapsed && !isMobile ? 'w-5 h-5' : 'w-5 h-5 mr-3',
                 activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
               ]"
             />
             <span
-              v-if="!isCollapsed"
+              v-if="!isCollapsed || isMobile"
               class="truncate transition-opacity duration-200"
             >
               {{ item.label }}
             </span>
             <span
-              v-if="!isCollapsed && item.badge"
+              v-if="(!isCollapsed || isMobile) && item.badge"
               :class="[
                 'ml-auto text-xs px-2 py-0.5 rounded-full',
                 item.badgeType === 'urgent'
@@ -87,7 +121,7 @@
         <!-- Academic Section -->
         <div class="pt-4">
           <div
-            v-if="!isCollapsed"
+            v-if="!isCollapsed || isMobile"
             class="px-3 mb-2"
           >
             <h3
@@ -96,43 +130,44 @@
               Academic
             </h3>
           </div>
-
           <div class="space-y-1">
             <RouterLink
               v-for="item in academicItems"
               :key="item.id"
               :to="item.route"
               class="block"
+              @click="handleNavClick(item.id)"
             >
               <div
                 :class="[
-                  'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+                  'w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation',
                   activeItem === item.id
                     ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200',
                 ]"
-                @click="setActiveItem(item.id)"
-                :title="isCollapsed ? item.label : ''"
+                :title="isCollapsed && !isMobile ? item.label : ''"
               >
                 <component
                   :is="item.icon"
                   :class="[
                     'flex-shrink-0 transition-colors duration-200',
-                    isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                    isCollapsed && !isMobile ? 'w-5 h-5' : 'w-5 h-5 mr-3',
                     activeItem === item.id
                       ? 'text-indigo-600'
                       : 'text-gray-500',
                   ]"
                 />
                 <span
-                  v-if="!isCollapsed"
+                  v-if="!isCollapsed || isMobile"
                   class="truncate transition-opacity duration-200"
                 >
                   {{ item.label }}
                 </span>
                 <span
-                  v-if="!isCollapsed && item.badge"
-                  class="ml-auto bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full"
+                  v-if="(!isCollapsed || isMobile) && item.badge"
+                  :class="[
+                    'ml-auto bg-green-100 text-green-600 text-xs px-2 py-0.5 rounded-full',
+                  ]"
                 >
                   {{ item.badge }}
                 </span>
@@ -142,54 +177,56 @@
         </div>
 
         <!-- Administration Section -->
-        <div
-          v-if="!isCollapsed"
-          class="px-3 mb-2 pt-4"
-        >
-          <h3
-            class="text-xs font-semibold text-gray-500 uppercase tracking-wider"
-          >
-            Administration
-          </h3>
-        </div>
-        <RouterLink
-          v-for="item in administrationItems"
-          :key="item.id"
-          :to="item.route"
-          class="block"
-        >
+        <div class="pt-4">
           <div
-            @click="setActiveItem(item.id)"
-            :class="[
-              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
-              activeItem === item.id
-                ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
-            ]"
-            :title="isCollapsed ? item.label : ''"
+            v-if="!isCollapsed || isMobile"
+            class="px-3 mb-2"
           >
-            <component
-              :is="item.icon"
-              :class="[
-                'flex-shrink-0 transition-colors duration-200',
-                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
-                activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
-              ]"
-            />
-            <span
-              v-if="!isCollapsed"
-              class="truncate transition-opacity duration-200"
+            <h3
+              class="text-xs font-semibold text-gray-500 uppercase tracking-wider"
             >
-              {{ item.label }}
-            </span>
-            <span
-              v-if="!isCollapsed && item.badge"
-              class="ml-auto bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full"
-            >
-              {{ item.badge }}
-            </span>
+              Administration
+            </h3>
           </div>
-        </RouterLink>
+          <RouterLink
+            v-for="item in administrationItems"
+            :key="item.id"
+            :to="item.route"
+            class="block"
+            @click="handleNavClick(item.id)"
+          >
+            <div
+              :class="[
+                'w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation',
+                activeItem === item.id
+                  ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
+                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200',
+              ]"
+              :title="isCollapsed && !isMobile ? item.label : ''"
+            >
+              <component
+                :is="item.icon"
+                :class="[
+                  'flex-shrink-0 transition-colors duration-200',
+                  isCollapsed && !isMobile ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                  activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
+                ]"
+              />
+              <span
+                v-if="!isCollapsed || isMobile"
+                class="truncate transition-opacity duration-200"
+              >
+                {{ item.label }}
+              </span>
+              <span
+                v-if="(!isCollapsed || isMobile) && item.badge"
+                class="ml-auto bg-orange-100 text-orange-600 text-xs px-2 py-0.5 rounded-full"
+              >
+                {{ item.badge }}
+              </span>
+            </div>
+          </RouterLink>
+        </div>
 
         <!-- Separator -->
         <div class="my-4 border-t border-gray-200"></div>
@@ -200,27 +237,27 @@
           :key="item.id"
           :to="item.route"
           class="block"
+          @click="handleNavClick(item.id)"
         >
           <div
-            @click="setActiveItem(item.id)"
             :class="[
-              'w-full flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200',
+              'w-full flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 touch-manipulation',
               activeItem === item.id
                 ? 'bg-indigo-50 text-indigo-700 border-r-2 border-indigo-600'
-                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900',
+                : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200',
             ]"
-            :title="isCollapsed ? item.label : ''"
+            :title="isCollapsed && !isMobile ? item.label : ''"
           >
             <component
               :is="item.icon"
               :class="[
                 'flex-shrink-0 transition-colors duration-200',
-                isCollapsed ? 'w-5 h-5' : 'w-5 h-5 mr-3',
+                isCollapsed && !isMobile ? 'w-5 h-5' : 'w-5 h-5 mr-3',
                 activeItem === item.id ? 'text-indigo-600' : 'text-gray-500',
               ]"
             />
             <span
-              v-if="!isCollapsed"
+              v-if="!isCollapsed || isMobile"
               class="truncate transition-opacity duration-200"
             >
               {{ item.label }}
@@ -233,7 +270,7 @@
       <div class="p-4 border-t border-gray-200">
         <!-- Current Academic Year -->
         <div
-          v-if="!isCollapsed"
+          v-if="!isCollapsed || isMobile"
           class="mb-3 p-2 bg-indigo-50 rounded-lg"
         >
           <div class="text-xs text-indigo-600 font-medium">Today's Date</div>
@@ -259,7 +296,7 @@
             </template>
           </div>
           <div
-            v-if="!isCollapsed"
+            v-if="!isCollapsed || isMobile"
             class="flex-1 min-w-0"
           >
             <p class="text-sm font-medium text-gray-900 truncate">
@@ -277,10 +314,11 @@
           </div>
         </div>
 
-        <!-- Toggle Button -->
+        <!-- Toggle Button (Desktop only) -->
         <button
+          v-if="!isMobile"
           @click="toggleSidebar"
-          class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200"
+          class="w-full flex items-center justify-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 touch-manipulation"
           :title="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
         >
           <ChevronLeft
@@ -292,8 +330,9 @@
           <span
             v-if="!isCollapsed"
             class="ml-2"
-            >Collapse</span
           >
+            Collapse
+          </span>
         </button>
       </div>
     </div>
@@ -304,7 +343,6 @@
   import { ref, computed, onMounted, onUnmounted } from "vue";
   import router from "@/router";
   import { useStore } from "vuex";
-
   import {
     Home,
     Users,
@@ -317,6 +355,8 @@
     User,
     ChevronLeft,
     School,
+    Menu,
+    X,
   } from "lucide-vue-next";
 
   const store = useStore();
@@ -324,11 +364,13 @@
   // Sidebar state
   const isCollapsed = ref(false);
   const activeItem = ref("dashboard");
+  const showMobileSidebar = ref(false);
+  const isMobile = ref(false);
 
   // Fetch role on mount
   onMounted(() => {
     store.dispatch("initializeUserRole");
-    store.dispatch("fetchStudents", { page: 1, limit: 1 }); // ensure we get updated total
+    store.dispatch("fetchStudents", { page: 1, limit: 1 });
   });
 
   // Computed values
@@ -345,7 +387,7 @@
       : null;
   });
 
-  // Main navigation items
+  // Navigation items
   const mainNavigationItems = ref([
     {
       id: "dashboard",
@@ -358,7 +400,6 @@
     },
   ]);
 
-  // ✅ Academic items with dynamic student total
   const academicItems = computed(() => [
     {
       id: "students",
@@ -401,7 +442,16 @@
     },
   ]);
 
-  // System Items
+  const administrationItems = ref([
+    {
+      id: "reports",
+      label: "Reports",
+      icon: ClipboardCheck,
+      badge: "New",
+      route: "/working",
+    },
+  ]);
+
   const systemItems = ref([
     {
       id: "settings",
@@ -436,6 +486,14 @@
     isCollapsed.value = !isCollapsed.value;
   };
 
+  const toggleMobileSidebar = () => {
+    showMobileSidebar.value = !showMobileSidebar.value;
+  };
+
+  const closeMobileSidebar = () => {
+    showMobileSidebar.value = false;
+  };
+
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {
       weekday: "long",
@@ -445,8 +503,14 @@
     });
   };
 
-  const setActiveItem = (itemId) => {
+  const handleNavClick = (itemId) => {
     activeItem.value = itemId;
+
+    // Close mobile sidebar when navigating
+    if (isMobile.value) {
+      showMobileSidebar.value = false;
+    }
+
     if (itemId === "logout") {
       localStorage.clear();
       sessionStorage.clear();
@@ -455,21 +519,26 @@
     }
   };
 
-  // Responsive sidebar
-  const handleResize = () => {
-    if (window.innerWidth < 768) {
-      isCollapsed.value = true;
+  // Responsive handling
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth < 1024; // lg breakpoint
+
+    if (isMobile.value) {
+      isCollapsed.value = false; // Always expanded on mobile when shown
+      showMobileSidebar.value = false; // Hide by default on mobile
+    } else {
+      showMobileSidebar.value = false; // Reset mobile sidebar state
     }
   };
 
   // Lifecycle hooks
   onMounted(() => {
-    window.addEventListener("resize", handleResize);
-    handleResize();
+    window.addEventListener("resize", checkMobile);
+    checkMobile();
   });
 
   onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
+    window.removeEventListener("resize", checkMobile);
   });
 </script>
 
@@ -504,6 +573,23 @@
     outline-offset: 2px;
   }
 
+  /* Touch optimization */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Mobile-specific styles */
+  @media (max-width: 1023px) {
+    .sidebar-mobile {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+  }
+
   /* Badge pulse animation */
   @keyframes pulse {
     0%,
@@ -530,5 +616,10 @@
 
   .animate-ping {
     animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+
+  /* Prevent body scroll when mobile sidebar is open */
+  body.sidebar-open {
+    overflow: hidden;
   }
 </style>

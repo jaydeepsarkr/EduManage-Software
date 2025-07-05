@@ -117,36 +117,13 @@ export default createStore({
       { commit },
       { calendarId, apiKey, timeMin, timeMax }
     ) {
+      const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
       try {
-        // Set default time range: today to 7 days later
-        const now = new Date();
-        const defaultTimeMin = now.toISOString();
-        const defaultTimeMax = new Date(
-          now.setDate(now.getDate() + 7)
-        ).toISOString();
-
-        const params = new URLSearchParams({
-          key: apiKey,
-          timeMin: timeMin || defaultTimeMin,
-          timeMax: timeMax || defaultTimeMax,
-          singleEvents: "true",
-          orderBy: "startTime",
-        });
-
-        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
-          calendarId
-        )}/events?${params.toString()}`;
-
         const res = await fetch(url);
-        if (!res.ok) {
-          throw new Error(`HTTP error! Status: ${res.status}`);
-        }
-
         const data = await res.json();
         commit("setUpcomingEvents", data.items || []);
       } catch (err) {
-        console.error("❌ Error fetching calendar events:", err);
-        commit("setUpcomingEvents", []); // Optional: clear on error
+        console.error("Error fetching calendar events", err);
       }
     },
 
