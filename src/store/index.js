@@ -1,8 +1,8 @@
 import { createStore } from "vuex";
-import axios from "axios";
+import api from "@/utils/api";
 import jwt_decode from "jwt-decode";
-const baseURL =
-  process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
+// const baseURL =
+//   process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
 export default createStore({
   state: {
     students: [],
@@ -117,63 +117,79 @@ export default createStore({
       { commit },
       { calendarId, apiKey, timeMin, timeMax }
     ) {
-      const url = `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${apiKey}&timeMin=${timeMin}&timeMax=${timeMax}&singleEvents=true&orderBy=startTime`;
       try {
+        // Set default time range: today to 7 days later
+        const now = new Date();
+        const defaultTimeMin = now.toISOString();
+        const defaultTimeMax = new Date(
+          now.setDate(now.getDate() + 7)
+        ).toISOString();
+
+        const params = new URLSearchParams({
+          key: apiKey,
+          timeMin: timeMin || defaultTimeMin,
+          timeMax: timeMax || defaultTimeMax,
+          singleEvents: "true",
+          orderBy: "startTime",
+        });
+
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
+          calendarId
+        )}/events?${params.toString()}`;
+
         const res = await fetch(url);
+        if (!res.ok) {
+          throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
         const data = await res.json();
         commit("setUpcomingEvents", data.items || []);
       } catch (err) {
-        console.error("Error fetching calendar events", err);
+        console.error("❌ Error fetching calendar events:", err);
+        commit("setUpcomingEvents", []); // Optional: clear on error
       }
     },
 
     async fetchTotalStudentCount({ commit }) {
       try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(`${baseURL}/api/students`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await api.get("/api/students", {
           params: {
             page: 1,
-            limit: 1, // ✅ Only fetch 1 student to get total count
+            limit: 1, // ✅ Just to get pagination.total
           },
         });
 
         const total = res.data.pagination?.total || 0;
         commit("SET_TOTAL_STUDENT_COUNT", total);
       } catch (err) {
-        console.error("Failed to fetch total student count:", err);
+        console.error("❌ Failed to fetch total student count:", err);
+        commit("SET_TOTAL_STUDENT_COUNT", 0); // optional: reset on error
       }
     },
+
     async fetchUserById({ state, commit }, userId) {
-      // ✅ Return cached user if available
+      // ✅ Return from cache if available
       if (state.userCache[userId]) {
-        commit("SET_CURRENT_USER", state.userCache[userId]); // Optional: set current user
+        commit("SET_CURRENT_USER", state.userCache[userId]);
         return state.userCache[userId];
       }
 
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.get(`${baseURL}/api/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await api.get(`/api/users/${userId}`); // 👈 token auto-attached
         const user = res.data;
 
-        // ✅ Store in cache and current user
+        // ✅ Cache and set current user
         commit("SET_USER_CACHE", { userId, user });
         commit("SET_CURRENT_USER", user);
         return user;
       } catch (err) {
-        console.error("Failed to fetch user:", err);
+        console.error("❌ Failed to fetch user:", err);
         return null;
       }
     },
 
     async fetchStudents({ commit }, filters = {}) {
       try {
-        const token = localStorage.getItem("token");
         const {
           search = "",
           page = 1,
@@ -182,10 +198,7 @@ export default createStore({
           class: classFilter = "",
         } = filters;
 
-        const res = await axios.get(`${baseURL}/api/students`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await api.get("/api/students", {
           params: {
             search,
             page,
@@ -200,7 +213,8 @@ export default createStore({
           commit("SET_STUDENT_PAGINATION", res.data.pagination);
         }
       } catch (err) {
-        console.error("Failed to fetch students:", err);
+        console.error("❌ Failed to fetch students:", err);
+        commit("SET_STUDENTS", []); // Optional: reset students on error
       }
     },
 
@@ -234,20 +248,17 @@ export default createStore({
 
     async addStudent(_, studentData) {
       try {
-        const res = await axios.post(
-          `${baseURL}/api/auth/register`,
-          studentData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log("Student registered successfully:", res.data);
+        const res = await api.post("/api/auth/register", studentData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+
+        console.log("✅ Student registered successfully:", res.data);
         return res.data;
       } catch (err) {
         console.error(
-          "Failed to register student:",
+          "❌ Failed to register student:",
           err.response?.data || err.message
         );
         throw err;
@@ -256,40 +267,26 @@ export default createStore({
 
     async markAttendance(_, { studentId, status, subject = "", notes = "" }) {
       try {
-        const token = localStorage.getItem("token");
-        if (!token) throw new Error("Token not found");
+        const res = await api.post("/api/attendance/manual", {
+          studentId,
+          status,
+          subject,
+          notes,
+        });
 
-        const res = await axios.post(
-          `${baseURL}/api/attendance/manual`,
-          {
-            studentId,
-            status,
-            subject,
-            notes: notes || "",
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        // console.log("Attendance marked successfully:", res.data);
+        // console.log("✅ Attendance marked:", res.data);
         return res.data;
       } catch (err) {
         console.error(
-          "Failed to mark attendance:",
+          "❌ Failed to mark attendance:",
           err.response?.data || err.message
         );
         throw err;
       }
     },
-
     // ✅ Fetch Attendance History and attach names
     async fetchAttendanceHistory({ commit, dispatch }, filters = {}) {
       try {
-        const token = localStorage.getItem("token");
-
         const {
           studentId = "",
           startDate = "",
@@ -297,14 +294,11 @@ export default createStore({
           page = 1,
           limit = 20,
           self = false,
-          search = "", // ✅ Add search
-          class: classFilter = "", // ✅ Add class filter
+          search = "",
+          class: classFilter = "",
         } = filters;
 
-        const res = await axios.get(`${baseURL}/api/attendance/history`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const res = await api.get("/api/attendance/history", {
           params: {
             studentId,
             startDate,
@@ -312,15 +306,15 @@ export default createStore({
             page,
             limit,
             self: self ? "true" : "false",
-            search, // ✅ Pass search query
-            class: classFilter, // ✅ Pass class filter (as 'class')
+            search,
+            class: classFilter,
           },
         });
 
         const attendance = res.data.attendance || [];
         const pagination = res.data.pagination || {};
 
-        // 🔄 Enrich with user names
+        // 🔄 Enrich attendance with user names
         const enriched = await Promise.all(
           attendance.map(async (entry) => {
             if (entry.studentId && typeof entry.studentId === "string") {
@@ -338,7 +332,8 @@ export default createStore({
         commit("SET_ATTENDANCE_HISTORY", enriched);
         commit("SET_ATTENDANCE_PAGINATION", pagination);
       } catch (err) {
-        console.error("Failed to fetch attendance history:", err);
+        console.error("❌ Failed to fetch attendance history:", err);
+        commit("SET_ATTENDANCE_HISTORY", []); // Optional fallback
       }
     },
 
@@ -348,44 +343,28 @@ export default createStore({
       { classFilter = null, date = null } = {}
     ) {
       try {
-        const token = localStorage.getItem("token");
+        const params = {};
 
-        // ✅ Build query string
-        const params = new URLSearchParams();
-        if (classFilter !== null) params.append("class", classFilter);
+        if (classFilter !== null) params.class = classFilter;
 
         if (date) {
-          // ✅ Ensure date is in YYYY-MM-DD format
+          // Ensure date format is YYYY-MM-DD
           const formattedDate = new Date(date).toISOString().split("T")[0];
-          params.append("date", formattedDate);
+          params.date = formattedDate;
         }
 
-        const res = await axios.get(
-          `${baseURL}/api/attendance/stats?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await api.get("/api/attendance/stats", { params });
 
         commit("SET_ATTENDANCE_STATS", res.data || {});
       } catch (err) {
-        console.error("Failed to fetch attendance stats:", err);
+        console.error("❌ Failed to fetch attendance stats:", err);
+        commit("SET_ATTENDANCE_STATS", {}); // Optional: reset stats on error
       }
     },
+
     async fetchTodaysAttendancePercentage({ commit }) {
       try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(
-          `${baseURL}/api/attendance/percentage/today`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await api.get("/api/attendance/percentage/today");
 
         commit("SET_TODAYS_ATTENDANCE_PERCENTAGE", res.data);
       } catch (error) {
@@ -393,22 +372,19 @@ export default createStore({
           "❌ Failed to fetch today's attendance percentage:",
           error
         );
+        commit("SET_TODAYS_ATTENDANCE_PERCENTAGE", null); // Optional reset
       }
     },
+
     async editUserById(_, { userId, updates }) {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.put(`${baseURL}/api/users/${userId}`, updates, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.put(`/api/users/${userId}`, updates);
 
-        console.log("User updated successfully:", res.data);
-        return res.data; // returns updated user
+        console.log("✅ User updated successfully:", res.data);
+        return res.data; // Returns updated user
       } catch (err) {
         console.error(
-          "Failed to update user:",
+          "❌ Failed to update user:",
           err.response?.data || err.message
         );
         throw err;
@@ -417,18 +393,13 @@ export default createStore({
 
     async deleteUserById(_, userId) {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.delete(`${baseURL}/api/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await api.delete(`/api/users/${userId}`);
 
-        console.log("User deleted successfully:", res.data);
+        console.log("✅ User deleted successfully:", res.data);
         return res.data; // Contains { message, user }
       } catch (err) {
         console.error(
-          "Failed to delete user:",
+          "❌ Failed to delete user:",
           err.response?.data || err.message
         );
         throw err;
@@ -437,22 +408,13 @@ export default createStore({
 
     async promoteStudentsByIds(_, studentIds) {
       try {
-        const token = localStorage.getItem("token");
-        const res = await axios.post(
-          `${baseURL}/api/users/promote`,
-          { studentIds }, // send array of IDs instead of class
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await api.post("/api/users/promote", { studentIds });
 
-        console.log("Students promoted successfully:", res.data);
+        console.log("✅ Students promoted successfully:", res.data);
         return res.data;
       } catch (err) {
         console.error(
-          "Failed to promote students:",
+          "❌ Failed to promote students:",
           err.response?.data || err.message
         );
         throw err;
