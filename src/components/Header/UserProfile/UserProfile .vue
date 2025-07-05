@@ -146,14 +146,21 @@
   };
 
   // Base URL for accessing image
-  const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+  // const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
 
   // Getters
   const userName = computed(() => store.getters.getUserName);
   const userRole = computed(() => store.getters.getUserRole);
   const userPhoto = computed(() => {
     const path = store.getters.getUserPhoto;
-    return path ? `${baseURL}/${path}` : null;
+    const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+
+    if (!path) return null;
+
+    // Check if the path is already an absolute URL
+    return path.startsWith("http")
+      ? path
+      : `${baseURL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
   });
 
   onMounted(() => {
