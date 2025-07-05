@@ -2,36 +2,38 @@
   <!-- Loading Overlay - Mobile Optimized -->
   <div
     v-if="isInitialLoading"
-    class="fixed inset-0 bg-white z-50 flex items-center justify-center p-4"
+    class="fixed inset-0 bg-white z-50 flex items-center justify-center p-3 sm:p-4"
   >
-    <div class="text-center max-w-sm mx-auto">
-      <div class="relative mb-4 sm:mb-6">
+    <div class="text-center max-w-xs sm:max-w-sm mx-auto">
+      <div class="relative mb-3 sm:mb-4 md:mb-6">
         <!-- Main Spinner -->
         <div
-          class="w-16 h-16 sm:w-20 sm:h-20 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"
+          class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 border-3 sm:border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto"
         ></div>
         <!-- Inner Spinner -->
         <div
-          class="absolute inset-0 w-16 h-16 sm:w-20 sm:h-20 border-4 border-transparent border-r-blue-400 rounded-full animate-spin mx-auto"
+          class="absolute inset-0 w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 border-3 sm:border-4 border-transparent border-r-blue-400 rounded-full animate-spin mx-auto"
           style="animation-direction: reverse; animation-duration: 1.5s"
         ></div>
       </div>
-      <div class="space-y-2">
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-800">
+      <div class="space-y-1 sm:space-y-2">
+        <h3 class="text-base sm:text-lg md:text-xl font-semibold text-gray-800">
           {{ loadingMessage }}
         </h3>
-        <p class="text-xs sm:text-sm text-gray-600">
+        <p class="text-xs sm:text-sm text-gray-600 px-2">
           Please wait while we load student data...
         </p>
         <!-- Loading Progress Dots -->
-        <div class="flex justify-center space-x-1 mt-4">
-          <div class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"></div>
+        <div class="flex justify-center space-x-1 mt-3 sm:mt-4">
           <div
-            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
+            class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-pulse"
+          ></div>
+          <div
+            class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-pulse"
             style="animation-delay: 0.1s"
           ></div>
           <div
-            class="w-2 h-2 bg-blue-600 rounded-full animate-pulse"
+            class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-blue-600 rounded-full animate-pulse"
             style="animation-delay: 0.2s"
           ></div>
         </div>
@@ -41,28 +43,28 @@
 
   <div class="min-h-screen bg-gray-50">
     <div
-      class="max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 lg:py-8"
+      class="max-w-none xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto px-2 sm:px-3 md:px-4 lg:px-6 py-3 sm:py-4 md:py-6 lg:py-8"
     >
       <!-- Global Success/Error Toast -->
       <div
         v-if="globalMessage.show"
         :class="[
-          'fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg border max-w-sm animate-slide-in',
+          'fixed top-2 left-2 right-2 sm:top-4 sm:left-auto sm:right-4 sm:max-w-sm z-50 p-3 sm:p-4 rounded-lg shadow-lg border animate-slide-in',
           globalMessage.type === 'success'
             ? 'bg-green-50 border-green-200 text-green-800'
             : 'bg-red-50 border-red-200 text-red-800',
         ]"
       >
-        <div class="flex items-start gap-3">
+        <div class="flex items-start gap-2 sm:gap-3">
           <div
             :class="[
-              'p-1 rounded-full',
+              'p-1 rounded-full flex-shrink-0',
               globalMessage.type === 'success' ? 'bg-green-100' : 'bg-red-100',
             ]"
           >
             <svg
               v-if="globalMessage.type === 'success'"
-              class="w-4 h-4 text-green-600"
+              class="w-3 h-3 sm:w-4 sm:h-4 text-green-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -76,7 +78,7 @@
             </svg>
             <svg
               v-else
-              class="w-4 h-4 text-red-600"
+              class="w-3 h-3 sm:w-4 sm:h-4 text-red-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -89,10 +91,10 @@
               ></path>
             </svg>
           </div>
-          <div class="flex-1">
+          <div class="flex-1 min-w-0">
             <h4
               :class="[
-                'text-sm font-semibold',
+                'text-xs sm:text-sm font-semibold',
                 globalMessage.type === 'success'
                   ? 'text-green-800'
                   : 'text-red-800',
@@ -102,7 +104,7 @@
             </h4>
             <p
               :class="[
-                'text-sm mt-1',
+                'text-xs sm:text-sm mt-0.5 sm:mt-1 break-words',
                 globalMessage.type === 'success'
                   ? 'text-green-700'
                   : 'text-red-700',
@@ -114,14 +116,14 @@
           <button
             @click="hideGlobalMessage"
             :class="[
-              'p-1 transition-colors',
+              'p-1 transition-colors flex-shrink-0',
               globalMessage.type === 'success'
                 ? 'text-green-400 hover:text-green-600'
                 : 'text-red-400 hover:text-red-600',
             ]"
           >
             <svg
-              class="w-4 h-4"
+              class="w-3 h-3 sm:w-4 sm:h-4"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -139,11 +141,11 @@
 
       <!-- Enhanced Stats Cards - Mobile Responsive Grid -->
       <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8"
+        class="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4 lg:gap-6 mb-4 sm:mb-6 md:mb-8"
       >
         <!-- Total Students -->
         <div
-          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
@@ -151,18 +153,20 @@
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
+              class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
-          <div class="flex items-center justify-between">
-            <div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0"
+          >
+            <div class="flex-1">
               <p
-                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                class="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Total Students
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-gray-800 mt-1 sm:mt-2"
+                class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-gray-800 mt-0.5 sm:mt-1 md:mt-2"
               >
                 <template v-if="!isStatsLoading">{{
                   students.length
@@ -171,16 +175,18 @@
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-blue-600 rounded-lg border border-blue-600"
+              class="p-2 sm:p-3 md:p-4 bg-blue-600 rounded-lg border border-blue-600 self-end sm:self-auto"
             >
-              <Users class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+              <Users
+                class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-7 lg:h-7 text-white"
+              />
             </div>
           </div>
         </div>
 
         <!-- Active Students -->
         <div
-          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
@@ -188,34 +194,38 @@
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"
+              class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"
             ></div>
           </div>
-          <div class="flex items-center justify-between">
-            <div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0"
+          >
+            <div class="flex-1">
               <p
-                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                class="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Active
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-green-600 mt-1 sm:mt-2"
+                class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-green-600 mt-0.5 sm:mt-1 md:mt-2"
               >
                 <template v-if="!isStatsLoading">{{ activeStudents }}</template>
                 <template v-else>--</template>
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-green-600 rounded-lg border border-green-600"
+              class="p-2 sm:p-3 md:p-4 bg-green-600 rounded-lg border border-green-600 self-end sm:self-auto"
             >
-              <UserCheck class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+              <UserCheck
+                class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-7 lg:h-7 text-white"
+              />
             </div>
           </div>
         </div>
 
         <!-- Graduated Students -->
         <div
-          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
@@ -223,18 +233,20 @@
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
+              class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
             ></div>
           </div>
-          <div class="flex items-center justify-between">
-            <div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0"
+          >
+            <div class="flex-1">
               <p
-                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                class="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Graduated
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-blue-600 mt-1 sm:mt-2"
+                class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-blue-600 mt-0.5 sm:mt-1 md:mt-2"
               >
                 <template v-if="!isStatsLoading">{{
                   graduatedStudents
@@ -243,16 +255,18 @@
               </p>
             </div>
             <div
-              class="p-3 sm:p-4 bg-blue-600 rounded-lg border border-blue-600"
+              class="p-2 sm:p-3 md:p-4 bg-blue-600 rounded-lg border border-blue-600 self-end sm:self-auto"
             >
-              <GraduationCap class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+              <GraduationCap
+                class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-7 lg:h-7 text-white"
+              />
             </div>
           </div>
         </div>
 
         <!-- Inactive Students -->
         <div
-          class="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 relative overflow-hidden"
+          class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 md:p-6 relative overflow-hidden"
         >
           <!-- Stats Loading Overlay -->
           <div
@@ -260,18 +274,20 @@
             class="absolute inset-0 bg-white bg-opacity-80 flex items-center justify-center"
           >
             <div
-              class="w-5 h-5 sm:w-6 sm:h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"
+              class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 border-2 border-red-200 border-t-red-600 rounded-full animate-spin"
             ></div>
           </div>
-          <div class="flex items-center justify-between">
-            <div>
+          <div
+            class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0"
+          >
+            <div class="flex-1">
               <p
-                class="text-xs sm:text-sm font-semibold text-gray-500 uppercase tracking-wide"
+                class="text-[10px] sm:text-xs md:text-sm font-semibold text-gray-500 uppercase tracking-wide"
               >
                 Inactive
               </p>
               <p
-                class="text-2xl sm:text-3xl font-bold text-red-600 mt-1 sm:mt-2"
+                class="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold text-red-600 mt-0.5 sm:mt-1 md:mt-2"
               >
                 <template v-if="!isStatsLoading">{{
                   inactiveStudents
@@ -279,8 +295,12 @@
                 <template v-else>--</template>
               </p>
             </div>
-            <div class="p-3 sm:p-4 bg-red-600 rounded-lg border border-red-600">
-              <UserX class="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+            <div
+              class="p-2 sm:p-3 md:p-4 bg-red-600 rounded-lg border border-red-600 self-end sm:self-auto"
+            >
+              <UserX
+                class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-7 lg:h-7 text-white"
+              />
             </div>
           </div>
         </div>
@@ -296,16 +316,16 @@
       <!-- Bulk Actions Bar -->
       <div
         v-if="selectedStudents.length > 0"
-        class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6 animate-slide-down"
+        class="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4 md:mb-6 animate-slide-down"
       >
-        <div
-          class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-        >
-          <div class="flex items-center gap-3">
-            <div class="p-2 bg-blue-600 rounded-lg">
-              <CheckSquare class="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+        <div class="flex flex-col gap-3 sm:gap-4">
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="p-1.5 sm:p-2 bg-blue-600 rounded-lg flex-shrink-0">
+              <CheckSquare
+                class="w-3 h-3 sm:w-4 sm:h-4 md:w-5 md:h-5 text-white"
+              />
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
               <p class="text-sm sm:text-base font-semibold text-blue-900">
                 {{ selectedStudents.length }} student{{
                   selectedStudents.length > 1 ? "s" : ""
@@ -317,25 +337,28 @@
               </p>
             </div>
           </div>
-          <div class="flex items-center gap-2">
+          <div
+            class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3"
+          >
             <button
               @click="clearSelection"
-              class="px-3 py-2 text-xs sm:text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-300"
+              class="px-3 py-2 text-xs sm:text-sm font-medium text-blue-700 hover:text-blue-900 hover:bg-blue-100 rounded-lg transition-all duration-200 border border-blue-300 min-h-[40px] sm:min-h-[36px]"
             >
               Clear Selection
             </button>
             <button
               @click="promoteSelectedStudents"
               :disabled="isLoading"
-              class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
+              class="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 min-h-[40px] sm:min-h-[36px]"
             >
               <TrendingUp class="w-3 h-3 sm:w-4 sm:h-4" />
-              Promote to Higher Class
+              <span class="hidden xs:inline">Promote to Higher Class</span>
+              <span class="xs:hidden">Promote</span>
             </button>
             <button
               @click="deleteSelectedStudents"
               :disabled="isLoading || isDeleting"
-              class="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
+              class="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600 min-h-[40px] sm:min-h-[36px]"
             >
               <div
                 v-if="isDeleting"
@@ -345,7 +368,12 @@
                 v-else
                 class="w-3 h-3 sm:w-4 sm:h-4"
               />
-              {{ isDeleting ? "Deleting..." : "Delete Selected" }}
+              <span class="hidden xs:inline">{{
+                isDeleting ? "Deleting..." : "Delete Selected"
+              }}</span>
+              <span class="xs:hidden">{{
+                isDeleting ? "Deleting..." : "Delete"
+              }}</span>
             </button>
           </div>
         </div>
@@ -362,7 +390,7 @@
         >
           <div class="text-center">
             <div
-              class="w-6 h-6 sm:w-8 sm:h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
+              class="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 border-3 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
             ></div>
             <p class="text-xs sm:text-sm text-gray-600">
               {{ tableLoadingMessage }}
@@ -372,19 +400,21 @@
 
         <!-- Table Header -->
         <div
-          class="bg-gray-800 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200"
+          class="bg-gray-800 px-3 sm:px-4 md:px-6 py-3 sm:py-4 border-b border-gray-200"
         >
           <div class="flex items-center justify-between">
-            <div>
-              <h3 class="text-lg sm:text-xl font-bold text-white">
+            <div class="flex-1 min-w-0">
+              <h3
+                class="text-base sm:text-lg md:text-xl font-bold text-white truncate"
+              >
                 Student Directory
               </h3>
-              <p class="text-gray-300 text-xs sm:text-sm mt-1">
+              <p class="text-gray-300 text-xs sm:text-sm mt-0.5 sm:mt-1">
                 Manage and view all student information
               </p>
             </div>
             <!-- Select All Checkbox (Desktop only) -->
-            <div class="hidden md:flex items-center gap-2">
+            <div class="hidden md:flex items-center gap-2 flex-shrink-0">
               <input
                 type="checkbox"
                 :checked="isAllSelected"
@@ -392,7 +422,9 @@
                 :disabled="isLoading || students.length === 0"
                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
               />
-              <span class="text-sm text-gray-300">Select All</span>
+              <span class="text-sm text-gray-300 whitespace-nowrap"
+                >Select All</span
+              >
             </div>
           </div>
         </div>
@@ -400,8 +432,8 @@
         <!-- Mobile View - Cards (< 768px) -->
         <div class="block md:hidden">
           <!-- Mobile Select All -->
-          <div class="p-4 border-b border-gray-200 bg-gray-50">
-            <label class="flex items-center gap-3 cursor-pointer">
+          <div class="p-3 sm:p-4 border-b border-gray-200 bg-gray-50">
+            <label class="flex items-center gap-2 sm:gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 :checked="isAllSelected"
@@ -418,31 +450,41 @@
           <!-- Mobile Skeleton Loading -->
           <div
             v-if="isTableLoading"
-            class="p-4 space-y-4"
+            class="p-3 sm:p-4 space-y-3 sm:space-y-4"
           >
             <div
               v-for="i in 5"
               :key="i"
-              class="bg-white border border-gray-200 rounded-lg p-4 space-y-3"
+              class="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 space-y-3"
             >
               <div class="flex items-center justify-between">
-                <div class="h-4 bg-gray-200 rounded w-20 animate-pulse"></div>
                 <div
-                  class="h-6 bg-gray-200 rounded-full w-16 animate-pulse"
+                  class="h-3 sm:h-4 bg-gray-200 rounded w-16 sm:w-20 animate-pulse"
+                ></div>
+                <div
+                  class="h-5 sm:h-6 bg-gray-200 rounded-full w-12 sm:w-16 animate-pulse"
                 ></div>
               </div>
-              <div class="flex items-center space-x-3">
+              <div class="flex items-center space-x-2 sm:space-x-3">
                 <div
-                  class="h-12 w-12 bg-gray-200 rounded-full animate-pulse"
+                  class="h-10 w-10 sm:h-12 sm:w-12 bg-gray-200 rounded-full animate-pulse flex-shrink-0"
                 ></div>
-                <div class="space-y-2 flex-1">
-                  <div class="h-4 bg-gray-200 rounded w-32 animate-pulse"></div>
-                  <div class="h-3 bg-gray-200 rounded w-24 animate-pulse"></div>
+                <div class="space-y-2 flex-1 min-w-0">
+                  <div
+                    class="h-3 sm:h-4 bg-gray-200 rounded w-24 sm:w-32 animate-pulse"
+                  ></div>
+                  <div
+                    class="h-2 sm:h-3 bg-gray-200 rounded w-20 sm:w-24 animate-pulse"
+                  ></div>
                 </div>
               </div>
               <div class="flex justify-between">
-                <div class="h-4 bg-gray-200 rounded w-24 animate-pulse"></div>
-                <div class="h-4 bg-gray-200 rounded w-16 animate-pulse"></div>
+                <div
+                  class="h-3 sm:h-4 bg-gray-200 rounded w-20 sm:w-24 animate-pulse"
+                ></div>
+                <div
+                  class="h-3 sm:h-4 bg-gray-200 rounded w-12 sm:w-16 animate-pulse"
+                ></div>
               </div>
             </div>
           </div>
@@ -450,12 +492,12 @@
           <!-- Mobile Cards -->
           <div
             v-else
-            class="p-4 space-y-4"
+            class="p-3 sm:p-4 space-y-3 sm:space-y-4"
           >
             <div
               v-for="student in students"
               :key="student.id"
-              class="bg-white border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-all duration-200"
+              class="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-50 transition-all duration-200 touch-manipulation"
               :class="{
                 'ring-2 ring-blue-500 bg-blue-50': isStudentSelected(
                   student._id
@@ -463,8 +505,10 @@
               }"
             >
               <!-- Selection Checkbox -->
-              <div class="flex items-center justify-between mb-3">
-                <label class="flex items-center gap-2 cursor-pointer">
+              <div class="flex items-center justify-between mb-2 sm:mb-3">
+                <label
+                  class="flex items-center gap-2 cursor-pointer touch-manipulation"
+                >
                   <input
                     type="checkbox"
                     :checked="isStudentSelected(student._id)"
@@ -472,59 +516,71 @@
                     :disabled="isLoading"
                     class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
-                  <span class="text-sm font-bold text-gray-800">{{
+                  <span class="text-xs sm:text-sm font-bold text-gray-800">{{
                     student.rollNumber
                   }}</span>
                 </label>
                 <span
                   :class="getStatusClass(student.status)"
-                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full border"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-bold rounded-full border"
                 >
-                  <FileChartLine class="w-3 h-3" />
+                  <FileChartLine class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                   {{ student.status }}
                 </span>
               </div>
 
               <!-- Student Info -->
-              <div class="flex items-center gap-3 mb-3">
+              <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
                 <div class="flex-shrink-0">
                   <div
-                    class="h-6 w-6 sm:h-12 sm:w-12 rounded-full bg-blue-600 flex items-center justify-center border border-blue-600"
+                    class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full bg-blue-600 flex items-center justify-center border border-blue-600"
                   >
-                    <span class="text-[10px] sm:text-sm font-bold text-white">
+                    <span
+                      class="text-[10px] sm:text-xs md:text-sm font-bold text-white"
+                    >
                       {{ getInitials(student.name) }}
                     </span>
                   </div>
                 </div>
                 <div class="flex-1 min-w-0">
-                  <div class="text-sm font-bold text-gray-800 truncate">
+                  <div
+                    class="text-sm sm:text-base font-bold text-gray-800 truncate"
+                  >
                     {{ student.name }}
                   </div>
                   <div
-                    class="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1 mt-1"
+                    class="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1 mt-0.5 sm:mt-1"
                   >
-                    <Mail class="w-3 h-3 flex-shrink-0" />
+                    <Mail class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
                     <span class="truncate">{{ student.email }}</span>
                   </div>
                 </div>
               </div>
 
               <!-- Contact & Academic Info -->
-              <div class="grid grid-cols-2 gap-3 mb-3">
-                <div class="space-y-2">
-                  <div class="flex items-center gap-2 text-xs text-gray-700">
+              <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div class="space-y-1.5 sm:space-y-2">
+                  <div
+                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-700"
+                  >
                     <div
-                      class="p-1 bg-green-100 rounded border border-green-200"
+                      class="p-0.5 sm:p-1 bg-green-100 rounded border border-green-200 flex-shrink-0"
                     >
-                      <Phone class="w-3 h-3 text-green-600" />
+                      <Phone class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
                     </div>
                     <span class="font-medium truncate">{{
                       student.phone
                     }}</span>
                   </div>
-                  <div class="flex items-center gap-2 text-xs text-gray-500">
-                    <div class="p-1 bg-blue-100 rounded border border-blue-200">
-                      <MapPinHouse class="w-3 h-3 text-blue-600" />
+                  <div
+                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-500"
+                  >
+                    <div
+                      class="p-0.5 sm:p-1 bg-blue-100 rounded border border-blue-200 flex-shrink-0"
+                    >
+                      <MapPinHouse
+                        class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600"
+                      />
                     </div>
                     <span
                       class="truncate"
@@ -540,24 +596,29 @@
                     </span>
                   </div>
                 </div>
-                <div class="space-y-2">
-                  <div class="flex items-center gap-2">
+                <div class="space-y-1.5 sm:space-y-2">
+                  <div class="flex items-center gap-1.5 sm:gap-2">
                     <div
-                      class="p-2 bg-green-600 rounded-lg border border-green-600"
+                      class="p-1 sm:p-2 bg-green-600 rounded-lg border border-green-600 flex-shrink-0"
                     >
-                      <School class="w-3 h-3 text-white" />
+                      <School class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
                     </div>
-                    <span class="text-sm font-semibold text-gray-800">{{
-                      student.class
-                    }}</span>
+                    <span
+                      class="text-xs sm:text-sm font-semibold text-gray-800 truncate"
+                      >{{ student.class }}</span
+                    >
                   </div>
                   <div
-                    class="flex items-center gap-2 text-[8px] sm:text-xs text-gray-600"
+                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600"
                   >
-                    <div class="p-1 bg-blue-100 rounded border border-blue-200">
-                      <Calendar class="w-3 h-3 text-blue-600" />
+                    <div
+                      class="p-0.5 sm:p-1 bg-blue-100 rounded border border-blue-200 flex-shrink-0"
+                    >
+                      <Calendar
+                        class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600"
+                      />
                     </div>
-                    <span class="font-medium">
+                    <span class="font-medium truncate">
                       {{ formatDate(student.enrollmentDate) }}
                     </span>
                   </div>
@@ -566,16 +627,16 @@
 
               <!-- Actions -->
               <div
-                class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100"
+                class="flex items-center justify-end gap-1.5 sm:gap-2 pt-2 sm:pt-3 border-t border-gray-100"
               >
                 <button
                   @click="viewStudentDetails(student)"
                   :disabled="isLoading"
-                  class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600"
+                  class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600 touch-manipulation"
                   title="View Details"
                 >
                   <svg
-                    class="w-4 h-4"
+                    class="w-3 h-3 sm:w-4 sm:h-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -597,24 +658,24 @@
                 <button
                   @click="editStudent(student)"
                   :disabled="isLoading"
-                  class="p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
+                  class="p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 touch-manipulation"
                   title="Edit"
                 >
-                  <Pencil class="w-4 h-4" />
+                  <Pencil class="w-3 h-3 sm:w-4 sm:h-4" />
                 </button>
                 <button
                   @click="deleteStudent(student._id, student.name)"
                   :disabled="isLoading || isDeleting"
-                  class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600"
+                  class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600 touch-manipulation"
                   title="Delete"
                 >
                   <div
                     v-if="isDeleting && deletingStudentId === student._id"
-                    class="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
+                    class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
                   ></div>
                   <Trash2
                     v-else
-                    class="w-4 h-4"
+                    class="w-3 h-3 sm:w-4 sm:h-4"
                   />
                 </button>
               </div>
@@ -623,17 +684,17 @@
             <!-- Mobile Empty State -->
             <div
               v-if="!isTableLoading && students.length === 0"
-              class="text-center py-12"
+              class="text-center py-8 sm:py-12"
             >
               <div
-                class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 border border-blue-200"
+                class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-blue-200"
               >
-                <Users class="w-8 h-8 text-blue-500" />
+                <Users class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
               </div>
-              <h3 class="text-lg font-bold text-gray-900 mb-2">
+              <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2">
                 No students found
               </h3>
-              <p class="text-sm text-gray-600">
+              <p class="text-sm text-gray-600 px-4">
                 Try adjusting your search criteria or add new students.
               </p>
             </div>
@@ -645,7 +706,7 @@
           <!-- Desktop Skeleton Loading -->
           <div
             v-if="isTableLoading"
-            class="p-6"
+            class="p-4 lg:p-6"
           >
             <div class="space-y-4">
               <div
@@ -999,15 +1060,15 @@
       <!-- Enhanced Edit Student Modal - Mobile Responsive -->
       <div
         v-if="showEditModal"
-        class="fixed z-[9999] inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4"
+        class="fixed z-[9999] inset-0 bg-black bg-opacity-60 flex items-end sm:items-center justify-center p-0 sm:p-4"
       >
         <div
-          class="bg-white w-full max-w-4xl max-h-[90vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
+          class="bg-white w-full sm:max-w-4xl max-h-screen sm:max-h-[95vh] sm:rounded-lg border-0 sm:border border-gray-200 relative animate-fade-in flex flex-col"
         >
           <!-- Modal Loading Overlay -->
           <div
             v-if="isSaving"
-            class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center rounded-lg"
+            class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center sm:rounded-lg"
           >
             <div class="text-center">
               <div
@@ -1018,27 +1079,31 @@
           </div>
 
           <!-- Fixed Header -->
-          <div class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-b border-gray-200">
+          <div
+            class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-b border-gray-200 bg-white"
+          >
             <!-- Close Button -->
             <button
               @click="closeModal"
               :disabled="isSaving"
-              class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              class="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation z-10"
               title="Close"
             >
-              <X class="w-4 h-4 sm:w-5 sm:h-5" />
+              <X class="w-5 h-5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
             </button>
 
             <!-- Header -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 sm:gap-3 pr-10 sm:pr-12">
               <div
-                class="p-2 sm:p-3 bg-green-600 rounded-lg border border-green-600"
+                class="p-2 sm:p-3 bg-green-600 rounded-lg border border-green-600 flex-shrink-0"
               >
-                <Pencil class="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+                <Pencil
+                  class="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6 text-white"
+                />
               </div>
-              <div>
+              <div class="flex-1 min-w-0">
                 <h2
-                  class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800"
+                  class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 truncate"
                 >
                   Edit Student
                 </h2>
@@ -1054,11 +1119,11 @@
             <!-- Error Message -->
             <div
               v-if="saveError"
-              class="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3"
+              class="mb-3 sm:mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 sm:gap-3"
             >
-              <div class="p-1 bg-red-100 rounded-full">
+              <div class="p-1 bg-red-100 rounded-full flex-shrink-0">
                 <svg
-                  class="w-4 h-4 text-red-600"
+                  class="w-3 h-3 sm:w-4 sm:h-4 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1071,16 +1136,18 @@
                   ></path>
                 </svg>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-0">
                 <h4 class="text-sm font-semibold text-red-800">Error</h4>
-                <p class="text-sm text-red-700 mt-1">{{ saveError }}</p>
+                <p class="text-sm text-red-700 mt-1 break-words">
+                  {{ saveError }}
+                </p>
               </div>
               <button
                 @click="saveError = ''"
-                class="p-1 text-red-400 hover:text-red-600 transition-colors"
+                class="p-1 text-red-400 hover:text-red-600 transition-colors flex-shrink-0 touch-manipulation"
               >
                 <svg
-                  class="w-4 h-4"
+                  class="w-3 h-3 sm:w-4 sm:h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1098,11 +1165,11 @@
             <!-- Success Message -->
             <div
               v-if="saveSuccess"
-              class="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-3"
+              class="mb-3 sm:mb-4 p-3 bg-green-50 border border-green-200 rounded-lg flex items-start gap-2 sm:gap-3"
             >
-              <div class="p-1 bg-green-100 rounded-full">
+              <div class="p-1 bg-green-100 rounded-full flex-shrink-0">
                 <svg
-                  class="w-4 h-4 text-green-600"
+                  class="w-3 h-3 sm:w-4 sm:h-4 text-green-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -1115,21 +1182,23 @@
                   ></path>
                 </svg>
               </div>
-              <div class="flex-1">
+              <div class="flex-1 min-w-0">
                 <h4 class="text-sm font-semibold text-green-800">Success</h4>
-                <p class="text-sm text-green-700 mt-1">{{ saveSuccess }}</p>
+                <p class="text-sm text-green-700 mt-1 break-words">
+                  {{ saveSuccess }}
+                </p>
               </div>
             </div>
 
             <!-- Form Sections -->
-            <div class="space-y-8">
+            <div class="space-y-6 sm:space-y-8">
               <!-- Basic Information Section -->
-              <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+              <div class="bg-gray-50 rounded-lg p-3 sm:p-4 md:p-6">
                 <h3
-                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                  class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2"
                 >
                   <svg
-                    class="w-5 h-5 text-blue-600"
+                    class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1141,8 +1210,9 @@
                       d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                     ></path>
                   </svg>
-                  Basic Information
+                  <span>Basic Information</span>
                 </h3>
+
                 <div
                   class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
                 >
@@ -1156,7 +1226,7 @@
                       v-model="editingStudent.name"
                       :disabled="isSaving"
                       :class="[
-                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation',
                         saveError && !editingStudent.name?.trim()
                           ? 'border-red-300 bg-red-50'
                           : 'border-gray-200',
@@ -1175,7 +1245,7 @@
                       v-model="editingStudent.rollNumber"
                       :disabled="isSaving"
                       :class="[
-                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation',
                         saveError && !editingStudent.rollNumber?.trim()
                           ? 'border-red-300 bg-red-50'
                           : 'border-gray-200',
@@ -1195,7 +1265,7 @@
                       type="email"
                       :disabled="isSaving"
                       :class="[
-                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed',
+                        'w-full rounded-lg border-2 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation',
                         saveError &&
                         (!editingStudent.email?.trim() ||
                           !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
@@ -1217,7 +1287,7 @@
                     <input
                       v-model="editingStudent.phone"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                       placeholder="Enter phone number"
                     />
                   </div>
@@ -1231,7 +1301,7 @@
                     <input
                       v-model="editingStudent.class"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                       placeholder="Enter class"
                     />
                   </div>
@@ -1245,7 +1315,7 @@
                     <select
                       v-model="editingStudent.status"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium bg-white text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     >
                       <option value="active">Active</option>
                       <option value="leaved">Leaved</option>
@@ -1263,7 +1333,7 @@
                       v-model="editingStudent.enrollmentDate"
                       type="date"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                   </div>
 
@@ -1277,7 +1347,7 @@
                       v-model="editingStudent.address"
                       rows="3"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-green-100 focus:border-green-500 focus:outline-none transition-all duration-200 font-medium resize-none text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                       placeholder="Enter full address"
                     ></textarea>
                   </div>
@@ -1285,12 +1355,12 @@
               </div>
 
               <!-- Photo Section -->
-              <div class="bg-blue-50 rounded-lg p-4 sm:p-6">
+              <div class="bg-blue-50 rounded-lg p-3 sm:p-4 md:p-6">
                 <h3
-                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                  class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2"
                 >
                   <svg
-                    class="w-5 h-5 text-blue-600"
+                    class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1302,27 +1372,28 @@
                       d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                     ></path>
                   </svg>
-                  Student Photo
+                  <span>Student Photo</span>
                 </h3>
-                <div class="space-y-4">
+
+                <div class="space-y-3 sm:space-y-4">
                   <!-- Current Photo Display -->
                   <div
                     v-if="editingStudent.photo"
-                    class="flex items-center gap-4"
+                    class="flex items-center gap-3 sm:gap-4"
                   >
                     <img
                       :src="editingStudent.photo"
                       alt="Student Photo"
-                      class="w-16 h-16 rounded-lg object-cover border border-gray-300"
+                      class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover border border-gray-300 flex-shrink-0"
                     />
-                    <div>
+                    <div class="flex-1 min-w-0">
                       <p class="text-sm font-medium text-gray-700">
                         Current Photo
                       </p>
                       <button
                         @click="editingStudent.photo = ''"
                         :disabled="isSaving"
-                        class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50"
+                        class="text-xs text-red-600 hover:text-red-800 disabled:opacity-50 touch-manipulation"
                       >
                         Remove Photo
                       </button>
@@ -1341,7 +1412,7 @@
                       accept="image/*"
                       @change="handlePhotoUpload"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-blue-100 focus:border-blue-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                     <p class="text-xs text-gray-500">
                       Supported formats: JPG, PNG, GIF (Max: 5MB)
@@ -1351,12 +1422,12 @@
               </div>
 
               <!-- Documents Section -->
-              <div class="bg-yellow-50 rounded-lg p-4 sm:p-6">
+              <div class="bg-yellow-50 rounded-lg p-3 sm:p-4 md:p-6">
                 <h3
-                  class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                  class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2"
                 >
                   <svg
-                    class="w-5 h-5 text-yellow-600"
+                    class="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600 flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -1368,9 +1439,12 @@
                       d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                     ></path>
                   </svg>
-                  Documents
+                  <span>Documents</span>
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 md:gap-6"
+                >
                   <!-- Aadhaar Card -->
                   <div class="space-y-2">
                     <label
@@ -1386,7 +1460,7 @@
                         class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
                       >
                         <svg
-                          class="w-4 h-4 text-green-600"
+                          class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1398,16 +1472,16 @@
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           ></path>
                         </svg>
-                        <span class="text-sm text-green-700"
+                        <span class="text-xs sm:text-sm text-green-700 flex-1"
                           >Document uploaded</span
                         >
                         <button
                           @click="editingStudent.aadhaarCard = ''"
                           :disabled="isSaving"
-                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                          class="text-red-600 hover:text-red-800 disabled:opacity-50 flex-shrink-0 touch-manipulation"
                         >
                           <svg
-                            class="w-4 h-4"
+                            class="w-3 h-3 sm:w-4 sm:h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1427,7 +1501,7 @@
                       accept=".pdf,.jpg,.jpeg,.png"
                       @change="handleDocumentUpload($event, 'aadhaarCard')"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                   </div>
 
@@ -1446,7 +1520,7 @@
                         class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
                       >
                         <svg
-                          class="w-4 h-4 text-green-600"
+                          class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1458,16 +1532,16 @@
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           ></path>
                         </svg>
-                        <span class="text-sm text-green-700"
+                        <span class="text-xs sm:text-sm text-green-700 flex-1"
                           >Document uploaded</span
                         >
                         <button
                           @click="editingStudent.birthCertificate = ''"
                           :disabled="isSaving"
-                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                          class="text-red-600 hover:text-red-800 disabled:opacity-50 flex-shrink-0 touch-manipulation"
                         >
                           <svg
-                            class="w-4 h-4"
+                            class="w-3 h-3 sm:w-4 sm:h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1487,7 +1561,7 @@
                       accept=".pdf,.jpg,.jpeg,.png"
                       @change="handleDocumentUpload($event, 'birthCertificate')"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                   </div>
 
@@ -1499,7 +1573,6 @@
                       Transfer Certificate
                       <span class="text-gray-500 font-normal">(optional)</span>
                     </label>
-
                     <div
                       v-if="editingStudent.transferCertificate"
                       class="mb-2"
@@ -1508,7 +1581,7 @@
                         class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
                       >
                         <svg
-                          class="w-4 h-4 text-green-600"
+                          class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1520,16 +1593,16 @@
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           ></path>
                         </svg>
-                        <span class="text-sm text-green-700"
+                        <span class="text-xs sm:text-sm text-green-700 flex-1"
                           >Document uploaded</span
                         >
                         <button
                           @click="editingStudent.transferCertificate = ''"
                           :disabled="isSaving"
-                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                          class="text-red-600 hover:text-red-800 disabled:opacity-50 flex-shrink-0 touch-manipulation"
                         >
                           <svg
-                            class="w-4 h-4"
+                            class="w-3 h-3 sm:w-4 sm:h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1551,7 +1624,7 @@
                         handleDocumentUpload($event, 'transferCertificate')
                       "
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                   </div>
 
@@ -1571,7 +1644,7 @@
                         class="flex items-center gap-2 p-2 bg-green-50 border border-green-200 rounded"
                       >
                         <svg
-                          class="w-4 h-4 text-green-600"
+                          class="w-3 h-3 sm:w-4 sm:h-4 text-green-600 flex-shrink-0"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -1583,16 +1656,16 @@
                             d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                           ></path>
                         </svg>
-                        <span class="text-sm text-green-700"
+                        <span class="text-xs sm:text-sm text-green-700 flex-1"
                           >Document uploaded</span
                         >
                         <button
                           @click="editingStudent.marksheet = ''"
                           :disabled="isSaving"
-                          class="ml-auto text-red-600 hover:text-red-800 disabled:opacity-50"
+                          class="text-red-600 hover:text-red-800 disabled:opacity-50 flex-shrink-0 touch-manipulation"
                         >
                           <svg
-                            class="w-4 h-4"
+                            class="w-3 h-3 sm:w-4 sm:h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -1612,11 +1685,12 @@
                       accept=".pdf,.jpg,.jpeg,.png"
                       @change="handleDocumentUpload($event, 'marksheet')"
                       :disabled="isSaving"
-                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="w-full rounded-lg border-2 border-gray-200 px-3 sm:px-4 py-2.5 sm:py-3 focus:ring-2 focus:ring-yellow-100 focus:border-yellow-500 focus:outline-none transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
                     />
                   </div>
                 </div>
-                <p class="text-xs text-gray-500 mt-4">
+
+                <p class="text-xs text-gray-500 mt-3 sm:mt-4">
                   Supported formats: PDF, JPG, PNG (Max: 10MB per file)
                 </p>
               </div>
@@ -1624,21 +1698,23 @@
           </div>
 
           <!-- Fixed Footer -->
-          <div class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-t border-gray-200">
+          <div
+            class="flex-shrink-0 p-4 sm:p-6 md:p-8 border-t border-gray-200 bg-white"
+          >
             <div
-              class="flex flex-col-reverse sm:flex-row justify-end gap-3 md:gap-4"
+              class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3 md:gap-4"
             >
               <button
                 @click="closeModal"
                 :disabled="isSaving"
-                class="px-4 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300"
+                class="px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-gray-300 touch-manipulation min-h-[44px] sm:min-h-[40px]"
               >
                 Cancel
               </button>
               <button
                 @click="saveStudent"
                 :disabled="isSaving"
-                class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2 sm:py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-green-600"
+                class="inline-flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 text-sm md:text-base disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 touch-manipulation min-h-[44px] sm:min-h-[40px]"
               >
                 <div
                   v-if="isSaving"
@@ -1658,48 +1734,52 @@
       <!-- Delete Confirmation Modal -->
       <div
         v-if="showDeleteModal"
-        class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+        class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-end sm:items-center justify-center p-0 sm:p-4"
       >
         <div
-          class="bg-white w-full max-w-md rounded-lg border border-gray-200 relative animate-fade-in"
+          class="bg-white w-full sm:max-w-md sm:rounded-lg border-0 sm:border border-gray-200 relative animate-fade-in"
         >
-          <div class="p-6">
-            <div class="flex items-center gap-4 mb-4">
-              <div class="p-3 bg-red-100 rounded-full">
-                <Trash2 class="w-6 h-6 text-red-600" />
+          <div class="p-4 sm:p-6">
+            <div class="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div class="p-2 sm:p-3 bg-red-100 rounded-full flex-shrink-0">
+                <Trash2 class="w-5 h-5 sm:w-6 sm:h-6 text-red-600" />
               </div>
-              <div>
-                <h3 class="text-lg font-bold text-gray-900">Delete Student</h3>
-                <p class="text-sm text-gray-600">
+              <div class="flex-1 min-w-0">
+                <h3 class="text-base sm:text-lg font-bold text-gray-900">
+                  Delete Student
+                </h3>
+                <p class="text-xs sm:text-sm text-gray-600">
                   This action cannot be undone
                 </p>
               </div>
             </div>
-            <p class="text-gray-700 mb-6">
+
+            <p class="text-sm sm:text-base text-gray-700 mb-4 sm:mb-6">
               Are you sure you want to delete
               <strong>{{ deleteTarget.name }}</strong
               >? This will permanently remove the student from the system.
             </p>
-            <div class="flex flex-col-reverse sm:flex-row gap-3">
+
+            <div class="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3">
               <button
                 @click="cancelDelete"
                 :disabled="isDeleting"
-                class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 disabled:opacity-50"
+                class="px-4 py-2.5 sm:py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 disabled:opacity-50 touch-manipulation min-h-[44px] sm:min-h-[40px]"
               >
                 Cancel
               </button>
               <button
                 @click="confirmDelete"
                 :disabled="isDeleting"
-                class="inline-flex items-center justify-center gap-2 px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50"
+                class="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-all duration-200 disabled:opacity-50 touch-manipulation min-h-[44px] sm:min-h-[40px]"
               >
                 <div
                   v-if="isDeleting"
-                  class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
+                  class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"
                 ></div>
                 <Trash2
                   v-else
-                  class="w-4 h-4"
+                  class="w-3 h-3 sm:w-4 sm:h-4"
                 />
                 {{ isDeleting ? "Deleting..." : "Delete Student" }}
               </button>
@@ -1710,7 +1790,7 @@
 
       <!-- Pagination Section - Mobile Responsive -->
       <div
-        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-6 sm:mt-8 space-y-3 sm:space-y-0 px-2"
+        class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 sm:mt-6 md:mt-8 space-y-3 sm:space-y-0 px-1 sm:px-2"
       >
         <!-- Results summary -->
         <div
@@ -1749,7 +1829,7 @@
           <button
             @click="goToPage(currentPage - 1)"
             :disabled="currentPage === 1 || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] sm:min-h-[32px] min-w-[36px] sm:min-w-[32px] border border-gray-300 touch-manipulation"
           >
             <ChevronLeft class="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
@@ -1763,7 +1843,7 @@
               @click="goToPage(page)"
               :disabled="isTableLoading"
               :class="[
-                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border',
+                'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 min-h-[36px] sm:min-h-[32px] min-w-[36px] sm:min-w-[32px] border touch-manipulation',
                 page === currentPage
                   ? 'font-bold bg-blue-600 text-white border-blue-600'
                   : 'font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-gray-300',
@@ -1778,25 +1858,26 @@
           <button
             @click="goToPage(currentPage + 1)"
             :disabled="currentPage === totalPages || isTableLoading"
-            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
+            class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] sm:min-h-[32px] min-w-[36px] sm:min-w-[32px] border border-gray-300 touch-manipulation"
           >
             <ChevronRight class="w-3 h-3 sm:w-4 sm:h-4" />
           </button>
         </div>
       </div>
+
       <div>
         <!-- Student Details Modal -->
         <div
           v-if="showDetailsModal"
-          class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center p-4"
+          class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-end sm:items-center justify-center p-0 sm:p-4"
         >
           <div
-            class="bg-white w-full max-w-6xl max-h-[95vh] rounded-lg border border-gray-200 relative animate-fade-in flex flex-col"
+            class="bg-white w-full sm:max-w-6xl max-h-screen sm:max-h-[95vh] sm:rounded-lg border-0 sm:border border-gray-200 relative animate-fade-in flex flex-col"
           >
             <!-- Modal Loading Overlay -->
             <div
               v-if="isDetailsLoading"
-              class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center rounded-lg"
+              class="absolute inset-0 bg-white bg-opacity-80 z-10 flex items-center justify-center sm:rounded-lg"
             >
               <div class="text-center">
                 <div
@@ -1809,24 +1890,26 @@
             </div>
 
             <!-- Fixed Header -->
-            <div class="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200">
+            <div
+              class="flex-shrink-0 p-4 sm:p-6 border-b border-gray-200 bg-white"
+            >
               <!-- Close Button -->
               <button
                 @click="closeDetailsModal"
                 :disabled="isDetailsLoading"
-                class="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="absolute top-2 right-2 sm:top-3 sm:right-3 md:top-4 md:right-4 p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation z-10"
                 title="Close"
               >
-                <X class="w-4 h-4 sm:w-5 sm:h-5" />
+                <X class="w-5 h-5 sm:w-4 sm:h-4 md:w-5 md:h-5" />
               </button>
 
               <!-- Header -->
-              <div class="flex items-center gap-4">
+              <div class="flex items-center gap-3 sm:gap-4 pr-10 sm:pr-12">
                 <!-- Student Photo/Avatar -->
                 <div class="flex-shrink-0">
                   <div
                     v-if="viewingStudent?.photo"
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-4 border-blue-200"
+                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-blue-200"
                   >
                     <img
                       :src="viewingStudent.photo"
@@ -1836,31 +1919,36 @@
                   </div>
                   <div
                     v-else
-                    class="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-600 flex items-center justify-center border-4 border-blue-200"
+                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full bg-blue-600 flex items-center justify-center border-2 sm:border-4 border-blue-200"
                   >
-                    <span class="text-lg sm:text-xl font-bold text-white">
+                    <span
+                      class="text-sm sm:text-lg md:text-xl font-bold text-white"
+                    >
                       {{ getInitials(viewingStudent?.name || "") }}
                     </span>
                   </div>
                 </div>
+
                 <div class="flex-1 min-w-0">
                   <h2
-                    class="text-xl sm:text-2xl font-bold text-gray-800 truncate"
+                    class="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 truncate"
                   >
                     {{ viewingStudent?.name || "Student Details" }}
                   </h2>
-                  <div class="flex flex-wrap items-center gap-2 mt-2">
+                  <div
+                    class="flex flex-wrap items-center gap-1 sm:gap-2 mt-1 sm:mt-2"
+                  >
                     <span
                       :class="getStatusClass(viewingStudent?.status)"
-                      class="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold rounded-full border"
+                      class="inline-flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-bold rounded-full border"
                     >
-                      <FileChartLine class="w-3 h-3" />
+                      <FileChartLine class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                       {{ viewingStudent?.status }}
                     </span>
-                    <span class="text-sm text-gray-600">
+                    <span class="text-xs sm:text-sm text-gray-600">
                       Roll No: {{ viewingStudent?.rollNumber }}
                     </span>
-                    <span class="text-sm text-gray-600">
+                    <span class="text-xs sm:text-sm text-gray-600">
                       Class: {{ viewingStudent?.class }}
                     </span>
                   </div>
@@ -1870,57 +1958,60 @@
 
             <!-- Scrollable Content -->
             <div class="flex-1 overflow-y-auto p-4 sm:p-6">
-              <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                 <!-- Personal Information -->
-                <div class="bg-blue-50 rounded-lg p-4 sm:p-6">
+                <div class="bg-blue-50 rounded-lg p-3 sm:p-4 md:p-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                    class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2"
                   >
-                    <User class="w-5 h-5 text-blue-600" />
-                    Personal Information
+                    <User
+                      class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0"
+                    />
+                    <span>Personal Information</span>
                   </h3>
-                  <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                  <div class="space-y-3 sm:space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Full Name</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border break-words"
                         >
                           {{ viewingStudent?.name || "N/A" }}
                         </p>
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Roll Number</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border"
                         >
                           {{ viewingStudent?.rollNumber || "N/A" }}
                         </p>
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Email</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border break-all"
                         >
                           {{ viewingStudent?.email || "N/A" }}
                         </p>
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Phone</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border"
                         >
                           {{ viewingStudent?.phone || "N/A" }}
                         </p>
@@ -1928,11 +2019,11 @@
                     </div>
                     <div>
                       <label
-                        class="block text-sm font-medium text-gray-700 mb-1"
+                        class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                         >Address</label
                       >
                       <p
-                        class="text-sm text-gray-900 bg-white p-2 rounded border min-h-[60px]"
+                        class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border min-h-[60px] break-words"
                       >
                         {{ viewingStudent?.address || "N/A" }}
                       </p>
@@ -1941,44 +2032,47 @@
                 </div>
 
                 <!-- Academic Information -->
-                <div class="bg-green-50 rounded-lg p-4 sm:p-6">
+                <div class="bg-green-50 rounded-lg p-3 sm:p-4 md:p-6">
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"
+                    class="text-base sm:text-lg font-semibold text-gray-800 mb-3 sm:mb-4 flex items-center gap-2"
                   >
-                    <GraduationCap class="w-5 h-5 text-green-600" />
-                    Academic Information
+                    <GraduationCap
+                      class="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0"
+                    />
+                    <span>Academic Information</span>
                   </h3>
-                  <div class="space-y-4">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                  <div class="space-y-3 sm:space-y-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Class</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border"
                         >
                           {{ viewingStudent?.class || "N/A" }}
                         </p>
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Status</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border"
                         >
                           {{ viewingStudent?.status || "N/A" }}
                         </p>
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Enrollment Date</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border"
                         >
                           {{
                             viewingStudent?.enrollmentDate
@@ -1989,11 +2083,11 @@
                       </div>
                       <div>
                         <label
-                          class="block text-sm font-medium text-gray-700 mb-1"
+                          class="block text-xs sm:text-sm font-medium text-gray-700 mb-1"
                           >Student ID</label
                         >
                         <p
-                          class="text-sm text-gray-900 bg-white p-2 rounded border font-mono"
+                          class="text-xs sm:text-sm text-gray-900 bg-white p-2 rounded border font-mono break-all"
                         >
                           {{ viewingStudent?._id || "N/A" }}
                         </p>
@@ -2003,39 +2097,51 @@
                 </div>
 
                 <!-- Documents Section -->
-                <div class="lg:col-span-2 bg-gray-50 rounded-lg p-4 sm:p-6">
+                <div
+                  class="lg:col-span-2 bg-gray-50 rounded-lg p-3 sm:p-4 md:p-6"
+                >
                   <h3
-                    class="text-lg font-semibold text-gray-800 mb-6 flex items-center gap-2"
+                    class="text-base sm:text-lg font-semibold text-gray-800 mb-4 sm:mb-6 flex items-center gap-2"
                   >
-                    <FileText class="w-5 h-5 text-gray-600" />
-                    Documents
+                    <FileText
+                      class="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 flex-shrink-0"
+                    />
+                    <span>Documents</span>
                   </h3>
+
                   <div
-                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
                   >
                     <!-- Aadhaar Card -->
                     <div
-                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                      class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 shadow-sm"
                     >
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="p-2 bg-blue-100 rounded-lg">
-                          <IdCard class="w-4 h-4 text-blue-600" />
+                      <div class="flex items-center gap-2 mb-2 sm:mb-3">
+                        <div
+                          class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0"
+                        >
+                          <IdCard class="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" />
                         </div>
-                        <h4 class="text-sm font-semibold text-gray-800">
+                        <h4
+                          class="text-xs sm:text-sm font-semibold text-gray-800"
+                        >
                           Aadhaar Card
                         </h4>
                       </div>
+
                       <div
                         v-if="viewingStudent?.aadhaarCard"
-                        class="space-y-3"
+                        class="space-y-2 sm:space-y-3"
                       >
                         <div
-                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                          class="flex items-center gap-2 text-[10px] sm:text-xs text-green-700 bg-green-50 p-2 rounded"
                         >
-                          <CheckCircle class="w-3 h-3" />
+                          <CheckCircle
+                            class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0"
+                          />
                           <span>Available</span>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-1 sm:gap-2">
                           <button
                             @click="
                               viewDocument(
@@ -2043,9 +2149,9 @@
                                 'Aadhaar Card'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-blue-600 text-white text-[10px] sm:text-xs rounded hover:bg-blue-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Eye class="w-3 h-3" />
+                            <Eye class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             View
                           </button>
                           <button
@@ -2055,44 +2161,55 @@
                                 'aadhaar-card'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-green-600 text-white text-[10px] sm:text-xs rounded hover:bg-green-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Download class="w-3 h-3" />
+                            <Download class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             Download
                           </button>
                         </div>
                       </div>
                       <div
                         v-else
-                        class="text-center py-6"
+                        class="text-center py-4 sm:py-6"
                       >
-                        <div class="text-xs text-gray-500">Not available</div>
+                        <div class="text-[10px] sm:text-xs text-gray-500">
+                          Not available
+                        </div>
                       </div>
                     </div>
 
                     <!-- Birth Certificate -->
                     <div
-                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                      class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 shadow-sm"
                     >
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="p-2 bg-green-100 rounded-lg">
-                          <FileText class="w-4 h-4 text-green-600" />
+                      <div class="flex items-center gap-2 mb-2 sm:mb-3">
+                        <div
+                          class="p-1.5 sm:p-2 bg-green-100 rounded-lg flex-shrink-0"
+                        >
+                          <FileText
+                            class="w-3 h-3 sm:w-4 sm:h-4 text-green-600"
+                          />
                         </div>
-                        <h4 class="text-sm font-semibold text-gray-800">
+                        <h4
+                          class="text-xs sm:text-sm font-semibold text-gray-800"
+                        >
                           Birth Certificate
                         </h4>
                       </div>
+
                       <div
                         v-if="viewingStudent?.birthCertificate"
-                        class="space-y-3"
+                        class="space-y-2 sm:space-y-3"
                       >
                         <div
-                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                          class="flex items-center gap-2 text-[10px] sm:text-xs text-green-700 bg-green-50 p-2 rounded"
                         >
-                          <CheckCircle class="w-3 h-3" />
+                          <CheckCircle
+                            class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0"
+                          />
                           <span>Available</span>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-1 sm:gap-2">
                           <button
                             @click="
                               viewDocument(
@@ -2100,9 +2217,9 @@
                                 'Birth Certificate'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-blue-600 text-white text-[10px] sm:text-xs rounded hover:bg-blue-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Eye class="w-3 h-3" />
+                            <Eye class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             View
                           </button>
                           <button
@@ -2112,44 +2229,55 @@
                                 'birth-certificate'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-green-600 text-white text-[10px] sm:text-xs rounded hover:bg-green-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Download class="w-3 h-3" />
+                            <Download class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             Download
                           </button>
                         </div>
                       </div>
                       <div
                         v-else
-                        class="text-center py-6"
+                        class="text-center py-4 sm:py-6"
                       >
-                        <div class="text-xs text-gray-500">Not available</div>
+                        <div class="text-[10px] sm:text-xs text-gray-500">
+                          Not available
+                        </div>
                       </div>
                     </div>
 
                     <!-- Transfer Certificate -->
                     <div
-                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                      class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 shadow-sm"
                     >
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="p-2 bg-purple-100 rounded-lg">
-                          <FileText class="w-4 h-4 text-purple-600" />
+                      <div class="flex items-center gap-2 mb-2 sm:mb-3">
+                        <div
+                          class="p-1.5 sm:p-2 bg-purple-100 rounded-lg flex-shrink-0"
+                        >
+                          <FileText
+                            class="w-3 h-3 sm:w-4 sm:h-4 text-purple-600"
+                          />
                         </div>
-                        <h4 class="text-sm font-semibold text-gray-800">
+                        <h4
+                          class="text-xs sm:text-sm font-semibold text-gray-800"
+                        >
                           Transfer Certificate
                         </h4>
                       </div>
+
                       <div
                         v-if="viewingStudent?.transferCertificate"
-                        class="space-y-3"
+                        class="space-y-2 sm:space-y-3"
                       >
                         <div
-                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                          class="flex items-center gap-2 text-[10px] sm:text-xs text-green-700 bg-green-50 p-2 rounded"
                         >
-                          <CheckCircle class="w-3 h-3" />
+                          <CheckCircle
+                            class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0"
+                          />
                           <span>Available</span>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-1 sm:gap-2">
                           <button
                             @click="
                               viewDocument(
@@ -2157,9 +2285,9 @@
                                 'Transfer Certificate'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-blue-600 text-white text-[10px] sm:text-xs rounded hover:bg-blue-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Eye class="w-3 h-3" />
+                            <Eye class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             View
                           </button>
                           <button
@@ -2169,44 +2297,55 @@
                                 'transfer-certificate'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-green-600 text-white text-[10px] sm:text-xs rounded hover:bg-green-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Download class="w-3 h-3" />
+                            <Download class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             Download
                           </button>
                         </div>
                       </div>
                       <div
                         v-else
-                        class="text-center py-6"
+                        class="text-center py-4 sm:py-6"
                       >
-                        <div class="text-xs text-gray-500">Not available</div>
+                        <div class="text-[10px] sm:text-xs text-gray-500">
+                          Not available
+                        </div>
                       </div>
                     </div>
 
                     <!-- Marksheet -->
                     <div
-                      class="bg-white rounded-lg border border-gray-200 p-4 shadow-sm"
+                      class="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 shadow-sm"
                     >
-                      <div class="flex items-center gap-2 mb-3">
-                        <div class="p-2 bg-red-100 rounded-lg">
-                          <FileText class="w-4 h-4 text-red-600" />
+                      <div class="flex items-center gap-2 mb-2 sm:mb-3">
+                        <div
+                          class="p-1.5 sm:p-2 bg-red-100 rounded-lg flex-shrink-0"
+                        >
+                          <FileText
+                            class="w-3 h-3 sm:w-4 sm:h-4 text-red-600"
+                          />
                         </div>
-                        <h4 class="text-sm font-semibold text-gray-800">
+                        <h4
+                          class="text-xs sm:text-sm font-semibold text-gray-800"
+                        >
                           Marksheet
                         </h4>
                       </div>
+
                       <div
                         v-if="viewingStudent?.marksheet"
-                        class="space-y-3"
+                        class="space-y-2 sm:space-y-3"
                       >
                         <div
-                          class="flex items-center gap-2 text-xs text-green-700 bg-green-50 p-2 rounded"
+                          class="flex items-center gap-2 text-[10px] sm:text-xs text-green-700 bg-green-50 p-2 rounded"
                         >
-                          <CheckCircle class="w-3 h-3" />
+                          <CheckCircle
+                            class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0"
+                          />
                           <span>Available</span>
                         </div>
-                        <div class="flex gap-2">
+                        <div class="flex flex-col sm:flex-row gap-1 sm:gap-2">
                           <button
                             @click="
                               viewDocument(
@@ -2214,9 +2353,9 @@
                                 'Marksheet'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-blue-600 text-white text-[10px] sm:text-xs rounded hover:bg-blue-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Eye class="w-3 h-3" />
+                            <Eye class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             View
                           </button>
                           <button
@@ -2226,18 +2365,20 @@
                                 'marksheet'
                               )
                             "
-                            class="flex-1 flex items-center justify-center gap-1 px-3 py-2 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                            class="flex-1 flex items-center justify-center gap-1 px-2 sm:px-3 py-2 bg-green-600 text-white text-[10px] sm:text-xs rounded hover:bg-green-700 transition-colors touch-manipulation min-h-[32px]"
                           >
-                            <Download class="w-3 h-3" />
+                            <Download class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
                             Download
                           </button>
                         </div>
                       </div>
                       <div
                         v-else
-                        class="text-center py-6"
+                        class="text-center py-4 sm:py-6"
                       >
-                        <div class="text-xs text-gray-500">Not available</div>
+                        <div class="text-[10px] sm:text-xs text-gray-500">
+                          Not available
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2246,19 +2387,23 @@
             </div>
 
             <!-- Fixed Footer -->
-            <div class="flex-shrink-0 p-4 sm:p-6 border-t border-gray-200">
-              <div class="flex justify-end gap-3">
+            <div
+              class="flex-shrink-0 p-4 sm:p-6 border-t border-gray-200 bg-white"
+            >
+              <div
+                class="flex flex-col-reverse sm:flex-row justify-end gap-2 sm:gap-3"
+              >
                 <button
                   @click="closeDetailsModal"
-                  class="px-4 py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200"
+                  class="px-4 py-2.5 sm:py-2 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200 touch-manipulation min-h-[44px] sm:min-h-[40px]"
                 >
                   Close
                 </button>
                 <button
                   @click="editStudent(viewingStudent)"
-                  class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2.5 sm:py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-all duration-200 touch-manipulation min-h-[44px] sm:min-h-[40px]"
                 >
-                  <Pencil class="w-4 h-4" />
+                  <Pencil class="w-3 h-3 sm:w-4 sm:h-4" />
                   Edit Student
                 </button>
               </div>
@@ -2269,32 +2414,37 @@
         <!-- Document Viewer Modal - Professional Styling with Highest Z-Index -->
         <div
           v-if="showDocumentViewer"
-          class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in-0 duration-300"
+          class="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 animate-in fade-in-0 duration-300"
         >
           <div
-            class="bg-white w-full max-w-5xl max-h-[95vh] rounded-xl shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
+            class="bg-white w-full sm:max-w-5xl max-h-screen sm:max-h-[95vh] sm:rounded-xl shadow-2xl relative flex flex-col overflow-hidden animate-in zoom-in-95 duration-300"
           >
             <!-- Document Viewer Header - Enhanced Professional Design -->
             <div
-              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-b border-gray-200/80 flex items-center justify-between"
+              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-200/80 flex items-center justify-between"
             >
-              <div class="flex items-center gap-3">
-                <div class="p-2 bg-blue-100 rounded-lg">
-                  <FileText class="w-5 h-5 text-blue-600" />
+              <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
+                <div class="p-1.5 sm:p-2 bg-blue-100 rounded-lg flex-shrink-0">
+                  <FileText class="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                 </div>
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900">
+                <div class="flex-1 min-w-0">
+                  <h3
+                    class="text-base sm:text-lg font-semibold text-gray-900 truncate"
+                  >
                     {{ currentDocumentTitle }}
                   </h3>
-                  <p class="text-sm text-gray-500">Document Viewer</p>
+                  <p class="text-xs sm:text-sm text-gray-500">
+                    Document Viewer
+                  </p>
                 </div>
               </div>
+
               <button
                 @click="closeDocumentViewer"
-                class="p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105"
+                class="p-2 sm:p-2.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-all duration-200 hover:scale-105 touch-manipulation flex-shrink-0"
                 title="Close Document Viewer"
               >
-                <X class="w-5 h-5" />
+                <X class="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
 
@@ -2320,7 +2470,7 @@
                 <!-- Image Viewer - Enhanced -->
                 <div
                   v-else
-                  class="w-full h-full flex items-center justify-center p-6"
+                  class="w-full h-full flex items-center justify-center p-3 sm:p-6"
                 >
                   <div
                     class="max-w-full max-h-full bg-white rounded-lg shadow-lg overflow-hidden"
@@ -2333,6 +2483,7 @@
                   </div>
                 </div>
               </div>
+
               <!-- Loading State - Enhanced -->
               <div
                 v-else
@@ -2341,20 +2492,22 @@
                 <div class="text-center">
                   <div class="relative">
                     <div
-                      class="w-12 h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-4"
+                      class="w-10 h-10 sm:w-12 sm:h-12 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin mx-auto mb-3 sm:mb-4"
                     ></div>
                     <div
-                      class="absolute inset-0 w-12 h-12 border-4 border-transparent border-r-blue-300 rounded-full animate-spin mx-auto"
+                      class="absolute inset-0 w-10 h-10 sm:w-12 sm:h-12 border-4 border-transparent border-r-blue-300 rounded-full animate-spin mx-auto"
                       style="
                         animation-direction: reverse;
                         animation-duration: 1.5s;
                       "
                     ></div>
                   </div>
-                  <p class="text-base font-medium text-gray-700 mb-1">
+                  <p
+                    class="text-sm sm:text-base font-medium text-gray-700 mb-1"
+                  >
                     Loading document...
                   </p>
-                  <p class="text-sm text-gray-500">
+                  <p class="text-xs sm:text-sm text-gray-500">
                     Please wait while we prepare your document
                   </p>
                 </div>
@@ -2363,18 +2516,21 @@
 
             <!-- Document Actions - Enhanced Professional Footer -->
             <div
-              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-6 py-4 border-t border-gray-200/80 flex items-center justify-between"
+              class="flex-shrink-0 bg-gradient-to-r from-slate-50 to-gray-50 px-4 sm:px-6 py-3 sm:py-4 border-t border-gray-200/80 flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-0"
             >
-              <div class="flex items-center gap-2 text-sm text-gray-600">
+              <div
+                class="flex items-center gap-2 text-xs sm:text-sm text-gray-600"
+              >
                 <div
-                  class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                  class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"
                 ></div>
                 <span>Document loaded successfully</span>
               </div>
-              <div class="flex gap-3">
+
+              <div class="flex gap-2 sm:gap-3 w-full sm:w-auto">
                 <button
                   @click="closeDocumentViewer"
-                  class="px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                  class="flex-1 sm:flex-none px-3 sm:px-4 py-2 sm:py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-200 touch-manipulation min-h-[40px] sm:min-h-[36px]"
                 >
                   Close
                 </button>
@@ -2385,10 +2541,10 @@
                       currentDocumentTitle.toLowerCase().replace(/\s+/g, '-')
                     )
                   "
-                  class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-200 shadow-lg hover:shadow-xl"
+                  class="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-3 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-green-200 shadow-lg hover:shadow-xl touch-manipulation min-h-[40px] sm:min-h-[36px]"
                 >
-                  <Download class="w-4 h-4" />
-                  Download Document
+                  <Download class="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span>Download</span>
                 </button>
               </div>
             </div>
@@ -3123,44 +3279,37 @@
 </script>
 
 <style scoped>
-  @keyframes fade-in {
+  /* Enhanced Mobile-First Animations */
+  @keyframes slide-in {
     from {
+      transform: translateX(100%);
       opacity: 0;
-      transform: scale(0.95) translateY(20px);
     }
     to {
+      transform: translateX(0);
       opacity: 1;
-      transform: scale(1) translateY(0);
     }
-  }
-
-  .animate-fade-in {
-    animation: fade-in 0.3s ease-out;
   }
 
   @keyframes slide-down {
     from {
+      transform: translateY(-20px);
       opacity: 0;
-      transform: translateY(-10px);
     }
     to {
-      opacity: 1;
       transform: translateY(0);
+      opacity: 1;
     }
   }
 
-  .animate-slide-down {
-    animation: slide-down 0.3s ease-out;
-  }
-
-  @keyframes slide-in {
+  @keyframes fade-in {
     from {
       opacity: 0;
-      transform: translateX(100%);
+      transform: scale(0.95);
     }
     to {
       opacity: 1;
-      transform: translateX(0);
+      transform: scale(1);
     }
   }
 
@@ -3168,104 +3317,242 @@
     animation: slide-in 0.3s ease-out;
   }
 
-  /* Custom animations */
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
+  .animate-slide-down {
+    animation: slide-down 0.3s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out;
+  }
+
+  /* Enhanced Touch Targets for Mobile */
+  @media (max-width: 767px) {
+    .touch-manipulation {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
     }
-  }
 
-  .animate-spin {
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
-  }
-
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-
-  /* Custom scrollbar */
-  .overflow-x-auto::-webkit-scrollbar {
-    height: 6px;
-  }
-
-  .overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 3px;
-  }
-
-  .overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 3px;
-  }
-
-  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-  }
-
-  /* Disabled state improvements */
-  .disabled\:opacity-50:disabled {
-    opacity: 0.5;
-  }
-
-  .disabled\:cursor-not-allowed:disabled {
-    cursor: not-allowed;
-  }
-
-  .disabled\:transform-none:disabled {
-    transform: none;
-  }
-
-  /* Mobile-specific optimizations */
-  @media (max-width: 640px) {
-    /* Ensure minimum touch targets */
-    button {
+    /* Ensure minimum touch target size */
+    button,
+    input[type="checkbox"],
+    input[type="radio"],
+    select {
       min-height: 44px;
       min-width: 44px;
     }
 
-    input,
-    select,
-    textarea {
-      min-height: 44px;
-    }
-
-    /* Optimize text sizes for mobile */
-    .text-xs {
-      font-size: 0.75rem;
-      line-height: 1rem;
-    }
-
-    .text-sm {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
+    /* Improve text input on mobile */
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="date"],
+    textarea,
+    select {
+      font-size: 16px; /* Prevents zoom on iOS */
     }
   }
 
-  /* Tablet optimizations */
-  @media (min-width: 641px) and (max-width: 1023px) {
-    /* Adjust spacing for tablet */
-    .p-4 {
-      padding: 1.5rem;
-    }
+  /* Enhanced Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
 
-    .gap-3 {
-      gap: 0.75rem;
+  ::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+  }
+
+  /* Enhanced Focus States for Accessibility */
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+  }
+
+  /* Enhanced Loading States */
+  .loading-shimmer {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
     }
   }
 
-  /* Accessibility improvements */
+  /* Enhanced Mobile Modal Styles */
+  @media (max-width: 639px) {
+    .modal-mobile {
+      border-radius: 0;
+      height: 100vh;
+      max-height: 100vh;
+    }
+
+    .modal-mobile .modal-content {
+      height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  /* Enhanced Responsive Grid */
+  @media (max-width: 479px) {
+    .grid-cols-2 {
+      grid-template-columns: 1fr;
+    }
+
+    .xs\:grid-cols-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* Enhanced Button States */
+  .btn-loading {
+    position: relative;
+    color: transparent;
+  }
+
+  .btn-loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Enhanced Table Responsive Styles */
+  @media (max-width: 767px) {
+    .table-mobile {
+      display: block;
+    }
+
+    .table-mobile thead,
+    .table-mobile tbody,
+    .table-mobile th,
+    .table-mobile td,
+    .table-mobile tr {
+      display: block;
+    }
+
+    .table-mobile thead tr {
+      position: absolute;
+      top: -9999px;
+      left: -9999px;
+    }
+
+    .table-mobile tr {
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      background: white;
+    }
+
+    .table-mobile td {
+      border: none;
+      position: relative;
+      padding-left: 50%;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .table-mobile td:before {
+      content: attr(data-label) ": ";
+      position: absolute;
+      left: 6px;
+      width: 45%;
+      padding-right: 10px;
+      white-space: nowrap;
+      font-weight: bold;
+      color: #666;
+    }
+  }
+
+  /* Enhanced Print Styles */
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+
+    .print-break {
+      page-break-after: always;
+    }
+
+    .print-avoid-break {
+      page-break-inside: avoid;
+    }
+  }
+
+  /* Enhanced Dark Mode Support (if needed) */
+  @media (prefers-color-scheme: dark) {
+    .dark-mode-auto {
+      background-color: #1f2937;
+      color: #f9fafb;
+    }
+
+    .dark-mode-auto .bg-white {
+      background-color: #374151;
+    }
+
+    .dark-mode-auto .text-gray-900 {
+      color: #f9fafb;
+    }
+
+    .dark-mode-auto .border-gray-200 {
+      border-color: #4b5563;
+    }
+  }
+
+  /* Enhanced High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    .high-contrast {
+      border-width: 2px;
+      font-weight: bold;
+    }
+
+    .high-contrast button {
+      border: 2px solid currentColor;
+    }
+  }
+
+  /* Enhanced Reduced Motion Support */
   @media (prefers-reduced-motion: reduce) {
-    * {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
