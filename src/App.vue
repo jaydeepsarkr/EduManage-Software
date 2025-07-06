@@ -10,7 +10,7 @@
       <!-- Top Bar -->
       <header
         v-if="!isAuthRoute"
-        class="bg-white shadow-sm border-b border-gray-200 px-6 py-4"
+        class="bg-white shadow-sm border-b border-gray-200 px-6"
       >
         <SchoolHeader />
       </header>
