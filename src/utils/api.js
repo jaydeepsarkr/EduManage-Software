@@ -3,8 +3,7 @@ import axios from "axios";
 import router from "@/router";
 
 const api = axios.create({
-  baseURL:
-    process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com",
+  baseURL: process.env.VUE_APP_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },

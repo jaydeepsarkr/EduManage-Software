@@ -10,6 +10,7 @@ export default createStore({
     userRole: null,
     userName: null,
     userId: null,
+    schoolId: null,
     userPhoto: null,
 
     attendanceHistory: [],
@@ -61,6 +62,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_SCHOOL_ID(state, schoolId) {
+      state.schoolId = schoolId; // ✅ Add this
+    },
     SET_TODAYS_ATTENDANCE_PERCENTAGE(state, payload) {
       state.todaysAttendancePercentage = payload;
     },
@@ -170,11 +174,10 @@ export default createStore({
         const {
           search = "",
           page = 1,
-          limit = 10,
+          limit = 20,
           sort = "desc",
           class: classFilter = "",
         } = filters;
-
         const res = await api.get("/api/students", {
           params: {
             search,
@@ -203,23 +206,26 @@ export default createStore({
         commit("SET_USER_NAME", null);
         commit("SET_USER_ID", null);
         commit("SET_USER_PHOTO", null); // ✅ reset photo
+        commit("SET_SCHOOL_ID", null); // ✅ reset schoolId
         return;
       }
 
       try {
         const decoded = jwt_decode(token);
-        const { role, name, userId, photo } = decoded;
+        const { role, name, userId, photo, schoolId } = decoded;
 
         commit("SET_USER_ROLE", role || null);
         commit("SET_USER_NAME", name || null);
         commit("SET_USER_ID", userId || null);
         commit("SET_USER_PHOTO", photo || null); // ✅ store photo
+        commit("SET_SCHOOL_ID", schoolId || null); // ✅ commit schoolId
       } catch (error) {
         console.error("Failed to decode token:", error);
         commit("SET_USER_ROLE", null);
         commit("SET_USER_NAME", null);
         commit("SET_USER_ID", null);
         commit("SET_USER_PHOTO", null); // ✅ reset on failure
+        commit("SET_SCHOOL_ID", null); // ✅ reset on failure
       }
     },
 
