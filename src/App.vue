@@ -116,18 +116,17 @@
   );
 
   // Lifecycle
-  onMounted(() => {
-    window.addEventListener("resize", () => {}, { passive: true });
+onMounted(() => {
+  if (!["/login", "/signup"].includes(route.path) && !sessionStorage.getItem("welcome_toast_shown")) {
+    addToast({
+      type: "success",
+      title: "Welcome 🎉",
+      message: "Welcome back! Your dashboard is ready.",
+    });
+    sessionStorage.setItem("welcome_toast_shown", "true");
+  }
+});
 
-    if (!isAuthRoute.value && !sessionStorage.getItem("welcome_toast_shown")) {
-      addToast({
-        type: "success",
-        title: "Welcome 🎉",
-        message: "Welcome back! Your dashboard is ready.",
-      });
-      sessionStorage.setItem("welcome_toast_shown", "true");
-    }
-  });
 </script>
 
 <style>
