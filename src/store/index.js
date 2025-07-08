@@ -6,6 +6,7 @@ import jwt_decode from "jwt-decode";
 export default createStore({
   state: {
     students: [],
+    schools: [],
     upcomingEvents: [],
     userRole: null,
     userName: null,
@@ -59,9 +60,13 @@ export default createStore({
     getStudentPagination: (state) => state.studentPagination,
     getTotalStudents: (state) => state.studentPagination.total,
     getTotalStudentCount: (state) => state.studentTotalCount,
+    getSchools: (state) => state.schools,
   },
 
   mutations: {
+    SET_SCHOOLS(state, schools) {
+      state.schools = schools;
+    },
     SET_SCHOOL_ID(state, schoolId) {
       state.schoolId = schoolId; // ✅ Add this
     },
@@ -117,6 +122,41 @@ export default createStore({
   },
 
   actions: {
+    async createSchool({ dispatch }, schoolData) {
+      try {
+        const res = await api.post("/api/schools", schoolData);
+
+        // Save new token if sent (optional)
+        if (res.data.token) {
+          localStorage.setItem("token", res.data.token);
+          dispatch("initializeUserRole"); // update Vuex from token
+        }
+
+        // Immediately fetch updated school
+        await dispatch("fetchMySchool");
+
+        return res.data.school;
+      } catch (err) {
+        console.error(
+          "❌ Failed to create school:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
+    async fetchMySchool({ commit }) {
+      try {
+        const res = await api.get("/api/schools"); // current user’s school
+        if (res.data.school) {
+          commit("SET_SCHOOLS", [res.data.school]); // store as array
+        } else {
+          commit("SET_SCHOOLS", []);
+        }
+      } catch (err) {
+        console.error("❌ Failed to fetch school:", err);
+        commit("SET_SCHOOLS", []);
+      }
+    },
     async fetchUpcomingEvents(
       { commit },
       { calendarId, apiKey, timeMin, timeMax }

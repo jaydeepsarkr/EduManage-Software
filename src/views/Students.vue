@@ -2586,7 +2586,15 @@
   import Header from "@/components/Students/HeaderStudent.vue";
 
   const store = useStore();
-  const students = computed(() => store.getters.allStudents);
+  const students = computed(() => {
+    return [...store.getters.allStudents]
+      .filter((s) => s.rollNumber !== undefined && s.rollNumber !== null)
+      .sort((a, b) => {
+        const numA = parseInt(a.rollNumber);
+        const numB = parseInt(b.rollNumber);
+        return numA - numB;
+      });
+  });
 
   // Loading states
   const isInitialLoading = ref(false);

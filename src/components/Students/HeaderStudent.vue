@@ -560,9 +560,8 @@
 </template>
 
 <script setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import { useStore } from "vuex";
-  import { watch } from "vue";
   import {
     UserPlus,
     X,
@@ -588,10 +587,11 @@
   const showAddModal = ref(false);
   const isAdding = ref(false);
   const generalError = ref("");
-
-  // Toast notification state
   const showToast = ref(false);
   const defaultPassword = process.env.VUE_APP_DEFAULT_PASSWORD;
+
+  // Static random number used for consistent email generation per entry
+  const random3Digit = Math.floor(100 + Math.random() * 900);
 
   const formErrors = ref({
     name: "",
@@ -613,6 +613,7 @@
     rollNumber: "",
     name: "",
     email: "",
+    emailTouched: false, // Track if user has typed email manually
     class: "",
     phone: "",
     address: "",
@@ -629,13 +630,9 @@
   const emitSelectedClass = (val) => emit("selected-class", val);
   const emitSearchText = (val) => emit("search-text", val);
 
-  // Toast functions
   const showSuccessToast = () => {
     showToast.value = true;
-    // Auto close after 3 seconds
-    setTimeout(() => {
-      closeToast();
-    }, 3000);
+    setTimeout(() => closeToast(), 3000);
   };
 
   const closeToast = () => {
@@ -644,11 +641,11 @@
 
   const closeAddModal = () => {
     showAddModal.value = false;
-    // Reset form data
     newStudent.value = {
       rollNumber: "",
       name: "",
       email: "",
+      emailTouched: false,
       class: "",
       phone: "",
       address: "",
@@ -660,22 +657,21 @@
       transferCertificate: "",
       marksheet: "",
     };
-    // Clear errors
     formErrors.value = {};
     generalError.value = "";
   };
+
+  // ✅ Auto-generate email live from name
   watch(
     () => newStudent.value.name,
     (newName) => {
-      if (newName?.trim()) {
-        const email = newName.toLowerCase().replace(/\s+/g, "") + "@gmail.com";
-        newStudent.value.email = email;
-      } else {
-        newStudent.value.email = "";
+      const trimmed = newName?.trim().toLowerCase().replace(/\s+/g, "") || "";
+      if (trimmed && !newStudent.value.emailTouched) {
+        newStudent.value.email = `${trimmed}${random3Digit}@gmail.com`;
       }
     }
   );
-  // Photo Upload
+
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -693,7 +689,6 @@
     newStudent.value.photo = file;
   };
 
-  // Document Upload
   const handleDocumentUpload = (event, documentType) => {
     const file = event.target.files[0];
     if (!file) return;
@@ -718,12 +713,10 @@
     newStudent.value[documentType] = file;
   };
 
-  // Add Student
   const addStudent = async () => {
     formErrors.value = {};
     generalError.value = "";
 
-    // Basic validation
     if (!newStudent.value.name?.trim()) {
       formErrors.value.name = "Student name is required";
       return;
@@ -738,15 +731,16 @@
 
     try {
       const formData = new FormData();
-
       const trimmedName = newStudent.value.name.trim();
 
-      // Generate email from name
-      const autoEmail =
-        trimmedName.toLowerCase().replace(/\s+/g, "") + "@gmail.com";
+      let finalEmail = newStudent.value.email?.trim();
+      if (!finalEmail) {
+        const base = trimmedName.toLowerCase().replace(/\s+/g, "");
+        finalEmail = `${base}${random3Digit}@gmail.com`;
+      }
 
       formData.append("name", trimmedName);
-      formData.append("email", autoEmail);
+      formData.append("email", finalEmail);
       formData.append("password", defaultPassword);
       formData.append("role", "student");
       formData.append("phone", newStudent.value.phone || "");
@@ -759,7 +753,6 @@
         newStudent.value.enrollmentDate || new Date().toISOString()
       );
 
-      // Append files
       if (newStudent.value.photo instanceof File) {
         formData.append("photo", newStudent.value.photo);
       }
@@ -784,9 +777,10 @@
 
       showSuccessToast();
       closeAddModal();
+
       setTimeout(() => {
         window.location.reload();
-      }, 1000); // 1000 milliseconds = 1 second
+      }, 1000);
     } catch (error) {
       console.error("Add student error:", error);
       if (error.response?.data?.errors) {
