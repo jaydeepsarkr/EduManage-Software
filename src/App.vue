@@ -117,6 +117,7 @@
 
   // Lifecycle
 onMounted(() => {
+  // Only show welcome toast if NOT on login or signup route
   if (!["/login", "/signup"].includes(route.path) && !sessionStorage.getItem("welcome_toast_shown")) {
     addToast({
       type: "success",
@@ -126,6 +127,7 @@ onMounted(() => {
     sessionStorage.setItem("welcome_toast_shown", "true");
   }
 });
+
 
 </script>
 
