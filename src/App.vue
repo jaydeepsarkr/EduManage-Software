@@ -134,7 +134,7 @@
 
 <style>
   html {
-    font-size: 11.5px;
+    font-size: 14.5px;
   }
 
   /* Toast animation */
