@@ -116,22 +116,27 @@
   );
 
   // Lifecycle
-onMounted(() => {
-  // Only show welcome toast if NOT on login or signup route
-  if (!["/login", "/signup"].includes(route.path) && !sessionStorage.getItem("welcome_toast_shown")) {
-    addToast({
-      type: "success",
-      title: "Welcome 🎉",
-      message: "Welcome back! Your dashboard is ready.",
-    });
-    sessionStorage.setItem("welcome_toast_shown", "true");
-  }
-});
-
-
+  onMounted(() => {
+    // Only show welcome toast if NOT on login or signup route
+    if (
+      !["/login", "/signup"].includes(route.path) &&
+      !sessionStorage.getItem("welcome_toast_shown")
+    ) {
+      addToast({
+        type: "success",
+        title: "Welcome 🎉",
+        message: "Welcome back! Your dashboard is ready.",
+      });
+      sessionStorage.setItem("welcome_toast_shown", "true");
+    }
+  });
 </script>
 
 <style>
+  html {
+    font-size: 11.5px;
+  }
+
   /* Toast animation */
   .fade-slide-enter-active,
   .fade-slide-leave-active {
