@@ -1,496 +1,944 @@
 <template>
-  <!-- Chat Widget Container -->
-  <div class="fixed bottom-4 right-4 z-50 font-sans">
-    <!-- Minimized Chat Button -->
-    <transition
-      enter-active-class="transition-all duration-300 ease-out"
-      enter-from-class="scale-0 opacity-0"
-      enter-to-class="scale-100 opacity-100"
-      leave-active-class="transition-all duration-200 ease-in"
-      leave-from-class="scale-100 opacity-100"
-      leave-to-class="scale-0 opacity-0"
-    >
-      <button
-        v-if="!isOpen"
-        @click="toggleChat"
-        class="group relative w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-indigo-200"
-      >
-        <!-- Chat Icon -->
-        <div class="flex items-center justify-center w-full h-full">
-          <MessageCircle
-            class="w-7 h-7 text-white transition-transform group-hover:scale-110"
-          />
-        </div>
+  <div class="fixed inset-0 z-50 pointer-events-none">
+    <!-- Mobile Overlay -->
+    <div
+      v-if="isOpen && isMobile"
+      class="absolute inset-0 bg-black bg-opacity-50 pointer-events-auto"
+      @click="toggleChat"
+    ></div>
 
-        <!-- Notification Badge -->
-        <div
-          v-if="unreadCount > 0"
-          class="absolute -top-2 -right-2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center"
-        >
-          <span class="text-white text-xs font-bold">{{
-            unreadCount > 9 ? "9+" : unreadCount
-          }}</span>
-        </div>
-
-        <!-- Pulse Animation -->
-        <div
-          class="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-500 to-purple-600 animate-ping opacity-20"
-        ></div>
-
-        <!-- Tooltip -->
-        <div
-          class="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
-        >
-          Need help? Chat with EduBot!
-          <div
-            class="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900"
-          ></div>
-        </div>
-      </button>
-    </transition>
-
-    <!-- Expanded Chat Interface -->
-    <transition
-      enter-active-class="transition-all duration-300 ease-out"
-      enter-from-class="scale-95 opacity-0 translate-y-4"
-      enter-to-class="scale-100 opacity-100 translate-y-0"
-      leave-active-class="transition-all duration-200 ease-in"
-      leave-from-class="scale-100 opacity-100 translate-y-0"
-      leave-to-class="scale-95 opacity-0 translate-y-4"
+    <!-- Chat Widget Container -->
+    <div
+      class="absolute pointer-events-auto transition-all duration-300 ease-in-out"
+      :class="chatContainerClasses"
     >
       <div
+        class="bg-white rounded-t-2xl shadow-2xl border border-gray-200 overflow-hidden h-full flex flex-col"
+        :class="{ 'bg-gray-800 border-gray-600': isDark }"
         v-if="isOpen"
-        class="w-80 h-96 bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
-        :class="{ 'w-full h-full fixed inset-4': isMobile && isOpen }"
       >
         <!-- Chat Header -->
         <div
-          class="bg-gradient-to-r from-indigo-500 to-purple-600 px-4 py-3 flex items-center justify-between"
+          class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 flex items-center justify-between flex-shrink-0"
         >
           <div class="flex items-center space-x-3">
             <div
-              class="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center"
+              class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center"
             >
-              <Bot class="w-5 h-5 text-white" />
+              <svg
+                class="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 14l9-5-9-5-9 5 9 5z"
+                />
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"
+                />
+              </svg>
             </div>
             <div>
-              <h3 class="text-white font-semibold text-sm">EduBot Assistant</h3>
-              <div class="flex items-center space-x-1">
-                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span class="text-white/80 text-xs">Online</span>
+              <h3 class="font-semibold text-lg">EduBot Assistant</h3>
+              <div class="flex items-center space-x-2">
+                <div
+                  class="w-2 h-2 bg-green-400 rounded-full animate-pulse"
+                ></div>
+                <p class="text-sm text-blue-100">Online now</p>
               </div>
             </div>
           </div>
-
-          <div class="flex items-center space-x-1">
-            <!-- Minimize Button -->
+          <div class="flex items-center space-x-2">
+            <button
+              @click="toggleTheme"
+              class="p-2 rounded-full hover:bg-white/10 transition-colors touch-manipulation"
+              :title="isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+            >
+              <svg
+                v-if="isDark"
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                />
+              </svg>
+              <svg
+                v-else
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+                />
+              </svg>
+            </button>
             <button
               @click="toggleChat"
-              class="p-1.5 hover:bg-white/20 rounded-lg transition-colors"
+              class="p-2 rounded-full hover:bg-white/10 transition-colors touch-manipulation"
+              title="Close chat"
             >
-              <Minimize2 class="w-4 h-4 text-white" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
             </button>
           </div>
         </div>
 
-        <!-- Messages Area -->
+        <!-- Quick Actions -->
         <div
-          ref="messagesContainer"
-          class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50"
+          class="p-4 bg-gray-50 border-b flex-shrink-0"
+          :class="{ 'bg-gray-700 border-gray-600': isDark }"
         >
-          <!-- Welcome Message -->
-          <div
-            v-if="messages.length === 0"
-            class="text-center py-6"
+          <h4
+            class="text-sm font-medium text-gray-600 mb-3"
+            :class="{ 'text-gray-300': isDark }"
           >
-            <div
-              class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-3"
+            Quick Actions
+          </h4>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <button
+              v-for="action in quickActions.slice(0, 6)"
+              :key="action.id"
+              @click="sendQuickAction(action.message)"
+              class="flex items-center justify-center space-x-2 px-3 py-3 bg-blue-100 hover:bg-blue-200 active:bg-blue-300 rounded-xl text-sm font-medium text-blue-700 transition-all duration-200 touch-manipulation"
+              :class="{
+                'bg-blue-900 hover:bg-blue-800 active:bg-blue-700 text-blue-200':
+                  isDark,
+              }"
             >
-              <Sparkles class="w-6 h-6 text-white" />
-            </div>
-            <h4 class="font-semibold text-gray-900 mb-1">Hi there! 👋</h4>
-            <p class="text-gray-600 text-sm mb-4">
-              I'm your school assistant. How can I help you today?
-            </p>
-
-            <!-- Quick Actions -->
-            <div class="space-y-2">
-              <button
-                v-for="action in quickActions"
-                :key="action.id"
-                @click="sendQuickMessage(action.message)"
-                class="w-full p-2 bg-white rounded-lg border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 transition-colors text-left"
-              >
-                <div class="flex items-center space-x-2">
-                  <span class="text-lg">{{ action.emoji }}</span>
-                  <span class="text-sm text-gray-700">{{ action.title }}</span>
-                </div>
-              </button>
-            </div>
+              <span class="text-lg">{{ action.icon }}</span>
+              <span class="hidden sm:inline">{{ action.label }}</span>
+              <span class="sm:hidden text-xs">{{ action.shortLabel }}</span>
+            </button>
           </div>
+        </div>
 
-          <!-- Chat Messages -->
+        <!-- Chat Messages -->
+        <div
+          ref="chatContainer"
+          class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar min-h-0"
+          :class="{ 'bg-gray-800': isDark }"
+          @scroll="handleScroll"
+        >
           <div
             v-for="message in messages"
             :key="message.id"
-            :class="[
-              'flex',
-              message.sender === 'user' ? 'justify-end' : 'justify-start',
-            ]"
+            class="flex animate-slide-in"
+            :class="message.isUser ? 'justify-end' : 'justify-start'"
           >
-            <!-- Bot Avatar -->
-            <div
-              v-if="message.sender === 'bot'"
-              class="flex-shrink-0 mr-2"
-            >
+            <div class="flex items-start space-x-3 max-w-[85%] sm:max-w-xs">
+              <!-- Bot Avatar -->
               <div
-                class="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center"
+                v-if="!message.isUser"
+                class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center flex-shrink-0"
               >
-                <Bot class="w-3 h-3 text-white" />
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
               </div>
-            </div>
 
-            <!-- Message Bubble -->
-            <div
-              :class="[
-                'max-w-xs px-3 py-2 rounded-2xl text-sm',
-                message.sender === 'user'
-                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-br-md'
-                  : 'bg-white border border-gray-200 text-gray-800 rounded-bl-md',
-              ]"
-            >
-              <p class="leading-relaxed">{{ message.text }}</p>
-              <p
-                :class="[
-                  'text-xs mt-1',
-                  message.sender === 'user'
-                    ? 'text-indigo-200'
-                    : 'text-gray-500',
-                ]"
+              <!-- Message Content -->
+              <div class="flex flex-col flex-1">
+                <div
+                  class="px-4 py-3 rounded-2xl shadow-sm text-sm leading-relaxed"
+                  :class="
+                    message.isUser
+                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-md'
+                      : isDark
+                      ? 'bg-gray-700 text-gray-100 rounded-bl-md'
+                      : 'bg-gray-100 text-gray-800 rounded-bl-md'
+                  "
+                >
+                  <p class="whitespace-pre-wrap break-words">
+                    {{ message.content }}
+                  </p>
+
+                  <!-- Image Display -->
+                  <div
+                    v-if="message.image"
+                    class="mt-3"
+                  >
+                    <img
+                      :src="message.image"
+                      alt="Generated image"
+                      class="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                      @click="openImageModal(message.image)"
+                    />
+                  </div>
+                </div>
+
+                <!-- Timestamp -->
+                <div
+                  class="text-xs text-gray-500 mt-2 px-2"
+                  :class="{ 'text-gray-400': isDark }"
+                >
+                  {{ formatTime(message.timestamp) }}
+                </div>
+              </div>
+
+              <!-- User Avatar -->
+              <div
+                v-if="message.isUser"
+                class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0"
               >
-                {{ formatTime(message.timestamp) }}
-              </p>
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
             </div>
           </div>
 
           <!-- Typing Indicator -->
           <div
             v-if="isTyping"
-            class="flex justify-start"
+            class="flex justify-start animate-slide-in"
           >
-            <div class="flex-shrink-0 mr-2">
+            <div class="flex items-center space-x-3">
               <div
-                class="w-6 h-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center"
+                class="w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center"
               >
-                <Bot class="w-3 h-3 text-white" />
+                <svg
+                  class="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
               </div>
-            </div>
-            <div
-              class="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-3 py-2"
-            >
-              <div class="flex space-x-1">
-                <div
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                ></div>
-                <div
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                  style="animation-delay: 0.1s"
-                ></div>
-                <div
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                  style="animation-delay: 0.2s"
-                ></div>
+              <div
+                class="rounded-2xl rounded-bl-md px-4 py-3"
+                :class="isDark ? 'bg-gray-700' : 'bg-gray-100'"
+              >
+                <div class="flex space-x-1">
+                  <div
+                    class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  ></div>
+                  <div
+                    class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style="animation-delay: 0.1s"
+                  ></div>
+                  <div
+                    class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                    style="animation-delay: 0.2s"
+                  ></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Quick Suggestions -->
-        <div
-          v-if="suggestions.length > 0"
-          class="px-4 py-2 bg-white border-t border-gray-100"
+        <!-- Scroll to Bottom Button -->
+        <button
+          v-if="showScrollButton"
+          @click="scrollToBottom"
+          class="absolute right-4 bottom-20 w-10 h-10 bg-blue-500 hover:bg-blue-600 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 touch-manipulation"
         >
-          <div class="flex flex-wrap gap-1">
-            <button
-              v-for="suggestion in suggestions.slice(0, 3)"
-              :key="suggestion"
-              @click="sendQuickMessage(suggestion)"
-              class="px-2 py-1 bg-gray-100 hover:bg-gray-200 rounded-full text-xs text-gray-700 transition-colors"
-            >
-              {{ suggestion }}
-            </button>
-          </div>
-        </div>
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </button>
 
         <!-- Input Area -->
-        <div class="p-3 bg-white border-t border-gray-100">
-          <div class="flex items-center space-x-2">
+        <div
+          class="p-4 bg-gray-50 border-t flex-shrink-0"
+          :class="{ 'bg-gray-700 border-gray-600': isDark }"
+        >
+          <div class="flex items-end space-x-3">
+            <!-- Voice Button -->
+            <button
+              @click="toggleVoiceInput"
+              class="p-3 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors touch-manipulation flex-shrink-0"
+              :class="{
+                'text-gray-400 hover:text-blue-400 hover:bg-gray-600': isDark,
+                'bg-red-100 text-red-600': isListening,
+              }"
+              :title="isListening ? 'Stop listening' : 'Voice input'"
+            >
+              <svg
+                v-if="!isListening"
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+                />
+              </svg>
+              <div
+                v-else
+                class="w-5 h-5 bg-red-500 rounded-full animate-pulse"
+              ></div>
+            </button>
+
+            <!-- Message Input -->
             <div class="flex-1 relative">
-              <input
-                v-model="newMessage"
-                @keydown.enter="sendMessage"
-                type="text"
-                placeholder="Type your message..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+              <textarea
+                ref="messageInput"
+                v-model="currentMessage"
+                @keydown="handleKeyDown"
+                @input="handleInput"
                 :disabled="isTyping"
+                class="w-full px-4 py-3 bg-white border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none touch-manipulation"
+                :class="{
+                  'bg-gray-600 border-gray-500 text-white placeholder-gray-400':
+                    isDark,
+                  'opacity-50 cursor-not-allowed': isTyping,
+                  'border-red-300 focus:ring-red-500': isListening,
+                }"
+                :rows="textareaRows"
                 maxlength="500"
-              />
+              ></textarea>
+
+              <!-- Character Counter -->
+              <div
+                v-if="currentMessage.length > 400"
+                class="absolute bottom-2 right-2 text-xs px-2 py-1 rounded-full"
+                :class="
+                  currentMessage.length >= 500
+                    ? 'bg-red-100 text-red-600'
+                    : 'bg-yellow-100 text-yellow-600'
+                "
+              >
+                {{ currentMessage.length }}/500
+              </div>
             </div>
+
+            <!-- Send Button -->
             <button
               @click="sendMessage"
-              :disabled="!newMessage.trim() || isTyping"
-              class="p-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-full hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105"
+              :disabled="
+                !currentMessage.trim() ||
+                isTyping ||
+                currentMessage.length > 500
+              "
+              class="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 active:scale-95 touch-manipulation flex-shrink-0"
             >
-              <Send class="w-4 h-4" />
+              <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
             </button>
           </div>
         </div>
       </div>
-    </transition>
+    </div>
 
-    <!-- Mobile Backdrop -->
-    <div
-      v-if="isOpen && isMobile"
+    <!-- Chat Toggle Button -->
+    <button
+      v-if="!isOpen"
       @click="toggleChat"
-      class="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"
-    ></div>
+      class="fixed bottom-4 right-4 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group touch-manipulation pointer-events-auto"
+    >
+      <div class="relative">
+        <svg
+          class="w-6 h-6 sm:w-7 sm:h-7 group-hover:scale-110 transition-transform"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+          />
+        </svg>
+        <!-- Notification Badge -->
+        <div
+          v-if="hasNewMessage"
+          class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse flex items-center justify-center"
+        >
+          <span class="text-xs text-white font-bold">{{ unreadCount }}</span>
+        </div>
+      </div>
+    </button>
+
+    <!-- Welcome Tooltip -->
+    <div
+      v-if="!isOpen && !hasInteracted && !isMobile"
+      class="fixed bottom-20 right-4 bg-white rounded-xl shadow-xl p-4 max-w-xs animate-bounce-gentle pointer-events-auto"
+      :class="{ 'bg-gray-800 text-white': isDark }"
+    >
+      <div class="flex items-center space-x-2 mb-2">
+        <span class="text-2xl">👋</span>
+        <div class="font-semibold">Hi! I'm EduBot</div>
+      </div>
+      <div
+        class="text-sm text-gray-600 mb-3"
+        :class="{ 'text-gray-300': isDark }"
+      >
+        Ask me about grades, schedules, assignments, or school info!
+      </div>
+      <button
+        @click="toggleChat"
+        class="w-full bg-blue-500 hover:bg-blue-600 text-white text-sm py-2 px-4 rounded-lg transition-colors"
+      >
+        Start Chat
+      </button>
+      <div
+        class="absolute bottom-0 right-6 transform translate-y-1/2 rotate-45 w-3 h-3 bg-white"
+        :class="{ 'bg-gray-800': isDark }"
+      ></div>
+    </div>
+
+    <!-- Image Modal -->
+    <div
+      v-if="imageModal.show"
+      class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-60 pointer-events-auto p-4"
+      @click="closeImageModal"
+    >
+      <div class="relative max-w-full max-h-full">
+        <img
+          :src="imageModal.src"
+          alt="Full size image"
+          class="max-w-full max-h-full rounded-lg"
+        />
+        <button
+          @click="closeImageModal"
+          class="absolute top-4 right-4 w-10 h-10 bg-black bg-opacity-50 text-white rounded-full flex items-center justify-center hover:bg-opacity-75 transition-all"
+        >
+          <svg
+            class="w-6 h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
-<script setup>
-  import { ref, onMounted, onBeforeUnmount, nextTick } from "vue";
-  import {
-    MessageCircle,
-    Bot,
-    Minimize2,
-    Sparkles,
-    Send,
-  } from "lucide-vue-next";
-  import axios from "axios";
+<script>
+  import { ref, onMounted, nextTick, watch, computed, onUnmounted } from "vue";
 
-  // DeepSeek API key (add this in your .env file)
-  const API_KEY = process.env.VUE_APP_DEEPSEEK_API_KEY;
+  export default {
+    name: "ChatWidget",
+    setup() {
+      // Reactive data
+      const isOpen = ref(false);
+      const messages = ref([]);
+      const currentMessage = ref("");
+      const isTyping = ref(false);
+      const isDark = ref(false);
+      const chatContainer = ref(null);
+      const messageInput = ref(null);
+      const hasNewMessage = ref(false);
+      const hasInteracted = ref(false);
+      const unreadCount = ref(0);
+      const showScrollButton = ref(false);
+      const isListening = ref(false);
+      const isMobile = ref(false);
+      const imageModal = ref({ show: false, src: "" });
 
-  console.log("DeepSeek Key:", API_KEY); // should start with sk-af5...
-
-  // Refs and reactive state
-  const isOpen = ref(false);
-  const messages = ref([]);
-  const newMessage = ref("");
-  const isTyping = ref(false);
-  const unreadCount = ref(0);
-  const suggestions = ref([]);
-  const isMobile = ref(false);
-  const messagesContainer = ref(null);
-
-  // Quick actions
-  const quickActions = [
-    {
-      id: 1,
-      title: "Check my grades",
-      emoji: "📊",
-      message: "Show me my recent grades",
-    },
-    {
-      id: 2,
-      title: "Today's schedule",
-      emoji: "📅",
-      message: "What's my schedule for today?",
-    },
-    {
-      id: 3,
-      title: "Attendance status",
-      emoji: "✅",
-      message: "Check my attendance record",
-    },
-    {
-      id: 4,
-      title: "Pending assignments",
-      emoji: "📝",
-      message: "Show my pending assignments",
-    },
-  ];
-
-  // Methods
-  const toggleChat = () => {
-    isOpen.value = !isOpen.value;
-    if (isOpen.value) {
-      unreadCount.value = 0;
-      scrollToBottom();
-    }
-  };
-
-  const sendMessage = () => {
-    if (!newMessage.value.trim() || isTyping.value) return;
-
-    const userMsg = {
-      id: Date.now(),
-      text: newMessage.value.trim(),
-      sender: "user",
-      timestamp: new Date(),
-    };
-
-    messages.value.push(userMsg);
-    newMessage.value = "";
-    scrollToBottom();
-    fetchDeepSeekResponse(userMsg.text);
-  };
-
-  const sendQuickMessage = (msg) => {
-    newMessage.value = msg;
-    sendMessage();
-  };
-
-  const fetchDeepSeekResponse = async (userText) => {
-    isTyping.value = true;
-    suggestions.value = [];
-
-    try {
-      const res = await axios.post(
-        "https://api.deepseek.com/v1/chat/completions",
+      // Quick actions for school management
+      const quickActions = ref([
         {
-          model: "deepseek-chat",
-          messages: [
-            {
-              role: "system",
-              content: "You are a helpful school assistant chatbot.",
-            },
-            { role: "user", content: userText },
-          ],
+          id: 1,
+          label: "Grades",
+          shortLabel: "Grades",
+          message: "Show my current grades and academic performance",
+          icon: "📊",
         },
         {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${API_KEY}`,
-          },
+          id: 2,
+          label: "Schedule",
+          shortLabel: "Schedule",
+          message: "What's my class schedule for today?",
+          icon: "📅",
+        },
+        {
+          id: 3,
+          label: "Assignments",
+          shortLabel: "Tasks",
+          message: "Show my pending assignments and homework",
+          icon: "📝",
+        },
+        {
+          id: 4,
+          label: "Teachers",
+          shortLabel: "Teachers",
+          message: "Show my teachers contact information",
+          icon: "👨‍🏫",
+        },
+        {
+          id: 5,
+          label: "News",
+          shortLabel: "News",
+          message: "Any new school announcements or important updates?",
+          icon: "📢",
+        },
+        {
+          id: 6,
+          label: "Generate",
+          shortLabel: "Image",
+          message: "/image Create a study motivation poster",
+          icon: "🎨",
+        },
+      ]);
+
+      // API URLs
+      const API_URLS = {
+        chat: "https://backend.buildpicoapps.com/aero/run/llm-api?pk=v1-Z0FBQUFBQm5HUEtMSjJkakVjcF9IQ0M0VFhRQ0FmSnNDSHNYTlJSblE0UXo1Q3RBcjFPcl9YYy1OZUhteDZWekxHdWRLM1M1alNZTkJMWEhNOWd4S1NPSDBTWC12M0U2UGc9PQ==",
+        image:
+          "https://backend.buildpicoapps.com/aero/run/image-generation-api?pk=v1-Z0FBQUFBQm5HUEtMSjJkakVjcF9IQ0M0VFhRQ0FmSnNDSHNYTlJSblE0UXo1Q3RBcjFPcl9YYy1OZUhteDZWekxHdWRLM1M1alNZTkJMWEhNOWd4S1NPSDBTWC12M0U2UGc9PQ==",
+      };
+
+      // Computed properties
+      const textareaRows = computed(() => {
+        const lines = currentMessage.value.split("\n").length;
+        return Math.min(Math.max(lines, 1), 4);
+      });
+
+      const chatContainerClasses = computed(() => {
+        if (isMobile.value) {
+          return isOpen.value
+            ? "bottom-0 left-0 right-0 top-20"
+            : "bottom-4 right-4 w-14 h-14";
+        } else {
+          return isOpen.value
+            ? "bottom-4 right-4 w-96 h-[32rem]"
+            : "bottom-4 right-4 w-14 h-14";
         }
+      });
+
+      // Methods
+      const checkMobile = () => {
+        isMobile.value = window.innerWidth < 640;
+      };
+
+      const toggleChat = () => {
+        isOpen.value = !isOpen.value;
+        hasInteracted.value = true;
+        if (isOpen.value) {
+          hasNewMessage.value = false;
+          unreadCount.value = 0;
+          nextTick(() => {
+            scrollToBottom();
+            if (messageInput.value) {
+              messageInput.value.focus();
+            }
+          });
+        }
+      };
+
+      const handleKeyDown = (event) => {
+        if (event.key === "Enter" && !event.shiftKey) {
+          event.preventDefault();
+          sendMessage();
+        }
+      };
+
+      const handleInput = () => {
+        // Auto-resize textarea is handled by computed property
+      };
+
+      const handleScroll = () => {
+        if (chatContainer.value) {
+          const { scrollTop, scrollHeight, clientHeight } = chatContainer.value;
+          showScrollButton.value =
+            scrollHeight - scrollTop - clientHeight > 100;
+        }
+      };
+
+      const sendMessage = async () => {
+        if (
+          !currentMessage.value.trim() ||
+          isTyping.value ||
+          currentMessage.value.length > 500
+        )
+          return;
+
+        const userMessage = {
+          id: Date.now(),
+          content: currentMessage.value,
+          isUser: true,
+          timestamp: new Date(),
+        };
+
+        messages.value.push(userMessage);
+        const messageToProcess = currentMessage.value;
+        currentMessage.value = "";
+
+        await scrollToBottom();
+
+        // Show typing indicator
+        isTyping.value = true;
+
+        try {
+          const response = await callApi(messageToProcess);
+          messages.value.push(response);
+
+          // Show notification if chat is closed
+          if (!isOpen.value) {
+            hasNewMessage.value = true;
+            unreadCount.value++;
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          messages.value.push({
+            id: Date.now() + 1,
+            content: "Sorry, I encountered an error. Please try again.",
+            isUser: false,
+            timestamp: new Date(),
+          });
+        } finally {
+          isTyping.value = false;
+          await scrollToBottom();
+        }
+      };
+
+      const sendQuickAction = (message) => {
+        currentMessage.value = message;
+        sendMessage();
+      };
+
+      const callApi = async (prompt) => {
+        const isImageRequest = prompt.toLowerCase().startsWith("/image");
+        const apiUrl = isImageRequest ? API_URLS.image : API_URLS.chat;
+
+        // eslint-disable-next-line no-useless-catch
+        try {
+          const response = await fetch(apiUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ prompt }),
+          });
+
+          const data = await response.json();
+
+          if (data.status === "success") {
+            const responseMessage = {
+              id: Date.now() + 1,
+              content: data.text || "Here's your response:",
+              isUser: false,
+              timestamp: new Date(),
+            };
+
+            // If it's an image response and has image URL
+            if (isImageRequest && data.image_url) {
+              responseMessage.image = data.image_url;
+              responseMessage.content = "Here's your generated image:";
+            }
+
+            return responseMessage;
+          } else {
+            throw new Error("API returned error status");
+          }
+        } catch (error) {
+          throw error;
+        }
+      };
+
+      const scrollToBottom = async () => {
+        await nextTick();
+        if (chatContainer.value) {
+          chatContainer.value.scrollTop = chatContainer.value.scrollHeight;
+          showScrollButton.value = false;
+        }
+      };
+
+      const formatTime = (timestamp) => {
+        return timestamp.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      };
+
+      const toggleTheme = () => {
+        isDark.value = !isDark.value;
+        localStorage.setItem("edubot-dark-mode", isDark.value);
+      };
+
+      const toggleVoiceInput = () => {
+        if (
+          !("webkitSpeechRecognition" in window) &&
+          !("SpeechRecognition" in window)
+        ) {
+          alert("Speech recognition is not supported in your browser.");
+          return;
+        }
+
+        if (isListening.value) {
+          // Stop listening
+          isListening.value = false;
+        } else {
+          // Start listening
+          isListening.value = true;
+          const SpeechRecognition =
+            window.SpeechRecognition || window.webkitSpeechRecognition;
+          const recognition = new SpeechRecognition();
+
+          recognition.continuous = false;
+          recognition.interimResults = false;
+          recognition.lang = "en-US";
+
+          recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            currentMessage.value = transcript;
+            isListening.value = false;
+          };
+
+          recognition.onerror = () => {
+            isListening.value = false;
+          };
+
+          recognition.onend = () => {
+            isListening.value = false;
+          };
+
+          recognition.start();
+        }
+      };
+
+      const openImageModal = (src) => {
+        imageModal.value = { show: true, src };
+      };
+
+      const closeImageModal = () => {
+        imageModal.value = { show: false, src: "" };
+      };
+
+      // Initialize
+      onMounted(() => {
+        // Check mobile
+        checkMobile();
+        window.addEventListener("resize", checkMobile);
+
+        // Load theme preference
+        const savedTheme = localStorage.getItem("edubot-dark-mode");
+        if (savedTheme !== null) {
+          isDark.value = JSON.parse(savedTheme);
+        }
+
+        // Welcome message
+        messages.value.push({
+          id: 1,
+          content: `Hi! I'm EduBot 🎓
+
+I can help you with:
+📊 Grades & academic performance
+📅 Class schedules & timetables
+📝 Assignments & homework
+👨‍🏫 Teacher contact information
+📢 School announcements & news
+🎨 Generate educational images (use '/image')
+
+What would you like to know about your school?`,
+          isUser: false,
+          timestamp: new Date(),
+        });
+
+        // Auto-hide welcome tooltip after 8 seconds
+        setTimeout(() => {
+          if (!hasInteracted.value) {
+            hasInteracted.value = true;
+          }
+        }, 8000);
+      });
+
+      onUnmounted(() => {
+        window.removeEventListener("resize", checkMobile);
+      });
+
+      // Watch for new messages to scroll
+      watch(
+        messages,
+        () => {
+          if (isOpen.value) {
+            nextTick(() => {
+              scrollToBottom();
+            });
+          }
+        },
+        { deep: true }
       );
 
-      const botText = res.data.choices?.[0]?.message?.content?.trim();
-
-      messages.value.push({
-        id: Date.now(),
-        text: botText || "⚠️ Sorry, I couldn't understand that.",
-        sender: "bot",
-        timestamp: new Date(),
-      });
-
-      if (!isOpen.value) {
-        unreadCount.value++;
-      }
-    } catch (err) {
-      console.error("DeepSeek Error:", err);
-      messages.value.push({
-        id: Date.now(),
-        text: "⚠️ Something went wrong. Try again later.",
-        sender: "bot",
-        timestamp: new Date(),
-      });
-    } finally {
-      isTyping.value = false;
-      scrollToBottom();
-    }
+      return {
+        isOpen,
+        messages,
+        currentMessage,
+        isTyping,
+        isDark,
+        chatContainer,
+        messageInput,
+        hasNewMessage,
+        hasInteracted,
+        unreadCount,
+        showScrollButton,
+        isListening,
+        isMobile,
+        imageModal,
+        quickActions,
+        textareaRows,
+        chatContainerClasses,
+        toggleChat,
+        handleKeyDown,
+        handleInput,
+        handleScroll,
+        sendMessage,
+        sendQuickAction,
+        scrollToBottom,
+        formatTime,
+        toggleTheme,
+        toggleVoiceInput,
+        openImageModal,
+        closeImageModal,
+      };
+    },
   };
-
-  const scrollToBottom = () => {
-    nextTick(() => {
-      if (messagesContainer.value) {
-        messagesContainer.value.scrollTop =
-          messagesContainer.value.scrollHeight;
-      }
-    });
-  };
-
-  const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 640;
-  };
-
-  const handleResize = () => {
-    checkMobile();
-  };
-
-  // Lifecycle hooks
-  onMounted(() => {
-    checkMobile();
-    window.addEventListener("resize", handleResize);
-
-    setTimeout(() => {
-      if (!isOpen.value) {
-        unreadCount.value = 1;
-      }
-    }, 3000);
-  });
-
-  onBeforeUnmount(() => {
-    window.removeEventListener("resize", handleResize);
-  });
 </script>
 
 <style scoped>
-  /* Custom Animations */
-  @keyframes bounce {
-    0%,
-    80%,
-    100% {
-      transform: scale(0);
-    }
-    40% {
-      transform: scale(1);
-    }
+  /* Custom scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
   }
 
-  .animate-bounce {
-    animation: bounce 1.4s infinite ease-in-out both;
-  }
-
-  /* Custom Scrollbar for Messages */
-  .overflow-y-auto::-webkit-scrollbar {
-    width: 4px;
-  }
-
-  .overflow-y-auto::-webkit-scrollbar-track {
+  .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
 
-  .overflow-y-auto::-webkit-scrollbar-thumb {
-    background: rgba(156, 163, 175, 0.5);
-    border-radius: 2px;
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
   }
 
-  .overflow-y-auto::-webkit-scrollbar-thumb:hover {
-    background: rgba(156, 163, 175, 0.7);
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
   }
 
-  /* Smooth Transitions */
-  * {
-    transition-property: color, background-color, border-color, transform,
-      opacity, box-shadow;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+  /* Touch manipulation */
+  .touch-manipulation {
+    touch-action: manipulation;
   }
 
-  /* Mobile Optimizations */
-  @media (max-width: 640px) {
-    .fixed.bottom-4.right-4 {
-      bottom: 1rem;
-      right: 1rem;
+  /* Animations */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
-  /* Focus States */
-  input:focus,
-  button:focus {
-    outline: none;
+  @keyframes bounceGentle {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
   }
 
-  /* Hover Effects */
+  .animate-slide-in {
+    animation: slideIn 0.4s ease-out;
+  }
+
+  .animate-bounce-gentle {
+    animation: bounceGentle 3s infinite;
+  }
+
+  /* Shadow utilities */
+  .shadow-3xl {
+    box-shadow: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  /* Hover and active states */
+  .transform {
+    transition: transform 0.2s ease-in-out;
+  }
+
   .hover\:scale-105:hover {
     transform: scale(1.05);
   }
@@ -499,16 +947,88 @@
     transform: scale(1.1);
   }
 
-  /* Pulse Animation */
-  @keyframes ping {
-    75%,
-    100% {
-      transform: scale(2);
-      opacity: 0;
+  .active\:scale-95:active {
+    transform: scale(0.95);
+  }
+
+  /* Focus styles */
+  .focus\:outline-none:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+  }
+
+  .focus\:ring-2:focus {
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+      var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+      calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
+      var(--tw-shadow, 0 0 #0000);
+  }
+
+  .focus\:ring-blue-500:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(59 130 246 / var(--tw-ring-opacity));
+  }
+
+  .focus\:ring-red-500:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(239 68 68 / var(--tw-ring-opacity));
+  }
+
+  .focus\:border-transparent:focus {
+    border-color: transparent;
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 640px) {
+    .animate-bounce-gentle {
+      display: none;
     }
   }
 
-  .animate-ping {
-    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
+  /* Prevent zoom on input focus on iOS */
+  @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    select,
+    textarea,
+    input[type="text"],
+    input[type="password"],
+    input[type="datetime"],
+    input[type="datetime-local"],
+    input[type="date"],
+    input[type="month"],
+    input[type="time"],
+    input[type="week"],
+    input[type="number"],
+    input[type="email"],
+    input[type="url"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="color"] {
+      font-size: 16px;
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .bg-gradient-to-r {
+      background: #1e40af !important;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-slide-in,
+    .animate-bounce-gentle,
+    .animate-bounce,
+    .animate-pulse {
+      animation: none;
+    }
+
+    .transition-all,
+    .transition-colors,
+    .transition-transform {
+      transition: none;
+    }
   }
 </style>
