@@ -4,7 +4,7 @@
 <button
   v-if="isMobile"
   @click="toggleMobileSidebar"
-  class="fixed  bg-white shadow-lg rounded-lg p-2 border border-gray-200 
+  class="fixed z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 
          top-[16px] ml-[5px] lg:hidden"
   :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
 >
