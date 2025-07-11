@@ -1,21 +1,23 @@
 <template>
   <div class="relative">
     <!-- Mobile Toggle Button -->
-    <button
-      v-if="isMobile"
-      @click="toggleMobileSidebar"
-      class="fixed top-4 left-4 z-[1001] lg:hidden bg-white shadow-lg rounded-lg p-2 border border-gray-200 mt-[-8px]"
-      :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
-    >
-      <Menu
-        v-if="!showMobileSidebar"
-        class="w-6 h-6 text-gray-700"
-      />
-      <X
-        v-else
-        class="w-6 h-6 text-gray-700"
-      />
-    </button>
+<button
+  v-if="isMobile"
+  @click="toggleMobileSidebar"
+  class="fixed z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 
+         top-[23px] ml-[5px] lg:hidden"
+  :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
+>
+  <Menu
+    v-if="!showMobileSidebar"
+    class="w-6 h-6 text-gray-700"
+  />
+  <X
+    v-else
+    class="w-6 h-6 text-gray-700"
+  />
+</button>
+
 
     <!-- Mobile Backdrop -->
     <div
