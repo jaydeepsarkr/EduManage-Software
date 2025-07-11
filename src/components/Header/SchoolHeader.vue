@@ -6,19 +6,21 @@
         <!-- Left Section - Title and Info (Mobile: Centered, Desktop: Left) -->
         <div class="flex items-center space-x-4 min-w-0 flex-1 sm:flex-initial">
           <div class="min-w-0 flex-1 text-center sm:text-left">
-            <h2
-              class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate ml-[54px]"
-            >
-              {{ getCurrentPageTitle() }}
-            </h2>
+    <h2
+  class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate ml-[3px]"
+>
+  {{ getCurrentPageTitle() }}
+</h2>
+
             <div
               class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1"
             >
-              <p
-                class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit mx-auto sm:mx-0 items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-              >
-                {{ getCurrentPageDescription() }}
-              </p>
+         <p
+  class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit mx-auto sm:mx-0 sm:ml-[31px] items-center px-2.5 py-0.5 rounded-full text-[9px] sm:text-xs font-medium"
+>
+  {{ getCurrentPageDescription() }}
+</p>
+
             </div>
           </div>
         </div>
