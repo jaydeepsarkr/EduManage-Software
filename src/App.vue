@@ -7,24 +7,16 @@
 
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
-      <!-- Top Bar for desktop (fixed) -->
+      <!-- Top Bar -->
       <header
         v-if="!isAuthRoute"
-        class="hidden lg:block bg-white shadow-sm border-b border-gray-200 px-6 py-3"
+        class="bg-white shadow-sm border-b border-gray-200 px-6"
       >
         <SchoolHeader />
       </header>
 
-      <!-- Scrollable Content -->
+      <!-- Main Content Area -->
       <main class="flex-1 overflow-y-auto px-6 py-4">
-        <!-- Top Bar for mobile (scrolls with content) -->
-        <header
-          v-if="!isAuthRoute"
-          class="block lg:hidden bg-white shadow-sm border-b border-gray-200 -mx-6 -mt-4 px-6 py-3 mb-4"
-        >
-          <SchoolHeader />
-        </header>
-
         <router-view />
       </main>
     </div>
@@ -125,6 +117,7 @@
 
   // Lifecycle
   onMounted(() => {
+    // Only show welcome toast if NOT on login or signup route
     if (
       !["/login", "/signup"].includes(route.path) &&
       !sessionStorage.getItem("welcome_toast_shown")
