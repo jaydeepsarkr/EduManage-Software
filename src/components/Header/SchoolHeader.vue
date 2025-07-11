@@ -15,11 +15,12 @@
             <div
               class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1"
             >
-         <p
-  class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit mx-auto sm:mx-0 sm:ml-[31px] items-center px-2.5 py-0.5 rounded-full text-[9px] sm:text-xs font-medium"
+<p
+  class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit ml-[36px] sm:ml-[31px] items-center px-2.5 py-0.5 rounded-full text-[9px] sm:text-xs font-medium"
 >
   {{ getCurrentPageDescription() }}
 </p>
+
 
             </div>
           </div>
