@@ -9,7 +9,7 @@
         <div class="flex items-center space-x-4 min-w-0 flex-1 sm:flex-initial">
           <div class="min-w-0 flex-1 text-center sm:text-left">
             <h2
-              class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate ml-[62px] sm:ml-[3px]"
+              class="text-base sm:text-lg md:text-xl font-semibold text-gray-900 truncate ml-[3px]"
             >
               {{ getCurrentPageTitle() }}
             </h2>
@@ -18,7 +18,7 @@
               class="flex flex-col sm:flex-row sm:items-center sm:space-x-4 mt-1"
             >
               <p
-                class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit ml-[54px] sm:ml-[31px] items-center px-2.5 py-0.5 rounded-full text-[7px] sm:text-xs font-medium"
+                class="text-indigo-800 truncate bg-indigo-100 mt-1 sm:mt-0 w-fit ml-[36px] sm:ml-[31px] items-center px-2.5 py-0.5 rounded-full text-[9px] sm:text-xs font-medium"
               >
                 {{ getCurrentPageDescription() }}
               </p>

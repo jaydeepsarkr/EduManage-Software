@@ -1,6 +1,7 @@
 <template>
   <div class="relative">
-    <!-- Mobile Toggle Button --><button
+    <!-- Mobile Toggle Button -->
+    <button
       v-if="isMobile"
       @click="toggleMobileSidebar"
       class="fixed z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 top-[16px] ml-[5px] lg:hidden"
@@ -15,15 +16,30 @@
         class="w-6 h-6 text-gray-700"
       />
     </button>
+
     <!-- Mobile Backdrop -->
     <div
       v-if="isMobile && showMobileSidebar"
       @click="closeMobileSidebar"
       class="fixed inset-0 bg-black bg-opacity-50 z-[999] lg:hidden"
     ></div>
+
     <!-- Sidebar -->
     <div
-      :class="[ 'bg-gradient-to-b from-slate-50 to-white shadow-2xl transition-all duration-300 ease-in-out flex flex-col border-r border-slate-200/60', // Desktop styles 'lg:relative lg:translate-x-0', isCollapsed && !isMobile ? 'lg:w-20' : 'lg:w-72', // Mobile styles 'fixed inset-y-0 left-0 z-[1000] w-64', 'lg:block', isMobile ? showMobileSidebar ? 'translate-x-0' : '-translate-x-full' : 'translate-x-0', ]"
+      :class="[
+        'bg-gradient-to-b from-slate-50 to-white shadow-2xl transition-all duration-300 ease-in-out flex flex-col border-r border-slate-200/60',
+        // Desktop styles
+        'lg:relative lg:translate-x-0',
+        isCollapsed && !isMobile ? 'lg:w-20' : 'lg:w-72',
+        // Mobile styles
+        'fixed inset-y-0 left-0 z-[1000] w-64',
+        'lg:block',
+        isMobile
+          ? showMobileSidebar
+            ? 'translate-x-0'
+            : '-translate-x-full'
+          : 'translate-x-0',
+      ]"
     >
       <!-- Header -->
       <div
@@ -60,6 +76,7 @@
           </div>
         </div>
       </div>
+
       <!-- Navigation -->
       <nav class="flex-1 p-4 space-y-3 overflow-y-auto custom-scrollbar">
         <!-- Main Navigation -->
@@ -116,6 +133,7 @@
             </div>
           </RouterLink>
         </div>
+
         <!-- Academic Section -->
         <div class="pt-6">
           <div
@@ -180,6 +198,7 @@
             </RouterLink>
           </div>
         </div>
+
         <!-- Administration Section -->
         <div class="pt-6">
           <div
@@ -242,12 +261,14 @@
             </div>
           </RouterLink>
         </div>
+
         <!-- Separator -->
         <div class="my-6">
           <div
             class="h-px bg-gradient-to-r from-transparent via-slate-300 to-transparent"
           ></div>
         </div>
+
         <!-- System Section -->
         <div class="space-y-1">
           <RouterLink
@@ -298,6 +319,7 @@
           </RouterLink>
         </div>
       </nav>
+
       <!-- Footer -->
       <div
         class="p-4 border-t border-slate-200/60 bg-gradient-to-r from-slate-50 to-white"
@@ -316,6 +338,7 @@
             {{ formatDate(new Date()) }}
           </div>
         </div>
+
         <!-- User Profile -->
         <div class="flex items-center space-x-3 mb-4">
           <div
@@ -353,6 +376,7 @@
             </p>
           </div>
         </div>
+
         <!-- Toggle Button (Desktop only) -->
         <button
           v-if="!isMobile"
@@ -377,6 +401,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
   import { ref, computed, onMounted, onUnmounted } from "vue";
   import router from "@/router";
@@ -396,35 +421,225 @@
     Menu,
     X,
   } from "lucide-vue-next";
-  const store = useStore(); // Sidebar state const isCollapsed = ref(false); const activeItem = ref("dashboard"); const showMobileSidebar = ref(false); const isMobile = ref(false); // Fetch role on mount onMounted(() => { store.dispatch("initializeUserRole"); store.dispatch("fetchStudents", { page: 1, limit: 1 }); }); // Computed values const TotalStudents = computed(() => store.getters.getTotalStudents); const userName = computed(() => store.getters.getUserName); const UserRole = computed(() => store.getters.getUserRole); const userPhoto = computed(() => { const photo = store.getters.getUserPhoto; const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000"; return photo ? photo.startsWith("http") ? photo : `${baseURL}/${photo}` : null; }); // Navigation items const mainNavigationItems = ref([ { id: "dashboard", label: "Dashboard", icon: Home, route: "/", description: "Overview of school statistics, recent activities, and key performance indicators.", quickAction: "View Today's Schedule", }, ]); const academicItems = computed(() => [ { id: "students", label: "Students", icon: Users, badge: TotalStudents.value, route: "/students", description: "Manage student records, enrollment, personal information, and academic history.", quickAction: "Add New Student", }, { id: "teachers", label: "Teachers", icon: UserCheck, badge: "89", description: "Manage teacher profiles, assignments, schedules, and performance records.", quickAction: "Add New Teacher", route: "/working", }, { id: "classes", label: "Classes", icon: School, badge: "42", description: "Manage class schedules, room assignments, and student-teacher allocations.", quickAction: "Create New Class", route: "/working", }, { id: "attendance", label: "Attendance", icon: ClipboardCheck, badge: "Today", description: "Track and manage student and teacher attendance records.", quickAction: "Mark Attendance", route: "/attendance", }, ]); const administrationItems = ref([ { id: "reports", label: "Reports", icon: ClipboardCheck, badge: "New", route: "/working", }, ]); const systemItems = ref([ { id: "settings", label: "Settings", icon: Settings, description: "Configure system settings, user permissions, and school preferences.", quickAction: "Manage Settings", route: "/working", }, { id: "help", label: "Help & Support", icon: HelpCircle, description: "Access help documentation, tutorials, and technical support.", quickAction: "Contact Support", route: "/HelpSupport", }, { id: "logout", label: "Logout", icon: LogOut, description: "Securely sign out of the school management system.", quickAction: null, route: "/login", }, ]); // Methods const toggleSidebar = () => { isCollapsed.value = !isCollapsed.value; }; const toggleMobileSidebar = () => { showMobileSidebar.value = !showMobileSidebar.value; }; const closeMobileSidebar = () => { showMobileSidebar.value = false; }; const formatDate = (date) => { return date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric", }); }; const handleNavClick = (itemId) => { activeItem.value = itemId; // Close mobile sidebar when navigating if (isMobile.value) { showMobileSidebar.value = false; } if (itemId === "logout") { localStorage.clear(); sessionStorage.clear(); localStorage.removeItem("token"); router.push("/login"); } }; // Responsive handling const checkMobile = () => { isMobile.value = window.innerWidth < 1024; // lg breakpoint if (isMobile.value) { isCollapsed.value = false; // Always expanded on mobile when shown showMobileSidebar.value = false; // Hide by default on mobile } else { showMobileSidebar.value = false; // Reset mobile sidebar state } }; // Lifecycle hooks onMounted(() => { window.addEventListener("resize", checkMobile); checkMobile(); }); onUnmounted(() => { window.removeEventListener("resize", checkMobile); });
+
+  const store = useStore();
+
+  // Sidebar state
+  const isCollapsed = ref(false);
+  const activeItem = ref("dashboard");
+  const showMobileSidebar = ref(false);
+  const isMobile = ref(false);
+
+  // Fetch role on mount
+  onMounted(() => {
+    store.dispatch("initializeUserRole");
+    store.dispatch("fetchStudents", { page: 1, limit: 1 });
+  });
+
+  // Computed values
+  const TotalStudents = computed(() => store.getters.getTotalStudents);
+  const userName = computed(() => store.getters.getUserName);
+  const UserRole = computed(() => store.getters.getUserRole);
+  const userPhoto = computed(() => {
+    const photo = store.getters.getUserPhoto;
+    const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+    return photo
+      ? photo.startsWith("http")
+        ? photo
+        : `${baseURL}/${photo}`
+      : null;
+  });
+
+  // Navigation items
+  const mainNavigationItems = ref([
+    {
+      id: "dashboard",
+      label: "Dashboard",
+      icon: Home,
+      route: "/",
+      description:
+        "Overview of school statistics, recent activities, and key performance indicators.",
+      quickAction: "View Today's Schedule",
+    },
+  ]);
+
+  const academicItems = computed(() => [
+    {
+      id: "students",
+      label: "Students",
+      icon: Users,
+      badge: TotalStudents.value,
+      route: "/students",
+      description:
+        "Manage student records, enrollment, personal information, and academic history.",
+      quickAction: "Add New Student",
+    },
+    {
+      id: "teachers",
+      label: "Teachers",
+      icon: UserCheck,
+      badge: "89",
+      description:
+        "Manage teacher profiles, assignments, schedules, and performance records.",
+      quickAction: "Add New Teacher",
+      route: "/working",
+    },
+    {
+      id: "classes",
+      label: "Classes",
+      icon: School,
+      badge: "42",
+      description:
+        "Manage class schedules, room assignments, and student-teacher allocations.",
+      quickAction: "Create New Class",
+      route: "/working",
+    },
+    {
+      id: "attendance",
+      label: "Attendance",
+      icon: ClipboardCheck,
+      badge: "Today",
+      description: "Track and manage student and teacher attendance records.",
+      quickAction: "Mark Attendance",
+      route: "/attendance",
+    },
+  ]);
+
+  const administrationItems = ref([
+    {
+      id: "reports",
+      label: "Reports",
+      icon: ClipboardCheck,
+      badge: "New",
+      route: "/working",
+    },
+  ]);
+
+  const systemItems = ref([
+    {
+      id: "settings",
+      label: "Settings",
+      icon: Settings,
+      description:
+        "Configure system settings, user permissions, and school preferences.",
+      quickAction: "Manage Settings",
+      route: "/working",
+    },
+    {
+      id: "help",
+      label: "Help & Support",
+      icon: HelpCircle,
+      description:
+        "Access help documentation, tutorials, and technical support.",
+      quickAction: "Contact Support",
+      route: "/HelpSupport",
+    },
+    {
+      id: "logout",
+      label: "Logout",
+      icon: LogOut,
+      description: "Securely sign out of the school management system.",
+      quickAction: null,
+      route: "/login",
+    },
+  ]);
+
+  // Methods
+  const toggleSidebar = () => {
+    isCollapsed.value = !isCollapsed.value;
+  };
+
+  const toggleMobileSidebar = () => {
+    showMobileSidebar.value = !showMobileSidebar.value;
+  };
+
+  const closeMobileSidebar = () => {
+    showMobileSidebar.value = false;
+  };
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const handleNavClick = (itemId) => {
+    activeItem.value = itemId;
+    // Close mobile sidebar when navigating
+    if (isMobile.value) {
+      showMobileSidebar.value = false;
+    }
+    if (itemId === "logout") {
+      localStorage.clear();
+      sessionStorage.clear();
+      localStorage.removeItem("token");
+      router.push("/login");
+    }
+  };
+
+  // Responsive handling
+  const checkMobile = () => {
+    isMobile.value = window.innerWidth < 1024; // lg breakpoint
+    if (isMobile.value) {
+      isCollapsed.value = false; // Always expanded on mobile when shown
+      showMobileSidebar.value = false; // Hide by default on mobile
+    } else {
+      showMobileSidebar.value = false; // Reset mobile sidebar state
+    }
+  };
+
+  // Lifecycle hooks
+  onMounted(() => {
+    window.addEventListener("resize", checkMobile);
+    checkMobile();
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("resize", checkMobile);
+  });
 </script>
+
 <style scoped>
   /* Custom scrollbar for webkit browsers */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-track {
     background: transparent;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: linear-gradient(to bottom, #e2e8f0, #cbd5e1);
     border-radius: 3px;
   }
+
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(to bottom, #cbd5e1, #94a3b8);
-  } /* Smooth transitions */
+  }
+
+  /* Smooth transitions */
   * {
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  } /* Focus styles for accessibility */
+  }
+
+  /* Focus styles for accessibility */
   button:focus {
     outline: 2px solid #4f46e5;
     outline-offset: 2px;
-  } /* Touch optimization */
+  }
+
+  /* Touch optimization */
   .touch-manipulation {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
-  } /* Mobile-specific styles */
+  }
+
+  /* Mobile-specific styles */
   @media (max-width: 1023px) {
     .sidebar-mobile {
       position: fixed;
@@ -433,10 +648,14 @@
       height: 100vh;
       z-index: 1000;
     }
-  } /* Enhanced hover effects */
+  }
+
+  /* Enhanced hover effects */
   .group:hover .group-hover\:scale-105 {
     transform: scale(1.05);
-  } /* Gradient animations */
+  }
+
+  /* Gradient animations */
   @keyframes gradient-shift {
     0%,
     100% {
@@ -446,10 +665,13 @@
       background-position: 100% 50%;
     }
   }
+
   .animate-gradient {
     background-size: 200% 200%;
     animation: gradient-shift 3s ease infinite;
-  } /* Badge pulse animation */
+  }
+
+  /* Badge pulse animation */
   @keyframes pulse {
     0%,
     100% {
@@ -459,9 +681,12 @@
       opacity: 0.8;
     }
   }
+
   .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  } /* Notification dot pulse */
+  }
+
+  /* Notification dot pulse */
   @keyframes ping {
     75%,
     100% {
@@ -469,15 +694,22 @@
       opacity: 0;
     }
   }
+
   .animate-ping {
     animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;
-  } /* Prevent body scroll when mobile sidebar is open */
+  }
+
+  /* Prevent body scroll when mobile sidebar is open */
   body.sidebar-open {
     overflow: hidden;
-  } /* Enhanced shadow effects */
+  }
+
+  /* Enhanced shadow effects */
   .shadow-glow {
     box-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
-  } /* Backdrop blur support */
+  }
+
+  /* Backdrop blur support */
   @supports (backdrop-filter: blur(10px)) {
     .backdrop-blur-sm {
       backdrop-filter: blur(4px);
