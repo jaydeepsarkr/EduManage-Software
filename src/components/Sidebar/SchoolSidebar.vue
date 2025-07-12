@@ -3,7 +3,7 @@
     <!-- Mobile Toggle Button -->
     <button
       @click="toggleMobileSidebar"
-      class="fixed z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 top-[16px] ml-[5px] lg:hidden"
+      class=" z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 top-[16px] ml-[5px] lg:hidden"
       :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
     >
       <Menu
@@ -19,7 +19,7 @@
     <!-- Mobile Fullscreen Button -->
     <button
       @click="toggleFullscreen"
-      class="fixed p-2 top-[18px] right-4 lg:hidden transition-all duration-300"
+      class=" p-2 top-[18px] right-4 lg:hidden transition-all duration-300"
       :class="{
         'bg-indigo-500 text-white border-indigo-500': isFullscreen,
         'hover:bg-gray-50': !isFullscreen,
