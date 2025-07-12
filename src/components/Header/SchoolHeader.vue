@@ -1,5 +1,8 @@
 <template>
-  <header class="bg-white shadow-sm border-b border-gray-200">
+ <header
+  class="bg-white shadow-sm border-b border-gray-200 sm:sticky sm:top-0 sm:z-40"
+>
+
     <!-- Main Header -->
     <div class="px-4 sm:px-6 py-3 sm:py-4">
       <div class="flex items-center justify-between">
