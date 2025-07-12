@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center space-x-3 sm:space-x-4 pl-4 sm:pl-6 border-l border-slate-200"
+    class="flex items-center space-x-3 sm:space-x-4 pl-4 sm:pl-6 border-l border-slate-200 mr-[13px] sm:mr-0"
   >
     <!-- Enhanced User Info -->
     <div class="text-right hidden lg:block">

@@ -1,23 +1,39 @@
 <template>
   <div class="relative">
     <!-- Mobile Toggle Button -->
-<button
-  v-if="isMobile"
-  @click="toggleMobileSidebar"
-  class="fixed z-[1001] bg-white shadow-lg rounded-lg p-2 border border-gray-200 
-         top-[16px] ml-[5px] lg:hidden"
-  :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
->
-  <Menu
-    v-if="!showMobileSidebar"
-    class="w-6 h-6 text-gray-700"
-  />
-  <X
-    v-else
-    class="w-6 h-6 text-gray-700"
-  />
-</button>
+    <button
+      @click="toggleMobileSidebar"
+      class="fixed bg-white shadow-lg rounded-lg p-2 border border-gray-200 top-[16px] ml-[5px] lg:hidden"
+      :class="{ 'left-4': !showMobileSidebar, 'left-72': showMobileSidebar }"
+    >
+      <Menu
+        v-if="!showMobileSidebar"
+        class="w-6 h-6 text-gray-700"
+      />
+      <X
+        v-else
+        class="w-6 h-6 text-gray-700 z-[1001]"
+      />
+    </button>
 
+    <!-- Mobile Fullscreen Button -->
+    <button
+      @click="toggleFullscreen"
+      class="fixed p-2 top-[18px] right-4 lg:hidden transition-all duration-300"
+      :class="{
+        'bg-indigo-500 text-white border-indigo-500': isFullscreen,
+        'hover:bg-gray-50': !isFullscreen,
+      }"
+    >
+      <Maximize
+        v-if="!isFullscreen"
+        class="w-6 h-6 text-gray-700"
+      />
+      <Minimize
+        v-else
+        class="w-6 h-6 text-white"
+      />
+    </button>
 
     <!-- Mobile Backdrop -->
     <div
@@ -46,6 +62,7 @@
       <!-- Header -->
       <div
         class="p-6 border-b border-slate-200/60 bg-gradient-to-r from-indigo-600 to-purple-600"
+        :class="{ 'pt-16': isMobile && isFullscreen }"
       >
         <div class="flex items-center justify-between">
           <div
@@ -422,6 +439,8 @@
     School,
     Menu,
     X,
+    Maximize,
+    Minimize,
   } from "lucide-vue-next";
 
   const store = useStore();
@@ -432,10 +451,21 @@
   const showMobileSidebar = ref(false);
   const isMobile = ref(false);
 
+  // Fullscreen state
+  const isFullscreen = ref(false);
+
   // Fetch role on mount
   onMounted(() => {
     store.dispatch("initializeUserRole");
     store.dispatch("fetchStudents", { page: 1, limit: 1 });
+
+    // Add fullscreen change event listener
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+  });
+
+  // Cleanup on unmount
+  onUnmounted(() => {
+    document.removeEventListener("fullscreenchange", handleFullscreenChange);
   });
 
   // Computed values
@@ -582,6 +612,23 @@
     }
   };
 
+  // Fullscreen methods
+  const toggleFullscreen = async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error("Error toggling fullscreen:", error);
+    }
+  };
+
+  const handleFullscreenChange = () => {
+    isFullscreen.value = !!document.fullscreenElement;
+  };
+
   // Responsive handling
   const checkMobile = () => {
     isMobile.value = window.innerWidth < 1024; // lg breakpoint
@@ -716,5 +763,10 @@
     .backdrop-blur-sm {
       backdrop-filter: blur(4px);
     }
+  }
+
+  /* Fullscreen specific styles */
+  .fullscreen-active {
+    background: #000;
   }
 </style>
