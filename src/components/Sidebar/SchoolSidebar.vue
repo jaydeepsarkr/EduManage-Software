@@ -422,234 +422,265 @@
 </template>
 
 <script setup>
-  import { ref, computed, onMounted, onUnmounted } from "vue";
-  import router from "@/router";
-  import { useStore } from "vuex";
-  import {
-    Home,
-    Users,
-    UserCheck,
-    ClipboardCheck,
-    Settings,
-    HelpCircle,
-    LogOut,
-    GraduationCap,
-    User,
-    ChevronLeft,
-    School,
-    Menu,
-    X,
-    Maximize,
-    Minimize,
-  } from "lucide-vue-next";
+import { ref, computed, onMounted, onUnmounted } from "vue";
+import router from "@/router";
+import { useStore } from "vuex";
+import {
+  Home,
+  Users,
+  UserCheck,
+  ClipboardCheck,
+  Settings,
+  HelpCircle,
+  LogOut,
+  GraduationCap,
+  User,
+  ChevronLeft,
+  School,
+  Menu,
+  X,
+  Maximize,
+  Minimize,
+} from "lucide-vue-next";
 
-  const store = useStore();
+const store = useStore();
 
-  // Sidebar state
-  const isCollapsed = ref(false);
-  const activeItem = ref("dashboard");
-  const showMobileSidebar = ref(false);
-  const isMobile = ref(false);
+// Sidebar state
+const isCollapsed = ref(false);
+const activeItem = ref("dashboard");
+const showMobileSidebar = ref(false);
+const isMobile = ref(false);
 
-  // Fullscreen state
-  const isFullscreen = ref(false);
+// Fullscreen state
+const isFullscreen = ref(false);
 
-  // Fetch role on mount
-  onMounted(() => {
-    store.dispatch("initializeUserRole");
-    store.dispatch("fetchStudents", { page: 1, limit: 1 });
+// Detect iOS
+const isIOS = () => {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+};
 
-    // Add fullscreen change event listener
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
+// Fetch role on mount
+onMounted(() => {
+  store.dispatch("initializeUserRole");
+  store.dispatch("fetchStudents", { page: 1, limit: 1 });
+
+  // Add fullscreen change event listener
+  document.addEventListener("fullscreenchange", handleFullscreenChange);
+  document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+  // Handle mobile detection
+  window.addEventListener("resize", checkMobile);
+  checkMobile();
+});
+
+// Cleanup on unmount
+onUnmounted(() => {
+  document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+  window.removeEventListener("resize", checkMobile);
+});
+
+// Computed values
+const TotalStudents = computed(() => store.getters.getTotalStudents);
+const userName = computed(() => store.getters.getUserName);
+const UserRole = computed(() => store.getters.getUserRole);
+const userPhoto = computed(() => {
+  const photo = store.getters.getUserPhoto;
+  const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+  return photo
+    ? photo.startsWith("http")
+      ? photo
+      : `${baseURL}/${photo}`
+    : null;
+});
+
+// Navigation items
+const mainNavigationItems = ref([
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: Home,
+    route: "/",
+    description:
+      "Overview of school statistics, recent activities, and key performance indicators.",
+    quickAction: "View Today's Schedule",
+  },
+]);
+
+const academicItems = computed(() => [
+  {
+    id: "students",
+    label: "Students",
+    icon: Users,
+    badge: TotalStudents.value,
+    route: "/students",
+    description:
+      "Manage student records, enrollment, personal information, and academic history.",
+    quickAction: "Add New Student",
+  },
+  {
+    id: "teachers",
+    label: "Teachers",
+    icon: UserCheck,
+    badge: "89",
+    description:
+      "Manage teacher profiles, assignments, schedules, and performance records.",
+    quickAction: "Add New Teacher",
+    route: "/working",
+  },
+  {
+    id: "classes",
+    label: "Classes",
+    icon: School,
+    badge: "42",
+    description:
+      "Manage class schedules, room assignments, and student-teacher allocations.",
+    quickAction: "Create New Class",
+    route: "/working",
+  },
+  {
+    id: "attendance",
+    label: "Attendance",
+    icon: ClipboardCheck,
+    badge: "Today",
+    description: "Track and manage student and teacher attendance records.",
+    quickAction: "Mark Attendance",
+    route: "/attendance",
+  },
+]);
+
+const administrationItems = ref([
+  {
+    id: "reports",
+    label: "Reports",
+    icon: ClipboardCheck,
+    badge: "New",
+    route: "/working",
+  },
+]);
+
+const systemItems = ref([
+  {
+    id: "settings",
+    label: "Settings",
+    icon: Settings,
+    description:
+      "Configure system settings, user permissions, and school preferences.",
+    quickAction: "Manage Settings",
+    route: "/working",
+  },
+  {
+    id: "help",
+    label: "Help & Support",
+    icon: HelpCircle,
+    description:
+      "Access help documentation, tutorials, and technical support.",
+    quickAction: "Contact Support",
+    route: "/HelpSupport",
+  },
+  {
+    id: "logout",
+    label: "Logout",
+    icon: LogOut,
+    description: "Securely sign out of the school management system.",
+    quickAction: null,
+    route: "/login",
+  },
+]);
+
+// Methods
+const toggleSidebar = () => {
+  isCollapsed.value = !isCollapsed.value;
+};
+
+const toggleMobileSidebar = () => {
+  showMobileSidebar.value = !showMobileSidebar.value;
+};
+
+const closeMobileSidebar = () => {
+  showMobileSidebar.value = false;
+};
+
+const formatDate = (date) => {
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
+};
 
-  // Cleanup on unmount
-  onUnmounted(() => {
-    document.removeEventListener("fullscreenchange", handleFullscreenChange);
-  });
+const handleNavClick = (itemId) => {
+  activeItem.value = itemId;
 
-  // Computed values
-  const TotalStudents = computed(() => store.getters.getTotalStudents);
-  const userName = computed(() => store.getters.getUserName);
-  const UserRole = computed(() => store.getters.getUserRole);
-  const userPhoto = computed(() => {
-    const photo = store.getters.getUserPhoto;
-    const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
-    return photo
-      ? photo.startsWith("http")
-        ? photo
-        : `${baseURL}/${photo}`
-      : null;
-  });
-
-  // Navigation items
-  const mainNavigationItems = ref([
-    {
-      id: "dashboard",
-      label: "Dashboard",
-      icon: Home,
-      route: "/",
-      description:
-        "Overview of school statistics, recent activities, and key performance indicators.",
-      quickAction: "View Today's Schedule",
-    },
-  ]);
-
-  const academicItems = computed(() => [
-    {
-      id: "students",
-      label: "Students",
-      icon: Users,
-      badge: TotalStudents.value,
-      route: "/students",
-      description:
-        "Manage student records, enrollment, personal information, and academic history.",
-      quickAction: "Add New Student",
-    },
-    {
-      id: "teachers",
-      label: "Teachers",
-      icon: UserCheck,
-      badge: "89",
-      description:
-        "Manage teacher profiles, assignments, schedules, and performance records.",
-      quickAction: "Add New Teacher",
-      route: "/working",
-    },
-    {
-      id: "classes",
-      label: "Classes",
-      icon: School,
-      badge: "42",
-      description:
-        "Manage class schedules, room assignments, and student-teacher allocations.",
-      quickAction: "Create New Class",
-      route: "/working",
-    },
-    {
-      id: "attendance",
-      label: "Attendance",
-      icon: ClipboardCheck,
-      badge: "Today",
-      description: "Track and manage student and teacher attendance records.",
-      quickAction: "Mark Attendance",
-      route: "/attendance",
-    },
-  ]);
-
-  const administrationItems = ref([
-    {
-      id: "reports",
-      label: "Reports",
-      icon: ClipboardCheck,
-      badge: "New",
-      route: "/working",
-    },
-  ]);
-
-  const systemItems = ref([
-    {
-      id: "settings",
-      label: "Settings",
-      icon: Settings,
-      description:
-        "Configure system settings, user permissions, and school preferences.",
-      quickAction: "Manage Settings",
-      route: "/working",
-    },
-    {
-      id: "help",
-      label: "Help & Support",
-      icon: HelpCircle,
-      description:
-        "Access help documentation, tutorials, and technical support.",
-      quickAction: "Contact Support",
-      route: "/HelpSupport",
-    },
-    {
-      id: "logout",
-      label: "Logout",
-      icon: LogOut,
-      description: "Securely sign out of the school management system.",
-      quickAction: null,
-      route: "/login",
-    },
-  ]);
-
-  // Methods
-  const toggleSidebar = () => {
-    isCollapsed.value = !isCollapsed.value;
-  };
-
-  const toggleMobileSidebar = () => {
-    showMobileSidebar.value = !showMobileSidebar.value;
-  };
-
-  const closeMobileSidebar = () => {
+  if (isMobile.value) {
     showMobileSidebar.value = false;
-  };
+  }
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  if (itemId === "logout") {
+    localStorage.clear();
+    sessionStorage.clear();
+    localStorage.removeItem("token");
+    router.push("/login");
+  }
+};
 
-  const handleNavClick = (itemId) => {
-    activeItem.value = itemId;
-    // Close mobile sidebar when navigating
-    if (isMobile.value) {
-      showMobileSidebar.value = false;
+// Fullscreen methods
+const toggleFullscreen = async () => {
+  try {
+    const docEl = document.documentElement;
+
+    if (isIOS()) {
+      alert("Fullscreen is not supported on iOS devices.");
+      return;
     }
-    if (itemId === "logout") {
-      localStorage.clear();
-      sessionStorage.clear();
-      localStorage.removeItem("token");
-      router.push("/login");
-    }
-  };
 
-  // Fullscreen methods
-  const toggleFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
+    if (
+      document.fullscreenEnabled ||
+      document.webkitFullscreenEnabled
+    ) {
+      if (
+        !document.fullscreenElement &&
+        !document.webkitFullscreenElement
+      ) {
+        if (docEl.requestFullscreen) {
+          await docEl.requestFullscreen();
+        } else if (docEl.webkitRequestFullscreen) {
+          await docEl.webkitRequestFullscreen();
+        }
       } else {
-        await document.exitFullscreen();
+        if (document.exitFullscreen) {
+          await document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          await document.webkitExitFullscreen();
+        }
       }
-    } catch (error) {
-      console.error("Error toggling fullscreen:", error);
-    }
-  };
-
-  const handleFullscreenChange = () => {
-    isFullscreen.value = !!document.fullscreenElement;
-  };
-
-  // Responsive handling
-  const checkMobile = () => {
-    isMobile.value = window.innerWidth < 1024; // lg breakpoint
-    if (isMobile.value) {
-      isCollapsed.value = false; // Always expanded on mobile when shown
-      showMobileSidebar.value = false; // Hide by default on mobile
     } else {
-      showMobileSidebar.value = false; // Reset mobile sidebar state
+      alert("Fullscreen is not supported in this browser.");
     }
-  };
+  } catch (error) {
+    console.error("Error toggling fullscreen:", error);
+  }
+};
 
-  // Lifecycle hooks
-  onMounted(() => {
-    window.addEventListener("resize", checkMobile);
-    checkMobile();
-  });
+const handleFullscreenChange = () => {
+  isFullscreen.value =
+    !!document.fullscreenElement ||
+    !!document.webkitFullscreenElement;
+};
 
-  onUnmounted(() => {
-    window.removeEventListener("resize", checkMobile);
-  });
+// Responsive handling
+const checkMobile = () => {
+  isMobile.value = window.innerWidth < 1024;
+  if (isMobile.value) {
+    isCollapsed.value = false;
+    showMobileSidebar.value = false;
+  } else {
+    showMobileSidebar.value = false;
+  }
+};
 </script>
+
 
 <style scoped>
   /* Custom scrollbar for webkit browsers */
