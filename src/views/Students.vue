@@ -632,7 +632,7 @@
                 <button
                   @click="viewStudentDetails(student)"
                   :disabled="isLoading"
-                  class="p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600 touch-manipulation"
                   title="View Details"
                 >
                   <svg
@@ -658,7 +658,7 @@
                 <button
                   @click="editStudent(student)"
                   :disabled="isLoading"
-                  class="p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 touch-manipulation"
                   title="Edit"
                 >
                   <Pencil class="w-3 h-3 sm:w-4 sm:h-4" />
@@ -666,7 +666,7 @@
                 <button
                   @click="deleteStudent(student._id, student.name)"
                   :disabled="isLoading || isDeleting"
-                  class="p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600 touch-manipulation"
                   title="Delete"
                 >
                   <div
@@ -1909,7 +1909,7 @@
                 <div class="flex-shrink-0">
                   <div
                     v-if="viewingStudent?.photo"
-                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-blue-200"
+                    class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 sm:border-4 border-blue-200 z-[999]"
                   >
                     <img
                       :src="viewingStudent.photo"
