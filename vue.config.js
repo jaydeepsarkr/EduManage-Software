@@ -17,7 +17,7 @@ module.exports = {
     themeColor: "#2563EB",
     backgroundColor: "#ffffff",
     manifestOptions: {
-      short_name: "SchoolSys",
+      short_name: "Edumanage",
       start_url: ".",
       display: "standalone",
       icons: [
