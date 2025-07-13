@@ -209,6 +209,7 @@
 <script setup>
   import { onMounted, ref, computed } from "vue";
   import { useRoute } from "vue-router";
+  import { useStore } from "vuex";
   import {
     UserCheck,
     CheckCircle,
@@ -218,9 +219,9 @@
   } from "lucide-vue-next";
   import axios from "axios";
 
-  // Get base URL from .env
   const BASE_URL = process.env.VUE_APP_BASE_URL;
 
+  const store = useStore();
   const route = useRoute();
   const studentId = route.params.studentId;
 
@@ -247,32 +248,22 @@
       success.value = false;
       error.value = "";
 
-      // Get student name
+      // ✅ Get student name
       const res = await axios.get(`${BASE_URL}/api/students/${studentId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
       studentName.value = res.data.name;
 
-      // Mark attendance
-      await axios.post(
-        `${BASE_URL}/api/attendance/manual`,
-        {
-          studentId,
-          status: "present",
-          subject: "",
-          notes: "Marked via NFC link",
-          attendanceByNFC: true,
-          method: "nfc",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      // ✅ Dispatch markAttendance action from store
+      await store.dispatch("markAttendance", {
+        studentId,
+        status: "present",
+        subject: "",
+        notes: "Marked via NFC link",
+        attendanceByNFC: true,
+      });
 
       success.value = true;
     } catch (err) {
