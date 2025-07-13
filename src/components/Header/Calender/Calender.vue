@@ -11,7 +11,7 @@
     <!-- Calendar Dropdown -->
     <div
       v-if="showCalendar"
-      class="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+      class="z-50 bg-white rounded-lg shadow-lg border border-gray-200 w-80 fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 sm:absolute sm:top-auto sm:left-auto sm:right-0 sm:mt-2 sm:transform-none"
     >
       <div class="p-4">
         <h3 class="font-semibold text-sm mb-3 text-gray-900">
