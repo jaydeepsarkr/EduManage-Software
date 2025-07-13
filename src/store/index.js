@@ -288,13 +288,14 @@ export default createStore({
       }
     },
 
-    async markAttendance(_, { studentId, status, subject = "", notes = "" }) {
+    async markAttendance(_, { studentId, status, subject = "", notes = "", attendanceByNFC = false  }) {
       try {
         const res = await api.post("/api/attendance/manual", {
           studentId,
           status,
           subject,
           notes,
+          attendanceByNFC,
         });
 
         // console.log("✅ Attendance marked:", res.data);
