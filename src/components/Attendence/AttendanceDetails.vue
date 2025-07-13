@@ -647,9 +647,9 @@
                 <td class="px-4 lg:px-6 py-4 whitespace-nowrap">
                   <div class="flex items-center gap-2">
                     <Clock class="w-4 h-4 text-gray-400" />
-                    <span class="text-sm font-medium text-gray-700">{{
-                      formatTime(entry.date)
-                    }}</span>
+                    <span class="text-sm font-medium text-gray-700"
+                      >{{ formatTime(entry.createdAt) }}
+                    </span>
                   </div>
                 </td>
               </tr>
@@ -856,7 +856,7 @@
   };
 
   const formatTime = (date) => {
-    return new Date(date).toLocaleTimeString("en-US", {
+    return new Date(date).toLocaleTimeString("en-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
