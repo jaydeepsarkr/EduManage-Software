@@ -2,7 +2,7 @@
   <div class="relative">
     <button
       @click="toggleCalendar"
-      class="hidden sm:block p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
+      class="p-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors duration-200"
       title="School Calendar"
     >
       <Calendar class="w-5 h-5" />
