@@ -28,6 +28,7 @@
         <UpcomingEvents />
       </div>
     </div>
+    <ChatBot />
   </main>
 </template>
 
@@ -49,6 +50,7 @@
   import Announcements from "@/components/Home/Announcements.vue";
   import RecentActivity from "@/components/Home/RecentActivity.vue";
   import UpcomingEvents from "@/components/Home/UpcomingEvents.vue";
+  import ChatBot from "@/components/AI-ChatBot.vue";
   const stats = [
     {
       icon: Users,

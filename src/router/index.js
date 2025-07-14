@@ -7,14 +7,13 @@ import Signup from "../views/Auth/SignupView.vue";
 
 // Main Views
 import HomeView from "../views/HomeView.vue";
-import AboutView from "../views/AboutView.vue";
-import UnderConstraction from "../views/UnderConstration.vue";
 import Students from "../views/Students.vue";
 import Attendance from "../views/Attendance.vue";
 import MarkAttendance from "../views/NFC/MarkAttendance.vue";
 import HelpSupport from "../views/Help&Support.vue";
 import createSchool from "../views/School/createSchool.vue";
 import schoolDetails from "../views/School/schoolDtails.vue";
+import Teacher from "../views/Teacher.vue";
 
 const routes = [
   // Public Routes
@@ -28,11 +27,6 @@ const routes = [
     name: "Signup",
     component: Signup,
   },
-  {
-    path: "/working",
-    name: "UnderConstraction",
-    component: UnderConstraction,
-  },
 
   // Protected Routes
   {
@@ -41,12 +35,7 @@ const routes = [
     component: HomeView,
     meta: { requiresAuth: true },
   },
-  {
-    path: "/about",
-    name: "About",
-    component: AboutView,
-    meta: { requiresAuth: true },
-  },
+
   {
     path: "/students",
     name: "Students",
@@ -81,6 +70,12 @@ const routes = [
     path: "/schoolDetails",
     name: "schoolDetails",
     component: schoolDetails,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/teacher",
+    name: "Teacher",
+    component: Teacher,
     meta: { requiresAuth: true },
   },
 ];

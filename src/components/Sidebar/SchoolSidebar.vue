@@ -482,7 +482,7 @@
       description:
         "Manage teacher profiles, assignments, schedules, and performance records.",
       quickAction: "Add New Teacher",
-      route: "/working",
+      route: "/teacher",
     },
     {
       id: "classes",

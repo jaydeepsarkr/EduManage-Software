@@ -113,7 +113,7 @@
         </div>
 
         <!-- Quick Actions -->
-        <div
+        <!-- <div
           class="p-4 bg-gray-50 border-b flex-shrink-0"
           :class="{ 'bg-gray-700 border-gray-600': isDark }"
         >
@@ -139,7 +139,7 @@
               <span class="sm:hidden text-xs">{{ action.shortLabel }}</span>
             </button>
           </div>
-        </div>
+        </div> -->
 
         <!-- Chat Messages -->
         <div
@@ -404,7 +404,7 @@
     <button
       v-if="!isOpen"
       @click="toggleChat"
-      class="fixed bottom-4 right-4 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group touch-manipulation pointer-events-auto"
+      class="fixed bottom-4 right-4 w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-blue-400 to-indigo-400 text-white rounded-full shadow-2xl hover:shadow-3xl transform hover:scale-110 active:scale-95 transition-all duration-300 flex items-center justify-center group touch-manipulation pointer-events-auto"
     >
       <div class="relative">
         <svg
