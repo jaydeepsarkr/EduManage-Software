@@ -9,9 +9,23 @@ module.exports = {
         __VUE_PROD_HYDRATION_MISMATCH_DETAILS__: JSON.stringify(false),
       }),
     ],
+    module: {
+      rules: [
+        {
+          test: /pdf\.worker(\.entry)?\.js$/,
+          use: {
+            loader: "file-loader",
+            options: {
+              name: "[name].[hash].js",
+              publicPath: "/js/",
+              outputPath: "js/",
+            },
+          },
+        },
+      ],
+    },
   },
 
-  // 👇 Add this PWA section
   pwa: {
     name: "School Management System",
     themeColor: "#2563EB",
