@@ -5,6 +5,8 @@ import jwt_decode from "jwt-decode";
 //   process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
 export default createStore({
   state: {
+    teachers: [],
+
     students: [],
     schools: [],
     upcomingEvents: [],
@@ -44,6 +46,8 @@ export default createStore({
   },
 
   getters: {
+    getAllTeachers: (state) => state.teachers || [],
+
     getUpcomingEvents: (state) => state.upcomingEvents,
     allStudents: (state) => state.students,
     getUserRole: (state) => state.userRole,
@@ -64,6 +68,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_TEACHERS(state, teachers) {
+      state.teachers = teachers;
+    },
     SET_SCHOOLS(state, schools) {
       state.schools = schools;
     },
@@ -122,6 +129,38 @@ export default createStore({
   },
 
   actions: {
+    async fetchTeachers({ commit }) {
+      try {
+        const res = await api.get("/api/teachers");
+        console.log("📦 Full API response:", res.data);
+
+        // ✅ Use the correct key: res.data.data
+        commit("SET_TEACHERS", res.data.data);
+      } catch (err) {
+        console.error(
+          "❌ Failed to fetch teachers:",
+          err.response?.data || err.message
+        );
+        commit("SET_TEACHERS", []);
+      }
+    },
+    async addTeacher(_, formData) {
+      try {
+        const res = await api.post("/api/auth/register", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        console.log("✅ Teacher registered successfully:", res.data);
+        return res.data;
+      } catch (err) {
+        console.error(
+          "❌ Failed to register teacher:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
     async createSchool({ dispatch }, schoolData) {
       try {
         const res = await api.post("/api/schools", schoolData);
@@ -288,7 +327,10 @@ export default createStore({
       }
     },
 
-    async markAttendance(_, { studentId, status, subject = "", notes = "", attendanceByNFC = false  }) {
+    async markAttendance(
+      _,
+      { studentId, status, subject = "", notes = "", attendanceByNFC = false }
+    ) {
       try {
         const res = await api.post("/api/attendance/manual", {
           studentId,
