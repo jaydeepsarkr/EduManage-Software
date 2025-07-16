@@ -1,17 +1,16 @@
 <template>
-  <div class="min-h-screen bg-gray-50 p-4 sm:p-6">
-    <div class="max-w-7xl mx-auto">
+  <div class="min-h-screen p-4 sm:p-6 lg:p-8">
+    <div class="max-w-7xl mx-auto p-6 lg:p-8">
       <!-- Loading State -->
       <div
         v-if="isInitialLoading"
-        class="flex items-center justify-center min-h-[60vh]"
+        class="flex flex-col items-center justify-center min-h-[60vh] text-gray-600"
       >
-        <div class="text-center">
-          <div
-            class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"
-          ></div>
-          <p class="text-gray-600 text-lg">Loading teachers...</p>
-        </div>
+        <div
+          class="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500 mb-4"
+        ></div>
+        <p class="text-xl font-medium">Loading teachers...</p>
+        <p class="text-sm text-gray-500 mt-2">Please wait a moment.</p>
       </div>
 
       <!-- Main Content (only show when not loading) -->
@@ -28,21 +27,21 @@
         <!-- Bulk Delete Button (appears when teachers are selected) -->
         <div
           v-if="isAnyTeacherSelected"
-          class="mt-4 mb-4 flex justify-end"
+          class="mt-6 mb-4 flex justify-end animate-fade-in"
         >
           <button
             @click="bulkDeleteTeachers"
             :disabled="isLoading"
-            class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="inline-flex items-center px-5 py-2.5 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Trash2 class="w-4 h-4 mr-2" />
+            <Trash2 class="w-5 h-5 mr-2" />
             Delete Selected ({{ selectedTeacherIds.length }})
           </button>
         </div>
 
         <!-- Teachers Table (Desktop View) -->
         <div
-          class="hidden md:block bg-white rounded-xl shadow-lg border overflow-hidden"
+          class="hidden md:block bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
           :class="{ 'mt-6': !isAnyTeacherSelected }"
         >
           <div class="overflow-x-auto">
@@ -50,7 +49,7 @@
               <thead class="bg-gray-50">
                 <tr>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     <!-- Checkbox for selecting all visible teachers -->
                     <input
@@ -58,57 +57,57 @@
                       :checked="allSelected"
                       @change="toggleSelectAll"
                       :disabled="isLoading"
-                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
                     />
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Photo
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Name
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Role
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Subject
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Email
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Phone
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     DOB
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Status
                   </th>
                   <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
                   >
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody class="bg-white divide-y divide-gray-200">
+              <tbody class="bg-white divide-y divide-gray-100">
                 <tr
                   v-for="teacher in paginatedTeachers"
                   :key="teacher._id"
@@ -121,12 +120,14 @@
                       :checked="selectedTeacherIds.includes(teacher._id)"
                       @change="toggleTeacherSelection(teacher._id)"
                       :disabled="isLoading"
-                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
                     />
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap">
                     <img
-                      :src="teacher.photo"
+                      :src="
+                        teacher.photo || '/placeholder.svg?height=40&width=40'
+                      "
                       :alt="teacher.name"
                       class="w-10 h-10 rounded-full object-cover border border-gray-200"
                     />
@@ -139,24 +140,24 @@
                       ID: {{ teacher._id }}
                     </div>
                   </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
                     {{ teacher.role }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap">
                     <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
                     >
                       {{ teacher.subject }}
                     </span>
                   </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
                     {{ teacher.email }}
                   </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
                     {{ teacher.phone }}
                   </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
-                    {{ teacher.dob }}
+                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
+                    {{ formatDate(teacher.dob) }}
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap">
                     <span
@@ -177,24 +178,24 @@
                       <button
                         @click="viewTeacher(teacher)"
                         :disabled="isLoading"
-                        class="text-blue-600 hover:text-blue-800 p-1 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="View"
+                        class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="View Details"
                       >
                         <Eye class="w-4 h-4" />
                       </button>
                       <button
                         @click="editTeacher(teacher)"
                         :disabled="isLoading"
-                        class="text-green-600 hover:text-green-800 p-1 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Edit"
+                        class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Edit Teacher"
                       >
                         <Edit class="w-4 h-4" />
                       </button>
                       <button
                         @click="deleteTeacher(teacher)"
                         :disabled="isLoading"
-                        class="text-red-600 hover:text-red-800 p-1 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Delete"
+                        class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Delete Teacher"
                       >
                         <Trash2 class="w-4 h-4" />
                       </button>
@@ -204,35 +205,36 @@
                 <tr v-if="paginatedTeachers.length === 0">
                   <td
                     colspan="10"
-                    class="px-4 py-6 text-center text-gray-500"
+                    class="px-4 py-6 text-center text-gray-500 text-base"
                   >
-                    No teachers found.
+                    No teachers found matching your criteria.
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
+
         <!-- Teachers Grid (Mobile View) -->
         <div
-          class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4"
+          class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 w-[304px] -ml-[23px]"
           :class="{ 'mt-6': !isAnyTeacherSelected }"
         >
           <div
             v-if="paginatedTeachers.length === 0"
-            class="col-span-full text-center py-6 text-gray-500 bg-white rounded-xl shadow-sm border"
+            class="col-span-full text-center py-6 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100 text-base"
           >
-            No teachers found.
+            No teachers found matching your criteria.
           </div>
           <div
             v-for="teacher in paginatedTeachers"
             :key="teacher._id"
-            class="bg-white rounded-xl shadow-lg border p-4 flex flex-col space-y-3"
+            class="bg-white rounded-xl border border-gray-100 p-4 flex flex-col space-y-3 w-full max-w-2xl"
           >
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-3">
                 <img
-                  :src="teacher.photo"
+                  :src="teacher.photo || '/placeholder.svg?height=64&width=64'"
                   :alt="teacher.name"
                   class="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                 />
@@ -240,7 +242,7 @@
                   <h3 class="text-lg font-semibold text-gray-900">
                     {{ teacher.name }}
                   </h3>
-                  <p class="text-sm text-gray-500">ID: {{ teacher._id }}</p>
+                  <p class="text-gray-500 text-[10px]">ID: {{ teacher._id }}</p>
                 </div>
               </div>
               <!-- Checkbox for individual teacher selection -->
@@ -249,10 +251,10 @@
                 :checked="selectedTeacherIds.includes(teacher._id)"
                 @change="toggleTeacherSelection(teacher._id)"
                 :disabled="isLoading"
-                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-5 w-5"
               />
             </div>
-            <div class="grid grid-cols-2 gap-y-2 text-sm">
+            <div class="grid grid-cols-2 gap-y-2 text-sm text-gray-800">
               <div>
                 <span class="font-medium text-gray-700">Role:</span>
                 {{ teacher.role }}
@@ -260,7 +262,7 @@
               <div>
                 <span class="font-medium text-gray-700">Subject:</span>
                 <span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"
+                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
                 >
                   {{ teacher.subject }}
                 </span>
@@ -275,13 +277,13 @@
               </div>
               <div>
                 <span class="font-medium text-gray-700">DOB:</span>
-                {{ teacher.dob }}
+                {{ formatDate(teacher.dob) }}
               </div>
               <div>
                 <span class="font-medium text-gray-700">Status:</span>
                 <span
                   :class="
-                    teacher.status === 'Active'
+                    teacher.status === 'active'
                       ? 'bg-green-100 text-green-800'
                       : 'bg-red-100 text-red-800'
                   "
@@ -297,24 +299,24 @@
               <button
                 @click="viewTeacher(teacher)"
                 :disabled="isLoading"
-                class="text-blue-600 hover:text-blue-800 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="View"
+                class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="View Details"
               >
                 <Eye class="w-5 h-5" />
               </button>
               <button
                 @click="editTeacher(teacher)"
                 :disabled="isLoading"
-                class="text-green-600 hover:text-green-800 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Edit"
+                class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Edit Teacher"
               >
                 <Edit class="w-5 h-5" />
               </button>
               <button
                 @click="deleteTeacher(teacher)"
                 :disabled="isLoading"
-                class="text-red-600 hover:text-red-800 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Delete"
+                class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                title="Delete Teacher"
               >
                 <Trash2 class="w-5 h-5" />
               </button>
@@ -325,93 +327,102 @@
         <!-- Pagination Controls -->
         <div
           v-if="totalPages > 1"
-          class="flex justify-center items-center space-x-2 mt-8"
+          class="flex justify-center items-center space-x-3 mt-8"
         >
           <button
             @click="prevPage"
             :disabled="currentPage === 1 || isLoading"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
           >
             Previous
           </button>
-          <span class="text-gray-700"
+          <span class="text-gray-700 font-medium"
             >Page {{ currentPage }} of {{ totalPages }}</span
           >
           <button
             @click="nextPage"
             :disabled="currentPage === totalPages || isLoading"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
           >
             Next
           </button>
         </div>
 
-        <!-- Basic Delete Confirmation (simple inline display) -->
+        <!-- Delete Confirmation Modal (Inline for simplicity, consider a dedicated modal component for complex UIs) -->
         <div
           v-if="showDeleteModal"
-          class="bg-white rounded-xl shadow-lg border p-6 mt-6 transition-all duration-300 ease-in-out"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70 p-4 sm:p-6"
+          @click.self="cancelDelete"
         >
-          <h2 class="text-2xl font-bold text-gray-900 mb-4">
-            Confirm Deletion
-          </h2>
-          <p
-            v-if="teacherToDelete"
-            class="text-gray-700 mb-6"
+          <div
+            class="bg-white rounded-xl shadow-2xl border border-gray-100 p-6 w-full max-w-md transform transition-all duration-300 ease-in-out scale-95 opacity-0"
+            :class="{ 'scale-100 opacity-100': showDeleteModal }"
           >
-            Are you sure you want to delete teacher
-            <span class="font-medium text-red-600">{{
-              teacherToDelete.name
-            }}</span>
-            (ID: {{ teacherToDelete._id }})?
-          </p>
-          <p
-            v-else
-            class="text-gray-700 mb-6"
-          >
-            Are you sure you want to delete the selected
-            {{ selectedTeacherIds.length }} teachers?
-          </p>
-          <div class="flex justify-end space-x-3">
-            <button
-              @click="cancelDelete"
-              :disabled="isLoading"
-              class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">
+              Confirm Deletion
+            </h2>
+            <p
+              v-if="teacherToDelete"
+              class="text-gray-700 mb-6"
             >
-              Cancel
-            </button>
-            <button
-              @click="confirmDelete"
-              :disabled="isLoading"
-              class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              Are you sure you want to delete teacher
+              <span class="font-semibold text-red-600">{{
+                teacherToDelete.name
+              }}</span>
+              (ID: {{ teacherToDelete._id }})? This action cannot be undone.
+            </p>
+            <p
+              v-else
+              class="text-gray-700 mb-6"
             >
-              <span
-                v-if="isLoading"
-                class="flex items-center"
+              Are you sure you want to delete the selected
+              <span class="font-semibold text-red-600">{{
+                selectedTeacherIds.length
+              }}</span>
+              teachers? This action cannot be undone.
+            </p>
+            <div class="flex justify-end space-x-3">
+              <button
+                @click="cancelDelete"
+                :disabled="isLoading"
+                class="inline-flex justify-center py-2.5 px-5 border border-gray-200 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <svg
-                  class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
+                Cancel
+              </button>
+              <button
+                @click="confirmDelete"
+                :disabled="isLoading"
+                class="inline-flex justify-center py-2.5 px-5 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span
+                  v-if="isLoading"
+                  class="flex items-center"
                 >
-                  <circle
-                    class="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    stroke-width="4"
-                  ></circle>
-                  <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Deleting...
-              </span>
-              <span v-else>Delete</span>
-            </button>
+                  <svg
+                    class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Deleting...
+                </span>
+                <span v-else>Delete</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -421,7 +432,7 @@
         <div
           v-if="toast.isVisible"
           :class="toastClasses"
-          class="fixed bottom-6 right-6 p-4 rounded-lg shadow-lg text-white text-sm font-medium z-50 flex items-center space-x-2"
+          class="fixed bottom-6 right-6 p-4 rounded-lg shadow-xl text-white text-base font-medium z-50 flex items-center space-x-2 min-w-[250px]"
         >
           <Info
             v-if="toast.type === 'info'"
@@ -438,6 +449,21 @@
           <span>{{ toast.message }}</span>
         </div>
       </transition>
+
+      <!-- Teacher Details Modal -->
+      <TeacherDetailsModal
+        :teacher="selectedTeacher"
+        :is-open="showViewModal"
+        @close="showViewModal = false"
+      />
+
+      <!-- Teacher Edit Modal -->
+      <TeacherEditModal
+        :teacher="selectedTeacher"
+        :is-open="showEditModal"
+        @close="showEditModal = false"
+        @save="handleSaveEdit"
+      />
     </div>
   </div>
 </template>
@@ -454,35 +480,34 @@
     XCircle,
   } from "lucide-vue-next";
   import HeaderTeacher from "@/components/Teacher/HeaderTeacher.vue";
+  import TeacherDetailsModal from "@/components/Teacher/Actions/TeacherDetailsModal.vue";
+  import TeacherEditModal from "@/components/Teacher/Actions/TeacherEditModal.vue";
 
   // Vuex store
   const store = useStore();
-
   // UI state
   const searchQuery = ref("");
   const showModal = ref(false);
   const showViewModal = ref(false);
+  const showEditModal = ref(false);
   const showDeleteModal = ref(false);
   const isEditing = ref(false);
   const selectedTeacher = ref(null);
   const teacherToDelete = ref(null);
-  const selectedTeacherIds = ref([]); // Stores IDs of selected teachers
+  const selectedTeacherIds = ref([]);
   const isLoading = ref(false);
-  const isInitialLoading = ref(true); // New loading state for initial data
-
+  const isInitialLoading = ref(true);
   // Pagination state
   const currentPage = ref(1);
-  const itemsPerPage = ref(1); // You can adjust this number
-
+  const itemsPerPage = ref(10);
   // Toast
   const toast = reactive({
     isVisible: false,
     message: "",
-    type: "info", // 'success', 'error', 'info'
+    type: "info",
   });
   let toastTimeoutId = null;
-
-  // Form data
+  // Form data (currentTeacher is now less critical as edit modal manages its own local state)
   const currentTeacher = reactive({
     id: "",
     name: "",
@@ -495,8 +520,23 @@
     dob: "",
   });
 
+  // Helper to format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return "N/A";
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch (e) {
+      return dateString;
+    }
+  };
+
   // Fetch teachers on load
-  onMounted(async () => {
+  const fetchTeachers = async () => {
     try {
       await store.dispatch("fetchTeachers");
       setTimeout(() => {
@@ -506,22 +546,22 @@
       console.error("Error fetching teachers:", error);
       showToast("❌ Failed to load teachers", "error");
     } finally {
-      // Set loading to false after a minimum delay to prevent flash
       setTimeout(() => {
         isInitialLoading.value = false;
       }, 500);
     }
+  };
+
+  onMounted(() => {
+    fetchTeachers();
   });
 
   // Get teachers from Vuex
   const teachers = computed(() => store.getters.getAllTeachers || []);
-
-  // Watch for teachers data to set loading state
   watch(
     teachers,
     (newTeachers) => {
       if (newTeachers && newTeachers.length >= 0) {
-        // Small delay to prevent flash
         setTimeout(() => {
           isInitialLoading.value = false;
         }, 300);
@@ -529,7 +569,6 @@
     },
     { immediate: true }
   );
-
   // Filtering
   const filteredTeachers = computed(() => {
     if (!searchQuery.value) return teachers.value;
@@ -542,41 +581,34 @@
         t.role?.toLowerCase().includes(query)
     );
   });
-
   // Pagination computed properties
   const totalPages = computed(() => {
     return Math.ceil(filteredTeachers.value.length / itemsPerPage.value);
   });
-
   const paginatedTeachers = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return filteredTeachers.value.slice(start, end);
   });
-
-  // Watch for changes in filteredTeachers to reset page if necessary
   watch(filteredTeachers, () => {
     if (currentPage.value > totalPages.value && totalPages.value > 0) {
       currentPage.value = totalPages.value;
     } else if (totalPages.value === 0) {
       currentPage.value = 1;
     }
-    selectedTeacherIds.value = []; // Clear selection on filter/page change
+    selectedTeacherIds.value = [];
   });
-
   // Pagination actions
   const nextPage = () => {
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
     }
   };
-
   const prevPage = () => {
     if (currentPage.value > 1) {
       currentPage.value--;
     }
   };
-
   // Checkbox logic for current page
   const allSelected = computed(() => {
     return (
@@ -586,26 +618,22 @@
       )
     );
   });
-
-  // Checks if any teacher is selected (for enabling bulk delete button)
   const isAnyTeacherSelected = computed(
     () => selectedTeacherIds.value.length > 0
   );
-
   // Toast classes
   const toastClasses = computed(() => {
     const baseClasses = "transition-all duration-300 ease-in-out";
     switch (toast.type) {
       case "success":
-        return `${baseClasses} bg-green-500`;
+        return `${baseClasses} bg-green-600`;
       case "error":
-        return `${baseClasses} bg-red-500`;
+        return `${baseClasses} bg-red-600`;
       case "info":
       default:
-        return `${baseClasses} bg-blue-500`;
+        return `${baseClasses} bg-blue-600`;
     }
   });
-
   // Toast utility
   const showToast = (msg, type = "info", duration = 3000) => {
     if (toastTimeoutId) clearTimeout(toastTimeoutId);
@@ -616,7 +644,6 @@
       toast.isVisible = false;
     }, duration);
   };
-
   // Reset form
   const resetCurrentTeacher = () => {
     Object.assign(currentTeacher, {
@@ -631,46 +658,35 @@
       dob: "",
     });
   };
-
   // Actions
   const addTeacher = () => {
     isEditing.value = false;
     resetCurrentTeacher();
     showModal.value = true;
   };
-
   const editTeacher = (teacher) => {
-    isEditing.value = true;
-    Object.assign(currentTeacher, { ...teacher });
-    showModal.value = true;
+    selectedTeacher.value = teacher;
+    showEditModal.value = true;
   };
-
   const viewTeacher = (teacher) => {
     selectedTeacher.value = teacher;
     showViewModal.value = true;
   };
-
   const deleteTeacher = (teacher) => {
     teacherToDelete.value = teacher;
     showDeleteModal.value = true;
   };
-
-  // Function called by HeaderTeacher or the new bulk delete button
   const bulkDeleteTeachers = () => {
-    teacherToDelete.value = null; // Indicate bulk delete
+    teacherToDelete.value = null;
     showDeleteModal.value = true;
   };
-
-  // Confirm deletion (single or bulk)
   const confirmDelete = async () => {
     isLoading.value = true;
     try {
       if (teacherToDelete.value) {
-        // Single delete
         await store.dispatch("deleteUserById", teacherToDelete.value._id);
         showToast(`🗑️ Deleted: ${teacherToDelete.value.name}`, "success");
       } else if (selectedTeacherIds.value.length > 0) {
-        // Bulk delete
         for (const id of selectedTeacherIds.value) {
           await store.dispatch("deleteUserById", id);
         }
@@ -678,10 +694,10 @@
           `🗑️ ${selectedTeacherIds.value.length} teachers deleted`,
           "success"
         );
-        selectedTeacherIds.value = []; // Clear selection after bulk delete
+        selectedTeacherIds.value = [];
       }
       showDeleteModal.value = false;
-      await store.dispatch("fetchTeachers"); // Re-fetch to update pagination and list
+      await fetchTeachers();
     } catch (err) {
       showToast("❌ Failed to delete teacher(s)", "error");
     } finally {
@@ -689,10 +705,61 @@
       teacherToDelete.value = null;
     }
   };
-
   const cancelDelete = () => {
     showDeleteModal.value = false;
     teacherToDelete.value = null;
+  };
+
+  // --- Placeholder for File Upload Logic ---
+  const uploadFileToCloudinary = async (file) => {
+    if (!file) return null;
+    console.log(`Simulating upload for file: ${file.name}`);
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(`https://example.com/uploaded/${Date.now()}-${file.name}`);
+      }, 1000);
+    });
+  };
+
+  // Handle save from TeacherEditModal
+  const handleSaveEdit = async ({ teacherData, files }) => {
+    isLoading.value = true;
+    try {
+      const updates = { ...teacherData };
+
+      if (files.photo) {
+        updates.photo = await uploadFileToCloudinary(files.photo);
+      }
+
+      if (files.aadhaarCard) {
+        updates.aadhaarCard = await uploadFileToCloudinary(files.aadhaarCard);
+      }
+
+      if (updates.qualifications && files.qualifications) {
+        for (let i = 0; i < updates.qualifications.length; i++) {
+          if (files.qualifications[i]) {
+            updates.qualifications[i].fileUrl = await uploadFileToCloudinary(
+              files.qualifications[i]
+            );
+          }
+        }
+      }
+
+      const { _id, ...finalUpdates } = updates;
+      await store.dispatch("editUserById", {
+        userId: _id,
+        updates: finalUpdates,
+      });
+      showToast(`✅ Teacher ${updates.name} updated successfully!`, "success");
+      await fetchTeachers();
+    } catch (error) {
+      console.error("Error saving teacher:", error);
+      showToast("❌ Failed to save teacher updates", "error");
+    } finally {
+      isLoading.value = false;
+      showEditModal.value = false;
+      selectedTeacher.value = null;
+    }
   };
 
   // Toggle selection for all teachers on the current page
@@ -703,7 +770,6 @@
       selectedTeacherIds.value = paginatedTeachers.value.map((t) => t._id);
     }
   };
-
   // Toggle selection for an individual teacher
   const toggleTeacherSelection = (id) => {
     const index = selectedTeacherIds.value.indexOf(id);
@@ -726,7 +792,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   /* Basic spinner animation */
   @keyframes spin {
     from {
@@ -738,5 +803,20 @@
   }
   .animate-spin {
     animation: spin 1s linear infinite;
+  }
+
+  /* Fade-in animation for bulk delete button */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
   }
 </style>
