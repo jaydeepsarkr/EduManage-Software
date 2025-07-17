@@ -524,9 +524,8 @@
 
   // Pagination state
   const currentPage = ref(1);
-  const itemsPerPage = ref(1); // Number of items per page
+  const itemsPerPage = ref(10);
 
-  // Toast
   const toast = reactive({
     isVisible: false,
     message: "",

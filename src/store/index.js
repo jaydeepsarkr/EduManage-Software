@@ -52,6 +52,7 @@ export default createStore({
   },
 
   getters: {
+    getTotalTeachers: (state) => state.teacherPagination.totalResults,
     getTeacherPagination: (state) => state.teacherPagination,
     getAllTeachers: (state) => state.teachers || [],
 

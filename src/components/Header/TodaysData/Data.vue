@@ -67,7 +67,12 @@
     },
     mounted() {
       this.fetchTodaysData();
-      this.interval = setInterval(this.fetchTodaysData, 1000); // fetch only light data
+      this.interval = setInterval(this.fetchTodaysData, 1000);
+      this.$store.dispatch("fetchTeachers", {
+        page: 1,
+        limit: 10,
+        search: "",
+      });
     },
     beforeUnmount() {
       clearInterval(this.interval);

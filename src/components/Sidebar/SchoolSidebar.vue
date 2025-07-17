@@ -437,6 +437,8 @@
   });
 
   // Computed values
+  const TotalTeachers = computed(() => store.getters.getTotalTeachers);
+
   const TotalStudents = computed(() => store.getters.getTotalStudents);
   const userName = computed(() => store.getters.getUserName);
   const UserRole = computed(() => store.getters.getUserRole);
@@ -478,7 +480,7 @@
       id: "teachers",
       label: "Teachers",
       icon: UserCheck,
-      badge: "89",
+      badge: TotalTeachers.value,
       description:
         "Manage teacher profiles, assignments, schedules, and performance records.",
       quickAction: "Add New Teacher",
