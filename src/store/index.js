@@ -7,6 +7,12 @@ export default createStore({
   state: {
     teachers: [],
 
+    teacherPagination: {
+      totalPages: 0,
+      totalResults: 0,
+      currentPage: 1,
+    },
+
     students: [],
     schools: [],
     upcomingEvents: [],
@@ -46,6 +52,7 @@ export default createStore({
   },
 
   getters: {
+    getTeacherPagination: (state) => state.teacherPagination,
     getAllTeachers: (state) => state.teachers || [],
 
     getUpcomingEvents: (state) => state.upcomingEvents,
@@ -68,6 +75,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_TEACHER_PAGINATION(state, pagination) {
+      state.teacherPagination = pagination;
+    },
     SET_TEACHERS(state, teachers) {
       state.teachers = teachers;
     },
@@ -142,18 +152,32 @@ export default createStore({
         throw err;
       }
     },
-    async fetchTeachers({ commit }) {
+    async fetchTeachers({ commit }, { page = 1, limit = 10, search = "" }) {
       try {
-        const res = await api.get("/api/teachers");
+        const res = await api.get("/api/teachers", {
+          params: { page, limit, search },
+        });
 
-        // ✅ Use the correct key: res.data.data
-        commit("SET_TEACHERS", res.data.data);
+        const { data, totalPages, total, page: currentPage } = res.data;
+        const pagination = {
+          totalPages,
+          totalResults: total,
+          currentPage,
+        };
+
+        commit("SET_TEACHERS", data);
+        commit("SET_TEACHER_PAGINATION", pagination);
       } catch (err) {
         console.error(
           "❌ Failed to fetch teachers:",
           err.response?.data || err.message
         );
         commit("SET_TEACHERS", []);
+        commit("SET_TEACHER_PAGINATION", {
+          totalPages: 0,
+          totalResults: 0,
+          currentPage: 1,
+        });
       }
     },
     async addTeacher(_, formData) {

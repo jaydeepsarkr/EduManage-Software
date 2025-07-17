@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen p-4 sm:p-6 lg:p-8">
     <div class="max-w-7xl mx-auto p-6 lg:p-8">
-      <!-- Loading State -->
+      <!-- Initial Loading State (for the very first load of the page) -->
       <div
         v-if="isInitialLoading"
         class="flex flex-col items-center justify-center min-h-[60vh] text-gray-600"
@@ -12,7 +12,7 @@
         <p class="text-xl font-medium">Loading teachers...</p>
         <p class="text-sm text-gray-500 mt-2">Please wait a moment.</p>
       </div>
-      <!-- Main Content (only show when not loading) -->
+      <!-- Main Content (only show when not initially loading) -->
       <div v-else>
         <!-- Header - This component is responsible for the bulk delete button -->
         <HeaderTeacher
@@ -29,304 +29,332 @@
         >
           <button
             @click="bulkDeleteTeachers"
-            :disabled="isLoading"
+            :disabled="isLoading || isTableLoading"
             class="inline-flex items-center px-5 py-2.5 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Trash2 class="w-5 h-5 mr-2" />
             Delete Selected ({{ selectedTeacherIds.length }})
           </button>
         </div>
-        <!-- Teachers Table (Desktop View) -->
-        <div
-          class="hidden md:block bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
-          :class="{ 'mt-6': !isAnyTeacherSelected }"
-        >
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200">
-              <thead class="bg-gray-50">
-                <tr>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    <!-- Checkbox for selecting all visible teachers -->
-                    <input
-                      type="checkbox"
-                      :checked="allSelected"
-                      @change="toggleSelectAll"
-                      :disabled="isLoading"
-                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
-                    />
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Photo
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Role
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Subject
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Email
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Phone
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    DOB
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Status
-                  </th>
-                  <th
-                    class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
-                  >
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white divide-y divide-gray-100">
-                <tr
-                  v-for="teacher in paginatedTeachers"
-                  :key="teacher._id"
-                  class="hover:bg-gray-50 transition-colors duration-150"
-                >
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <!-- Checkbox for individual teacher selection -->
-                    <input
-                      type="checkbox"
-                      :checked="selectedTeacherIds.includes(teacher._id)"
-                      @change="toggleTeacherSelection(teacher._id)"
-                      :disabled="isLoading"
-                      class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
-                    />
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <img
-                      :src="
-                        teacher.photo || '/placeholder.svg?height=40&width=40'
-                      "
-                      :alt="teacher.name"
-                      class="w-10 h-10 rounded-full object-cover border border-gray-200"
-                    />
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <div class="text-sm font-medium text-gray-900">
-                      {{ teacher.name }}
-                    </div>
-                    <!-- <div class="text-xs text-gray-500">
-                      ID: {{ teacher._id }}
-                    </div> -->
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                    {{ teacher.role }}
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <span
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
-                    >
-                      {{ teacher.subject }}
-                    </span>
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                    {{ teacher.email }}
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                    {{ teacher.phone }}
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
-                    {{ formatDate(teacher.dob) }}
-                  </td>
-                  <td class="px-4 py-3 whitespace-nowrap">
-                    <span
-                      :class="
-                        teacher.status === 'active'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      "
-                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    >
-                      {{ teacher.status }}
-                    </span>
-                  </td>
-                  <td
-                    class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium"
-                  >
-                    <div class="flex items-center gap-2">
-                      <button
-                        @click="viewTeacher(teacher)"
-                        :disabled="isLoading"
-                        class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="View Details"
-                      >
-                        <Eye class="w-4 h-4" />
-                      </button>
-                      <button
-                        @click="editTeacher(teacher)"
-                        :disabled="isLoading"
-                        class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Edit Teacher"
-                      >
-                        <Edit class="w-4 h-4" />
-                      </button>
-                      <button
-                        @click="deleteTeacher(teacher)"
-                        :disabled="isLoading"
-                        class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                        title="Delete Teacher"
-                      >
-                        <Trash2 class="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr v-if="paginatedTeachers.length === 0">
-                  <td
-                    colspan="10"
-                    class="px-4 py-6 text-center text-gray-500 text-base"
-                  >
-                    No teachers found.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <!-- Teachers Grid (Mobile View) -->
-        <div
-          class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 w-[304px] -ml-[23px]"
-          :class="{ 'mt-6': !isAnyTeacherSelected }"
-        >
+        <!-- Teachers Table & Grid Container -->
+        <div class="relative">
+          <!-- Content Loading Overlay (for search, pagination, refresh) -->
           <div
-            v-if="paginatedTeachers.length === 0"
-            class="col-span-full text-center py-6 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100 text-base"
+            v-if="isTableLoading"
+            class="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center"
           >
-            No teachers found.
-          </div>
-          <div
-            v-for="teacher in paginatedTeachers"
-            :key="teacher._id"
-            class="bg-white rounded-xl border border-gray-100 p-4 flex flex-col space-y-3 w-full max-w-2xl"
-          >
-            <div class="flex items-center justify-between">
-              <div class="flex items-center space-x-3">
-                <img
-                  :src="teacher.photo || '/placeholder.svg?height=64&width=64'"
-                  :alt="teacher.name"
-                  class="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
-                />
-                <div>
-                  <h3 class="text-lg font-semibold text-gray-900">
-                    {{ teacher.name }}
-                  </h3>
-                  <p class="text-gray-500 text-[10px]">ID: {{ teacher._id }}</p>
-                </div>
-              </div>
-              <!-- Checkbox for individual teacher selection -->
-              <input
-                type="checkbox"
-                :checked="selectedTeacherIds.includes(teacher._id)"
-                @change="toggleTeacherSelection(teacher._id)"
-                :disabled="isLoading"
-                class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-5 w-5"
-              />
+            <div class="text-center">
+              <div
+                class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
+              ></div>
+              <p class="text-sm text-gray-600">Loading teachers...</p>
             </div>
-            <div class="grid grid-cols-2 gap-y-2 text-sm text-gray-800">
-              <div>
-                <span class="font-medium text-gray-700">Role:</span>
-                {{ teacher.role }}
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">Subject:</span>
-                <span
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
-                >
-                  {{ teacher.subject }}
-                </span>
-              </div>
-              <div class="col-span-2">
-                <span class="font-medium text-gray-700">Email:</span>
-                {{ teacher.email }}
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">Phone:</span>
-                {{ teacher.phone }}
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">DOB:</span>
-                {{ formatDate(teacher.dob) }}
-              </div>
-              <div>
-                <span class="font-medium text-gray-700">Status:</span>
-                <span
-                  :class="
-                    teacher.status === 'active'
-                      ? 'bg-green-100 text-green-800'
-                      : 'bg-red-100 text-red-800'
-                  "
-                  class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
-                >
-                  {{ teacher.status }}
-                </span>
-              </div>
+          </div>
+
+          <!-- Teachers Table (Desktop View) -->
+          <div
+            class="hidden md:block bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
+            :class="{ 'mt-6': !isAnyTeacherSelected }"
+          >
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      <!-- Checkbox for selecting all visible teachers -->
+                      <input
+                        type="checkbox"
+                        :checked="allSelected"
+                        @change="toggleSelectAll"
+                        :disabled="isLoading || isTableLoading"
+                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
+                      />
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Photo
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Name
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Role
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Subject
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Email
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Phone
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      DOB
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Status
+                    </th>
+                    <th
+                      class="px-4 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider"
+                    >
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-100">
+                  <tr
+                    v-for="teacher in teachers"
+                    :key="teacher._id"
+                    class="hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <!-- Checkbox for individual teacher selection -->
+                      <input
+                        type="checkbox"
+                        :checked="selectedTeacherIds.includes(teacher._id)"
+                        @change="toggleTeacherSelection(teacher._id)"
+                        :disabled="isLoading || isTableLoading"
+                        class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-4 w-4"
+                      />
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <img
+                        :src="
+                          teacher.photo || '/placeholder.svg?height=40&width=40'
+                        "
+                        :alt="teacher.name"
+                        class="w-10 h-10 rounded-full object-cover border border-gray-200"
+                      />
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ teacher.name }}
+                      </div>
+                      <!-- <div class="text-xs text-gray-500">
+                        ID: {{ teacher._id }}
+                      </div> -->
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-800"
+                    >
+                      {{ teacher.role }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
+                      >
+                        {{ teacher.subject }}
+                      </span>
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-800"
+                    >
+                      {{ teacher.email }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-800"
+                    >
+                      {{ teacher.phone }}
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-sm text-gray-800"
+                    >
+                      {{ formatDate(teacher.dob) }}
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap">
+                      <span
+                        :class="
+                          teacher.status === 'active'
+                            ? 'bg-green-100 text-green-800'
+                            : 'bg-red-100 text-red-800'
+                        "
+                        class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
+                      >
+                        {{ teacher.status }}
+                      </span>
+                    </td>
+                    <td
+                      class="px-4 py-3 whitespace-nowrap text-right text-sm font-medium"
+                    >
+                      <div class="flex items-center gap-2">
+                        <button
+                          @click="viewTeacher(teacher)"
+                          :disabled="isLoading || isTableLoading"
+                          class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="View Details"
+                        >
+                          <Eye class="w-4 h-4" />
+                        </button>
+                        <button
+                          @click="editTeacher(teacher)"
+                          :disabled="isLoading || isTableLoading"
+                          class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Edit Teacher"
+                        >
+                          <Edit class="w-4 h-4" />
+                        </button>
+                        <button
+                          @click="deleteTeacher(teacher)"
+                          :disabled="isLoading || isTableLoading"
+                          class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                          title="Delete Teacher"
+                        >
+                          <Trash2 class="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr v-if="teachers.length === 0 && !isTableLoading">
+                    <td
+                      colspan="10"
+                      class="px-4 py-6 text-center text-gray-500 text-base"
+                    >
+                      No teachers found.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <!-- Teachers Grid (Mobile View) -->
+          <div
+            class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
+            :class="{ 'mt-6': !isAnyTeacherSelected }"
+          >
+            <div
+              v-if="teachers.length === 0 && !isTableLoading"
+              class="col-span-full text-center py-6 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100 text-base"
+            >
+              No teachers found.
             </div>
             <div
-              class="flex justify-end gap-2 mt-4 border-t pt-3 border-gray-100"
+              v-for="teacher in teachers"
+              :key="teacher._id"
+              class="bg-white rounded-xl border border-gray-100 p-4 flex flex-col space-y-3 w-full max-w-2xl"
             >
-              <button
-                @click="viewTeacher(teacher)"
-                :disabled="isLoading"
-                class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="View Details"
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                  <img
+                    :src="
+                      teacher.photo || '/placeholder.svg?height=64&width=64'
+                    "
+                    :alt="teacher.name"
+                    class="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                  />
+                  <div>
+                    <h3 class="text-lg font-semibold text-gray-900">
+                      {{ teacher.name }}
+                    </h3>
+                    <p class="text-gray-500 text-[10px]">
+                      ID: {{ teacher._id }}
+                    </p>
+                  </div>
+                </div>
+                <!-- Checkbox for individual teacher selection -->
+                <input
+                  type="checkbox"
+                  :checked="selectedTeacherIds.includes(teacher._id)"
+                  @change="toggleTeacherSelection(teacher._id)"
+                  :disabled="isLoading || isTableLoading"
+                  class="rounded border-gray-300 text-blue-600 shadow-sm focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed h-5 w-5"
+                />
+              </div>
+              <div class="grid grid-cols-2 gap-y-2 text-sm text-gray-800">
+                <div>
+                  <span class="font-medium text-gray-700">Role:</span>
+                  {{ teacher.role }}
+                </div>
+                <div>
+                  <span class="font-medium text-gray-700">Subject:</span>
+                  <span
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-700"
+                  >
+                    {{ teacher.subject }}
+                  </span>
+                </div>
+                <div class="col-span-2">
+                  <span class="font-medium text-gray-700">Email:</span>
+                  {{ teacher.email }}
+                </div>
+                <div>
+                  <span class="font-medium text-gray-700">Phone:</span>
+                  {{ teacher.phone }}
+                </div>
+                <div>
+                  <span class="font-medium text-gray-700">DOB:</span>
+                  {{ formatDate(teacher.dob) }}
+                </div>
+                <div>
+                  <span class="font-medium text-gray-700">Status:</span>
+                  <span
+                    :class="
+                      teacher.status === 'active'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    "
+                    class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium"
+                  >
+                    {{ teacher.status }}
+                  </span>
+                </div>
+              </div>
+              <div
+                class="flex justify-end gap-2 mt-4 border-t pt-3 border-gray-100"
               >
-                <Eye class="w-5 h-5" />
-              </button>
-              <button
-                @click="editTeacher(teacher)"
-                :disabled="isLoading"
-                class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Edit Teacher"
-              >
-                <Edit class="w-5 h-5" />
-              </button>
-              <button
-                @click="deleteTeacher(teacher)"
-                :disabled="isLoading"
-                class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-                title="Delete Teacher"
-              >
-                <Trash2 class="w-5 h-5" />
-              </button>
+                <button
+                  @click="viewTeacher(teacher)"
+                  :disabled="isLoading || isTableLoading"
+                  class="text-gray-500 hover:text-blue-600 p-2 rounded-full hover:bg-blue-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="View Details"
+                >
+                  <Eye class="w-5 h-5" />
+                </button>
+                <button
+                  @click="editTeacher(teacher)"
+                  :disabled="isLoading || isTableLoading"
+                  class="text-gray-500 hover:text-green-600 p-2 rounded-full hover:bg-green-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Edit Teacher"
+                >
+                  <Edit class="w-5 h-5" />
+                </button>
+                <button
+                  @click="deleteTeacher(teacher)"
+                  :disabled="isLoading || isTableLoading"
+                  class="text-gray-500 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition-colors duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Delete Teacher"
+                >
+                  <Trash2 class="w-5 h-5" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <!-- Pagination Controls -->
         <div
-          v-if="totalPages > 1"
+          v-if="totalResults > 0 && totalPages > 1"
           class="flex justify-center items-center space-x-3 mt-8"
         >
           <button
-            @click="prevPage"
-            :disabled="currentPage === 1 || isLoading"
+            @click="goToPage(currentPage - 1)"
+            :disabled="currentPage === 1 || isLoading || isTableLoading"
             class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
           >
             Previous
@@ -335,8 +363,10 @@
             >Page {{ currentPage }} of {{ totalPages }}</span
           >
           <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages || isLoading"
+            @click="goToPage(currentPage + 1)"
+            :disabled="
+              currentPage === totalPages || isLoading || isTableLoading
+            "
             class="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 shadow-sm"
           >
             Next
@@ -488,12 +518,13 @@
   const selectedTeacher = ref(null);
   const teacherToDelete = ref(null);
   const selectedTeacherIds = ref([]);
-  const isLoading = ref(false); // This ref controls the loading state for the entire view and modals
-  const isInitialLoading = ref(true);
+  const isLoading = ref(false); // This ref controls the loading state for save/delete operations
+  const isInitialLoading = ref(true); // For the very first page load
+  const isTableLoading = ref(false); // For search, pagination, and refresh of the table content
 
   // Pagination state
   const currentPage = ref(1);
-  const itemsPerPage = ref(10);
+  const itemsPerPage = ref(1); // Number of items per page
 
   // Toast
   const toast = reactive({
@@ -531,92 +562,76 @@
     }
   };
 
-  // Fetch teachers on load
-  const fetchTeachers = async () => {
+  // Fetch teachers with pagination and search parameters
+  const fetchTeachers = async (
+    page = currentPage.value,
+    limit = itemsPerPage.value,
+    search = searchQuery.value
+  ) => {
+    // Set loading state based on whether it's the initial load or a content refresh
+    if (isInitialLoading.value) {
+      // Keep isInitialLoading true
+    } else {
+      isTableLoading.value = true; // For subsequent loads (search, pagination)
+    }
+
     try {
-      await store.dispatch("fetchTeachers");
+      currentPage.value = page; // Update current page before dispatching
+      await store.dispatch("fetchTeachers", { page, limit, search });
     } catch (error) {
       console.error("Error fetching teachers:", error);
       showToast("❌ Failed to load teachers", "error");
     } finally {
-      setTimeout(() => {
-        isInitialLoading.value = false;
-      }, 500);
+      isInitialLoading.value = false; // Always set to false after first load attempt
+      isTableLoading.value = false; // Always set to false after content load attempt
     }
   };
 
   onMounted(() => {
-    fetchTeachers();
+    fetchTeachers(currentPage.value, itemsPerPage.value, searchQuery.value);
   });
 
-  // Get teachers from Vuex
+  // Get teachers and pagination info from Vuex
   const teachers = computed(() => store.getters.getAllTeachers || []);
-
-  watch(
-    teachers,
-    (newTeachers) => {
-      if (newTeachers && newTeachers.length >= 0) {
-        setTimeout(() => {
-          isInitialLoading.value = false;
-        }, 300);
-      }
-    },
-    { immediate: true }
+  const totalResults = computed(
+    () => store.getters.getTeacherPagination?.totalResults || 0
+  );
+  const totalPages = computed(
+    () => store.getters.getTeacherPagination?.totalPages || 0
   );
 
-  // Filtering
-  const filteredTeachers = computed(() => {
-    if (!searchQuery.value) return teachers.value;
-    const query = searchQuery.value.toLowerCase();
-    return teachers.value.filter(
-      (t) =>
-        t.name?.toLowerCase().includes(query) ||
-        t.subject?.toLowerCase().includes(query) ||
-        t.email?.toLowerCase().includes(query) ||
-        t.role?.toLowerCase().includes(query)
-    );
+  // Watch for search query changes and refetch data
+  let searchTimeout = null;
+  watch(searchQuery, (newQuery) => {
+    clearTimeout(searchTimeout);
+    isTableLoading.value = true; // Show loading immediately on search input
+    searchTimeout = setTimeout(() => {
+      fetchTeachers(1, itemsPerPage.value, newQuery); // Reset to page 1 on new search
+    }, 300); // Debounce search input
   });
 
-  // Pagination computed properties
-  const totalPages = computed(() => {
-    return Math.ceil(filteredTeachers.value.length / itemsPerPage.value);
-  });
-
-  const paginatedTeachers = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return filteredTeachers.value.slice(start, end);
-  });
-
-  watch(filteredTeachers, () => {
-    if (currentPage.value > totalPages.value && totalPages.value > 0) {
-      currentPage.value = totalPages.value;
-    } else if (totalPages.value === 0) {
-      currentPage.value = 1;
-    }
+  // Watch for changes in teachers data (e.g., after delete/edit) to clear selections
+  watch(teachers, () => {
     selectedTeacherIds.value = [];
   });
 
   // Pagination actions
-  const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-      currentPage.value++;
-    }
-  };
-
-  const prevPage = () => {
-    if (currentPage.value > 1) {
-      currentPage.value--;
+  const goToPage = (page) => {
+    if (
+      page >= 1 &&
+      page <= totalPages.value &&
+      !isLoading.value &&
+      !isTableLoading.value
+    ) {
+      fetchTeachers(page, itemsPerPage.value, searchQuery.value);
     }
   };
 
   // Checkbox logic for current page
   const allSelected = computed(() => {
     return (
-      paginatedTeachers.value.length > 0 &&
-      paginatedTeachers.value.every((t) =>
-        selectedTeacherIds.value.includes(t._id)
-      )
+      teachers.value.length > 0 &&
+      teachers.value.every((t) => selectedTeacherIds.value.includes(t._id))
     );
   });
 
@@ -708,7 +723,11 @@
         selectedTeacherIds.value = [];
       }
       showDeleteModal.value = false;
-      await fetchTeachers();
+      await fetchTeachers(
+        currentPage.value,
+        itemsPerPage.value,
+        searchQuery.value
+      ); // Re-fetch current page after delete
     } catch (err) {
       showToast("❌ Failed to delete teacher(s)", "error");
     } finally {
@@ -818,7 +837,6 @@
         return; // Exit early, no need to set isLoading to false in finally if we return here
       }
 
-      console.log(updatesToSend);
       await store.dispatch("editTeacherById", {
         teacherId: originalTeacher._id,
         updates: updatesToSend,
@@ -828,7 +846,11 @@
         `✅ Teacher ${originalTeacher.name} updated successfully!`,
         "success"
       );
-      await fetchTeachers(); // Re-fetch teachers to update the table
+      await fetchTeachers(
+        currentPage.value,
+        itemsPerPage.value,
+        searchQuery.value
+      );
     } catch (error) {
       console.error("Error saving teacher:", error);
       showToast("❌ Failed to save teacher updates", "error");
@@ -844,7 +866,7 @@
     if (allSelected.value) {
       selectedTeacherIds.value = [];
     } else {
-      selectedTeacherIds.value = paginatedTeachers.value.map((t) => t._id);
+      selectedTeacherIds.value = teachers.value.map((t) => t._id);
     }
   };
 
