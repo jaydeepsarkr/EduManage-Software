@@ -23,7 +23,6 @@
           <X class="w-6 h-6" />
         </button>
       </div>
-
       <div
         v-if="teacher"
         class="p-8 space-y-8"
@@ -47,7 +46,6 @@
             <p class="text-md text-gray-500 mt-1">{{ teacher.role }}</p>
           </div>
         </div>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <!-- Contact Info -->
           <div
@@ -84,7 +82,6 @@
               </span>
             </p>
           </div>
-
           <!-- Subject & Aadhaar -->
           <div
             class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-md"
@@ -114,26 +111,42 @@
               class="mt-3"
             >
               <span class="font-medium text-gray-700">Aadhaar Card:</span>
-              <a
-                :href="`https://docs.google.com/viewer?url=${encodeURIComponent(
-                  teacher.aadhaarCard
-                )}&embedded=true`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 hover:underline flex items-center text-sm mt-1"
-              >
-                <Paperclip class="w-4 h-4 mr-2" /> View Document
-              </a>
-              <img
-                v-if="isImage(teacher.aadhaarCard)"
-                :src="teacher.aadhaarCard"
-                alt="Aadhaar Card"
-                class="mt-3 max-w-full h-auto rounded-lg border border-gray-200 shadow-sm"
-              />
+              <div v-if="isImage(teacher.aadhaarCard)">
+                <img
+                  :src="teacher.aadhaarCard"
+                  alt="Aadhaar Card"
+                  class="mt-3 max-w-full h-auto rounded-lg border border-gray-200 shadow-sm"
+                />
+              </div>
+              <div v-else-if="isPdf(teacher.aadhaarCard)">
+                <a
+                  :href="teacher.aadhaarCard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :download="
+                    teacher.aadhaarCard.startsWith('data:')
+                      ? 'aadhaar_card.pdf'
+                      : null
+                  "
+                  class="text-blue-600 hover:underline flex items-center text-sm mt-1"
+                >
+                  <Paperclip class="w-4 h-4 mr-2" /> View/Download Document
+                </a>
+              </div>
+              <div v-else>
+                <a
+                  :href="teacher.aadhaarCard"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline flex items-center text-sm mt-1"
+                >
+                  <Paperclip class="w-4 h-4 mr-2" /> View Document (Unsupported
+                  Type)
+                </a>
+              </div>
             </div>
           </div>
         </div>
-
         <!-- Address -->
         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-md">
           <h4
@@ -166,7 +179,6 @@
             </p>
           </div>
         </div>
-
         <!-- Qualifications -->
         <div
           v-if="teacher.qualifications && teacher.qualifications.length > 0"
@@ -187,21 +199,41 @@
               <span class="font-semibold">{{ q.institution }}</span> ({{
                 q.year
               }})
-              <a
-                v-if="q.fileUrl"
-                :href="`https://docs.google.com/viewer?url=${encodeURIComponent(
-                  q.fileUrl
-                )}&embedded=true`"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-blue-600 hover:underline flex items-center text-sm mt-2"
-              >
-                <Paperclip class="w-4 h-4 mr-2" /> View Document
-              </a>
+              <div v-if="q.fileUrl">
+                <a
+                  v-if="isPdf(q.fileUrl)"
+                  :href="q.fileUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :download="
+                    q.fileUrl.startsWith('data:')
+                      ? `qualification_${index + 1}.pdf`
+                      : null
+                  "
+                  class="text-blue-600 hover:underline flex items-center text-sm mt-2"
+                >
+                  <Paperclip class="w-4 h-4 mr-2" /> View/Download Document
+                </a>
+                <img
+                  v-else-if="isImage(q.fileUrl)"
+                  :src="q.fileUrl"
+                  alt="Qualification Document"
+                  class="mt-2 max-w-full h-auto rounded-lg border border-gray-200 shadow-sm"
+                />
+                <a
+                  v-else
+                  :href="q.fileUrl"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-blue-600 hover:underline flex items-center text-sm mt-2"
+                >
+                  <Paperclip class="w-4 h-4 mr-2" /> View Document (Unsupported
+                  Type)
+                </a>
+              </div>
             </li>
           </ul>
         </div>
-
         <!-- Remarks -->
         <div
           v-if="teacher.remark"
@@ -215,7 +247,6 @@
           <p class="text-base text-gray-800">{{ teacher.remark }}</p>
         </div>
       </div>
-
       <div
         v-else
         class="p-8 text-center text-gray-500 text-lg"
@@ -249,7 +280,6 @@
       required: true,
     },
   });
-
   const emit = defineEmits(["close"]);
 
   const formatDate = (dateString) => {
@@ -267,8 +297,30 @@
     }
   };
 
-  const isImage = (url) => {
-    return /\.(jpeg|jpg|gif|png|svg)$/i.test(url);
+  const isImage = (urlOrBase64) => {
+    if (!urlOrBase64) return false;
+    // Check for common image file extensions in URLs
+    if (/\.(jpeg|jpg|gif|png|svg|webp)$/i.test(urlOrBase64)) {
+      return true;
+    }
+    // Check for Base64 image data URLs
+    if (urlOrBase64.startsWith("data:image/")) {
+      return true;
+    }
+    return false;
+  };
+
+  const isPdf = (urlOrBase64) => {
+    if (!urlOrBase64) return false;
+    // Check for .pdf extension in URLs
+    if (/\.pdf$/i.test(urlOrBase64)) {
+      return true;
+    }
+    // Check for Base64 PDF data URLs
+    if (urlOrBase64.startsWith("data:application/pdf")) {
+      return true;
+    }
+    return false;
   };
 </script>
 

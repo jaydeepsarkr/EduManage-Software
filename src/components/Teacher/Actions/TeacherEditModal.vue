@@ -105,8 +105,6 @@
                 class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:outline-none focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 bg-white text-gray-900"
               >
                 <option value="teacher">Teacher</option>
-                <option value="admin">Admin</option>
-                <option value="staff">Staff</option>
               </select>
             </div>
             <div>

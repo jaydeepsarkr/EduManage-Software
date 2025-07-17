@@ -204,7 +204,7 @@
                     colspan="10"
                     class="px-4 py-6 text-center text-gray-500 text-base"
                   >
-                    No teachers found matching your criteria.
+                    No teachers found.
                   </td>
                 </tr>
               </tbody>
@@ -220,7 +220,7 @@
             v-if="paginatedTeachers.length === 0"
             class="col-span-full text-center py-6 text-gray-500 bg-white rounded-xl shadow-sm border border-gray-100 text-base"
           >
-            No teachers found matching your criteria.
+            No teachers found.
           </div>
           <div
             v-for="teacher in paginatedTeachers"
@@ -818,7 +818,7 @@
         return; // Exit early, no need to set isLoading to false in finally if we return here
       }
 
-      // Dispatch the action with only the changed fields. File data is now Base64 strings.
+      console.log(updatesToSend);
       await store.dispatch("editTeacherById", {
         teacherId: originalTeacher._id,
         updates: updatesToSend,
