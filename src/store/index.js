@@ -129,10 +129,22 @@ export default createStore({
   },
 
   actions: {
+    async editTeacherById(_, { teacherId, updates }) {
+      try {
+        const res = await api.put(`/api/teachers/${teacherId}`, updates);
+
+        return res.data;
+      } catch (err) {
+        console.error(
+          "❌ Failed to update teacher:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
     async fetchTeachers({ commit }) {
       try {
         const res = await api.get("/api/teachers");
-        console.log("📦 Full API response:", res.data);
 
         // ✅ Use the correct key: res.data.data
         commit("SET_TEACHERS", res.data.data);

@@ -614,6 +614,7 @@
 
         <!-- Pagination Section - Mobile Responsive -->
         <div
+          v-if="students.length"
           class="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 space-y-4 sm:space-y-0 px-2"
         >
           <!-- Results summary -->

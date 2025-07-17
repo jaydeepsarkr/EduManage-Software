@@ -23,11 +23,12 @@
           <X class="w-6 h-6" />
         </button>
       </div>
+
       <div
         v-if="teacher"
         class="p-8 space-y-8"
       >
-        <!-- Basic Info - Header Section -->
+        <!-- Header -->
         <div
           class="flex flex-col sm:flex-row items-center sm:items-start space-y-6 sm:space-y-0 sm:space-x-8 pb-6 border-b border-gray-100"
         >
@@ -114,7 +115,9 @@
             >
               <span class="font-medium text-gray-700">Aadhaar Card:</span>
               <a
-                :href="teacher.aadhaarCard"
+                :href="`https://docs.google.com/viewer?url=${encodeURIComponent(
+                  teacher.aadhaarCard
+                )}&embedded=true`"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-blue-600 hover:underline flex items-center text-sm mt-1"
@@ -131,7 +134,7 @@
           </div>
         </div>
 
-        <!-- Address Info -->
+        <!-- Address -->
         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 shadow-md">
           <h4
             class="text-xl font-semibold text-gray-800 mb-4 flex items-center border-b border-gray-200 pb-3"
@@ -186,7 +189,9 @@
               }})
               <a
                 v-if="q.fileUrl"
-                :href="q.fileUrl"
+                :href="`https://docs.google.com/viewer?url=${encodeURIComponent(
+                  q.fileUrl
+                )}&embedded=true`"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-blue-600 hover:underline flex items-center text-sm mt-2"
@@ -210,6 +215,7 @@
           <p class="text-base text-gray-800">{{ teacher.remark }}</p>
         </div>
       </div>
+
       <div
         v-else
         class="p-8 text-center text-gray-500 text-lg"

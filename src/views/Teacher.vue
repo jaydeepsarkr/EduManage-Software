@@ -12,7 +12,6 @@
         <p class="text-xl font-medium">Loading teachers...</p>
         <p class="text-sm text-gray-500 mt-2">Please wait a moment.</p>
       </div>
-
       <!-- Main Content (only show when not loading) -->
       <div v-else>
         <!-- Header - This component is responsible for the bulk delete button -->
@@ -23,7 +22,6 @@
           :is-any-selected="isAnyTeacherSelected"
           :selected-count="selectedTeacherIds.length"
         />
-
         <!-- Bulk Delete Button (appears when teachers are selected) -->
         <div
           v-if="isAnyTeacherSelected"
@@ -38,7 +36,6 @@
             Delete Selected ({{ selectedTeacherIds.length }})
           </button>
         </div>
-
         <!-- Teachers Table (Desktop View) -->
         <div
           class="hidden md:block bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden"
@@ -136,9 +133,9 @@
                     <div class="text-sm font-medium text-gray-900">
                       {{ teacher.name }}
                     </div>
-                    <div class="text-xs text-gray-500">
+                    <!-- <div class="text-xs text-gray-500">
                       ID: {{ teacher._id }}
-                    </div>
+                    </div> -->
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-800">
                     {{ teacher.role }}
@@ -214,7 +211,6 @@
             </table>
           </div>
         </div>
-
         <!-- Teachers Grid (Mobile View) -->
         <div
           class="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-4 w-[304px] -ml-[23px]"
@@ -323,7 +319,6 @@
             </div>
           </div>
         </div>
-
         <!-- Pagination Controls -->
         <div
           v-if="totalPages > 1"
@@ -347,7 +342,6 @@
             Next
           </button>
         </div>
-
         <!-- Delete Confirmation Modal (Inline for simplicity, consider a dedicated modal component for complex UIs) -->
         <div
           v-if="showDeleteModal"
@@ -426,7 +420,6 @@
           </div>
         </div>
       </div>
-
       <!-- Toast Notification (Integrated) -->
       <transition name="fade">
         <div
@@ -449,20 +442,19 @@
           <span>{{ toast.message }}</span>
         </div>
       </transition>
-
       <!-- Teacher Details Modal -->
       <TeacherDetailsModal
         :teacher="selectedTeacher"
         :is-open="showViewModal"
         @close="showViewModal = false"
       />
-
       <!-- Teacher Edit Modal -->
       <TeacherEditModal
         :teacher="selectedTeacher"
         :is-open="showEditModal"
         @close="showEditModal = false"
         @save="handleSaveEdit"
+        :isLoading="isLoading"
       />
     </div>
   </div>
@@ -485,6 +477,7 @@
 
   // Vuex store
   const store = useStore();
+
   // UI state
   const searchQuery = ref("");
   const showModal = ref(false);
@@ -495,11 +488,13 @@
   const selectedTeacher = ref(null);
   const teacherToDelete = ref(null);
   const selectedTeacherIds = ref([]);
-  const isLoading = ref(false);
+  const isLoading = ref(false); // This ref controls the loading state for the entire view and modals
   const isInitialLoading = ref(true);
+
   // Pagination state
   const currentPage = ref(1);
   const itemsPerPage = ref(10);
+
   // Toast
   const toast = reactive({
     isVisible: false,
@@ -507,6 +502,7 @@
     type: "info",
   });
   let toastTimeoutId = null;
+
   // Form data (currentTeacher is now less critical as edit modal manages its own local state)
   const currentTeacher = reactive({
     id: "",
@@ -539,9 +535,6 @@
   const fetchTeachers = async () => {
     try {
       await store.dispatch("fetchTeachers");
-      setTimeout(() => {
-        console.log("👩‍🏫 All Teachers from Vuex:", store.getters.getAllTeachers);
-      }, 100);
     } catch (error) {
       console.error("Error fetching teachers:", error);
       showToast("❌ Failed to load teachers", "error");
@@ -558,6 +551,7 @@
 
   // Get teachers from Vuex
   const teachers = computed(() => store.getters.getAllTeachers || []);
+
   watch(
     teachers,
     (newTeachers) => {
@@ -569,6 +563,7 @@
     },
     { immediate: true }
   );
+
   // Filtering
   const filteredTeachers = computed(() => {
     if (!searchQuery.value) return teachers.value;
@@ -581,15 +576,18 @@
         t.role?.toLowerCase().includes(query)
     );
   });
+
   // Pagination computed properties
   const totalPages = computed(() => {
     return Math.ceil(filteredTeachers.value.length / itemsPerPage.value);
   });
+
   const paginatedTeachers = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
     return filteredTeachers.value.slice(start, end);
   });
+
   watch(filteredTeachers, () => {
     if (currentPage.value > totalPages.value && totalPages.value > 0) {
       currentPage.value = totalPages.value;
@@ -598,17 +596,20 @@
     }
     selectedTeacherIds.value = [];
   });
+
   // Pagination actions
   const nextPage = () => {
     if (currentPage.value < totalPages.value) {
       currentPage.value++;
     }
   };
+
   const prevPage = () => {
     if (currentPage.value > 1) {
       currentPage.value--;
     }
   };
+
   // Checkbox logic for current page
   const allSelected = computed(() => {
     return (
@@ -618,9 +619,11 @@
       )
     );
   });
+
   const isAnyTeacherSelected = computed(
     () => selectedTeacherIds.value.length > 0
   );
+
   // Toast classes
   const toastClasses = computed(() => {
     const baseClasses = "transition-all duration-300 ease-in-out";
@@ -634,6 +637,7 @@
         return `${baseClasses} bg-blue-600`;
     }
   });
+
   // Toast utility
   const showToast = (msg, type = "info", duration = 3000) => {
     if (toastTimeoutId) clearTimeout(toastTimeoutId);
@@ -644,6 +648,7 @@
       toast.isVisible = false;
     }, duration);
   };
+
   // Reset form
   const resetCurrentTeacher = () => {
     Object.assign(currentTeacher, {
@@ -658,28 +663,34 @@
       dob: "",
     });
   };
+
   // Actions
   const addTeacher = () => {
     isEditing.value = false;
     resetCurrentTeacher();
     showModal.value = true;
   };
+
   const editTeacher = (teacher) => {
     selectedTeacher.value = teacher;
     showEditModal.value = true;
   };
+
   const viewTeacher = (teacher) => {
     selectedTeacher.value = teacher;
     showViewModal.value = true;
   };
+
   const deleteTeacher = (teacher) => {
     teacherToDelete.value = teacher;
     showDeleteModal.value = true;
   };
+
   const bulkDeleteTeachers = () => {
     teacherToDelete.value = null;
     showDeleteModal.value = true;
   };
+
   const confirmDelete = async () => {
     isLoading.value = true;
     try {
@@ -705,58 +716,124 @@
       teacherToDelete.value = null;
     }
   };
+
   const cancelDelete = () => {
     showDeleteModal.value = false;
     teacherToDelete.value = null;
   };
 
-  // --- Placeholder for File Upload Logic ---
-  const uploadFileToCloudinary = async (file) => {
-    if (!file) return null;
-    console.log(`Simulating upload for file: ${file.name}`);
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(`https://example.com/uploaded/${Date.now()}-${file.name}`);
-      }, 1000);
-    });
-  };
-
   // Handle save from TeacherEditModal
-  const handleSaveEdit = async ({ teacherData, files }) => {
-    isLoading.value = true;
+  const handleSaveEdit = async ({ teacherData }) => {
+    isLoading.value = true; // Set loading true when save starts
     try {
-      const updates = { ...teacherData };
+      const originalTeacher = selectedTeacher.value;
+      const updatesToSend = {};
 
-      if (files.photo) {
-        updates.photo = await uploadFileToCloudinary(files.photo);
-      }
+      // Helper to normalize values that might be empty objects to empty strings
+      const normalizeValue = (value) => {
+        return typeof value === "object" &&
+          value !== null &&
+          Object.keys(value).length === 0
+          ? "" // Treat empty object as empty string
+          : value;
+      };
 
-      if (files.aadhaarCard) {
-        updates.aadhaarCard = await uploadFileToCloudinary(files.aadhaarCard);
-      }
-
-      if (updates.qualifications && files.qualifications) {
-        for (let i = 0; i < updates.qualifications.length; i++) {
-          if (files.qualifications[i]) {
-            updates.qualifications[i].fileUrl = await uploadFileToCloudinary(
-              files.qualifications[i]
-            );
-          }
+      // 1. Handle regular fields (non-file related)
+      for (const key in teacherData) {
+        if (
+          key === "_id" ||
+          key === "photo" ||
+          key === "aadhaarCard" ||
+          key === "qualifications"
+        ) {
+          continue; // Handle these separately
+        }
+        const normalizedNewValue = normalizeValue(teacherData[key]);
+        if (normalizedNewValue !== originalTeacher[key]) {
+          updatesToSend[key] = normalizedNewValue;
         }
       }
 
-      const { _id, ...finalUpdates } = updates;
-      await store.dispatch("editUserById", {
-        userId: _id,
-        updates: finalUpdates,
+      // 2. Handle photo (now expected to be a Base64 string or URL in teacherData.photo)
+      const normalizedNewPhotoValue = normalizeValue(teacherData.photo);
+      if (normalizedNewPhotoValue !== originalTeacher.photo) {
+        updatesToSend.photo = normalizedNewPhotoValue;
+      }
+
+      // 3. Handle aadhaarCard (now expected to be a Base64 string or URL in teacherData.aadhaarCard)
+      const normalizedNewAadhaarValue = normalizeValue(teacherData.aadhaarCard);
+      if (normalizedNewAadhaarValue !== originalTeacher.aadhaarCard) {
+        updatesToSend.aadhaarCard = normalizedNewAadhaarValue;
+      }
+
+      // 4. Handle qualifications
+      const updatedQualifications = teacherData.qualifications
+        ? JSON.parse(JSON.stringify(teacherData.qualifications))
+        : [];
+      let qualificationsChanged = false;
+
+      // Normalize fileUrl for each qualification and check for changes
+      updatedQualifications.forEach((qual, index) => {
+        const normalizedFileUrl = normalizeValue(qual.fileUrl);
+        // Compare with original qualification's fileUrl
+        if (
+          originalTeacher.qualifications &&
+          originalTeacher.qualifications[index]
+        ) {
+          if (
+            normalizedFileUrl !== originalTeacher.qualifications[index].fileUrl
+          ) {
+            qual.fileUrl = normalizedFileUrl;
+            qualificationsChanged = true;
+          }
+        } else if (normalizedFileUrl !== "") {
+          // New qualification with a fileUrl
+          qualificationsChanged = true;
+        }
       });
-      showToast(`✅ Teacher ${updates.name} updated successfully!`, "success");
-      await fetchTeachers();
+
+      // Check if the array structure itself changed (e.g., added/removed qualifications)
+      if (
+        updatedQualifications.length !==
+        (originalTeacher.qualifications
+          ? originalTeacher.qualifications.length
+          : 0)
+      ) {
+        qualificationsChanged = true;
+      }
+
+      // If qualificationsChanged is true OR the array content is different, include it.
+      if (
+        qualificationsChanged ||
+        JSON.stringify(updatedQualifications) !==
+          JSON.stringify(originalTeacher.qualifications)
+      ) {
+        updatesToSend.qualifications = updatedQualifications;
+      }
+
+      // If no updates were detected, show an info toast and exit
+      if (Object.keys(updatesToSend).length === 0) {
+        showToast("ℹ️ No changes detected.", "info");
+        showEditModal.value = false;
+        return; // Exit early, no need to set isLoading to false in finally if we return here
+      }
+
+      // Dispatch the action with only the changed fields. File data is now Base64 strings.
+      await store.dispatch("editTeacherById", {
+        teacherId: originalTeacher._id,
+        updates: updatesToSend,
+      });
+
+      showToast(
+        `✅ Teacher ${originalTeacher.name} updated successfully!`,
+        "success"
+      );
+      await fetchTeachers(); // Re-fetch teachers to update the table
     } catch (error) {
       console.error("Error saving teacher:", error);
       showToast("❌ Failed to save teacher updates", "error");
     } finally {
-      isLoading.value = false;
+      isLoading.value = false; // Set loading false when save completes (success or error)
       showEditModal.value = false;
       selectedTeacher.value = null;
     }
@@ -770,6 +847,7 @@
       selectedTeacherIds.value = paginatedTeachers.value.map((t) => t._id);
     }
   };
+
   // Toggle selection for an individual teacher
   const toggleTeacherSelection = (id) => {
     const index = selectedTeacherIds.value.indexOf(id);
@@ -804,7 +882,6 @@
   .animate-spin {
     animation: spin 1s linear infinite;
   }
-
   /* Fade-in animation for bulk delete button */
   @keyframes fade-in {
     from {

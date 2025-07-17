@@ -168,9 +168,9 @@
                   class="w-16 h-16 rounded-full object-cover border-2 border-gray-200 shadow-sm"
                 />
                 <span
-                  v-if="photoFile"
+                  v-if="photoPreview"
                   class="text-sm text-gray-600 font-medium"
-                  >{{ photoFile.name }}</span
+                  >New Photo Selected</span
                 >
                 <span
                   v-else-if="localTeacher.photo"
@@ -181,7 +181,6 @@
             </div>
           </div>
         </section>
-
         <!-- Aadhaar Info -->
         <section class="border-t border-gray-100 pt-8 space-y-6">
           <h3
@@ -218,28 +217,25 @@
                 accept=".pdf,image/*"
               />
               <div
-                v-if="aadhaarFile || localTeacher.aadhaarCard"
+                v-if="localTeacher.aadhaarCard"
                 class="mt-3 flex items-center space-x-3"
               >
                 <Paperclip class="w-5 h-5 text-gray-500" />
-                <span
-                  v-if="aadhaarFile"
-                  class="text-sm text-gray-600 font-medium"
-                  >{{ aadhaarFile.name }}</span
-                >
                 <a
-                  v-else-if="localTeacher.aadhaarCard"
                   :href="localTeacher.aadhaarCard"
                   target="_blank"
                   rel="noopener noreferrer"
                   class="text-sm text-blue-600 hover:underline"
-                  >Current Document</a
+                  >{{
+                    localTeacher.aadhaarCard.startsWith("data:")
+                      ? "New Document Selected"
+                      : "Current Document"
+                  }}</a
                 >
               </div>
             </div>
           </div>
         </section>
-
         <!-- Address Info -->
         <section class="border-t border-gray-100 pt-8 space-y-6">
           <h3
@@ -315,7 +311,6 @@
             </div>
           </div>
         </section>
-
         <!-- Qualifications -->
         <section class="border-t border-gray-100 pt-8 space-y-6">
           <h3
@@ -382,22 +377,20 @@
                   accept=".pdf,image/*"
                 />
                 <div
-                  v-if="qualificationFiles[index] || q.fileUrl"
+                  v-if="q.fileUrl"
                   class="mt-3 flex items-center space-x-3"
                 >
                   <Paperclip class="w-5 h-5 text-gray-500" />
-                  <span
-                    v-if="qualificationFiles[index]"
-                    class="text-sm text-gray-600 font-medium"
-                    >{{ qualificationFiles[index].name }}</span
-                  >
                   <a
-                    v-else-if="q.fileUrl"
                     :href="q.fileUrl"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="text-sm text-blue-600 hover:underline"
-                    >Current Document</a
+                    >{{
+                      q.fileUrl.startsWith("data:")
+                        ? "New Document Selected"
+                        : "Current Document"
+                    }}</a
                   >
                 </div>
               </div>
@@ -419,7 +412,6 @@
             <PlusCircle class="w-5 h-5 mr-2" /> Add Qualification
           </button>
         </section>
-
         <!-- Remarks -->
         <section class="border-t border-gray-100 pt-8 space-y-6">
           <h3
@@ -441,22 +433,49 @@
             ></textarea>
           </div>
         </section>
-
         <div
           class="flex justify-end space-x-4 border-t border-gray-100 pt-6 mt-6"
         >
           <button
             type="button"
             @click="emit('close')"
-            class="inline-flex justify-center py-3 px-6 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            :disabled="isLoading"
+            class="inline-flex justify-center py-3 px-6 border border-gray-300 shadow-sm text-base font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Cancel
           </button>
           <button
             type="submit"
-            class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+            :disabled="isLoading"
+            class="inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Save Changes
+            <span
+              v-if="isLoading"
+              class="flex items-center"
+            >
+              <svg
+                class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  class="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  stroke-width="4"
+                ></circle>
+                <path
+                  class="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+              Saving...
+            </span>
+            <span v-else>Save Changes</span>
           </button>
         </div>
       </form>
@@ -477,34 +496,33 @@
       type: Boolean,
       required: true,
     },
+    isLoading: {
+      // New prop for loading state
+      type: Boolean,
+      default: false,
+    },
   });
 
   const emit = defineEmits(["close", "save"]);
 
   const localTeacher = ref({});
-  const photoFile = ref(null);
-  const photoPreview = ref(null);
-  const aadhaarFile = ref(null);
-  const qualificationFiles = ref([]); // Array to hold File objects for each qualification
+  const photoPreview = ref(null); // Still used for displaying the new photo preview
 
   // Watch for changes in the prop.teacher and update localTeacher and clear file selections
   watch(
     () => props.teacher,
     (newTeacher) => {
       if (newTeacher) {
+        // Deep copy the teacher object to avoid direct mutation of props
         localTeacher.value = JSON.parse(JSON.stringify(newTeacher));
         if (!localTeacher.value.qualifications) {
           localTeacher.value.qualifications = [];
         }
-        // Reset file inputs and previews when a new teacher is loaded
-        photoFile.value = null;
-        photoPreview.value = null;
-        aadhaarFile.value = null;
-        qualificationFiles.value = new Array(
-          localTeacher.value.qualifications.length
-        ).fill(null);
+        // Set photo preview based on current photo URL
+        photoPreview.value = localTeacher.value.photo || null;
       } else {
         localTeacher.value = {};
+        photoPreview.value = null;
       }
     },
     { immediate: true, deep: true }
@@ -524,26 +542,46 @@
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
-      photoFile.value = file;
       const reader = new FileReader();
       reader.onload = (e) => {
-        photoPreview.value = e.target.result;
+        localTeacher.value.photo = e.target.result; // Store Base64 string
+        photoPreview.value = e.target.result; // Update preview
       };
       reader.readAsDataURL(file);
     } else {
-      photoFile.value = null;
+      localTeacher.value.photo = null; // Clear photo if input is cleared
       photoPreview.value = null;
     }
   };
 
   const handleAadhaarUpload = (event) => {
     const file = event.target.files[0];
-    aadhaarFile.value = file || null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        localTeacher.value.aadhaarCard = e.target.result; // Store Base64 string
+      };
+      reader.readAsDataURL(file);
+    } else {
+      localTeacher.value.aadhaarCard = null; // Clear Aadhaar card if input is cleared
+    }
   };
 
   const handleQualificationUpload = (event, index) => {
     const file = event.target.files[0];
-    qualificationFiles.value[index] = file || null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (localTeacher.value.qualifications[index]) {
+          localTeacher.value.qualifications[index].fileUrl = e.target.result; // Store Base64 string
+        }
+      };
+      reader.readAsDataURL(file);
+    } else {
+      if (localTeacher.value.qualifications[index]) {
+        localTeacher.value.qualifications[index].fileUrl = null; // Clear document if input is cleared
+      }
+    }
   };
 
   const addQualification = () => {
@@ -554,24 +592,18 @@
       type: "",
       institution: "",
       year: "",
-      fileUrl: "",
+      fileUrl: null, // Initialize with null for fileUrl
     });
-    qualificationFiles.value.push(null); // Add a corresponding null for the new qualification file
   };
 
   const removeQualification = (index) => {
     localTeacher.value.qualifications.splice(index, 1);
-    qualificationFiles.value.splice(index, 1); // Remove the corresponding file
   };
 
   const handleSave = () => {
+    // Emit only the localTeacher data, as all file data (Base64 or URLs) is now within it
     emit("save", {
       teacherData: localTeacher.value,
-      files: {
-        photo: photoFile.value,
-        aadhaarCard: aadhaarFile.value,
-        qualifications: qualificationFiles.value,
-      },
     });
   };
 </script>

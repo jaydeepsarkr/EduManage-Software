@@ -1790,6 +1790,7 @@
 
       <!-- Pagination Section - Mobile Responsive -->
       <div
+        v-if="students.length"
         class="flex flex-col sm:flex-row sm:items-center sm:justify-between mt-4 sm:mt-6 md:mt-8 space-y-3 sm:space-y-0 px-1 sm:px-2"
       >
         <!-- Results summary -->
@@ -3156,11 +3157,7 @@
         "success",
         `${editingStudent.value.name} has been updated successfully`
       );
-
-      setTimeout(() => {
-        saveSuccess.value = "";
-        window.location.reload();
-      }, 2000);
+      saveSuccess.value = "";
     } catch (err) {
       console.error("Save error:", err);
       if (err.response) {
