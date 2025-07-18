@@ -16,14 +16,12 @@
           <p class="text-sm text-gray-500 mt-1">Please wait a moment.</p>
         </div>
       </div>
-
       <div class="p-6 sm:p-8 lg:p-10">
         <h1
           class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-8 border-b-2 border-blue-100 pb-4 text-center sm:text-left"
         >
           My Profile
         </h1>
-
         <div v-if="currentUser">
           <!-- Profile Header & Photo Upload -->
           <section
@@ -85,7 +83,6 @@
               </button>
             </div>
           </section>
-
           <!-- Common Details -->
           <section class="mb-10 space-y-6">
             <h3
@@ -127,7 +124,11 @@
                   </span>
                 </p>
               </div>
+              <!-- Conditional Address Display -->
               <div
+                v-if="
+                  currentUser.role !== 'teacher' && currentUser.role !== 'admin'
+                "
                 class="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm"
               >
                 <p class="text-gray-700 text-base">
@@ -146,7 +147,6 @@
               </div>
             </div>
           </section>
-
           <!-- Student Specific Details -->
           <section
             v-if="currentUser.role === 'student'"
@@ -242,7 +242,6 @@
               </div>
             </div>
           </section>
-
           <!-- Teacher Specific Details -->
           <section
             v-else-if="currentUser.role === 'teacher'"
@@ -299,7 +298,6 @@
                 </a>
               </div>
             </div>
-            <!-- Address Details for Teacher - Removed as per request -->
             <div
               v-if="
                 currentUser.qualifications &&
@@ -340,7 +338,6 @@
               </ul>
             </div>
           </section>
-
           <!-- Admin Specific Details (subset of common fields, explicitly listed for clarity) -->
           <section
             v-else-if="currentUser.role === 'admin'"
@@ -386,7 +383,6 @@
               </div>
             </div>
           </section>
-
           <!-- Document Change Warning - Hidden for Admin -->
           <div
             v-if="currentUser.role !== 'admin'"
@@ -403,7 +399,6 @@
               </p>
             </div>
           </div>
-
           <!-- Change Password Section -->
           <section class="space-y-6">
             <h3
@@ -415,7 +410,7 @@
               @submit.prevent="changePassword"
               class="space-y-5"
             >
-              <div>
+              <div class="relative">
                 <label
                   for="current-password"
                   class="block text-sm font-medium text-gray-700 mb-2"
@@ -423,14 +418,29 @@
                 >
                 <input
                   id="current-password"
-                  type="password"
+                  :type="currentPasswordType"
                   v-model="passwordForm.currentPassword"
                   required
                   :disabled="isLoading"
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
+                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
                 />
+                <button
+                  type="button"
+                  @click="togglePasswordVisibility('current')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center pt-8 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  :disabled="isLoading"
+                >
+                  <Eye
+                    v-if="currentPasswordType === 'password'"
+                    class="h-5 w-5"
+                  />
+                  <EyeOff
+                    v-else
+                    class="h-5 w-5"
+                  />
+                </button>
               </div>
-              <div>
+              <div class="relative">
                 <label
                   for="new-password"
                   class="block text-sm font-medium text-gray-700 mb-2"
@@ -438,14 +448,29 @@
                 >
                 <input
                   id="new-password"
-                  type="password"
+                  :type="newPasswordType"
                   v-model="passwordForm.newPassword"
                   required
                   :disabled="isLoading"
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
+                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
                 />
+                <button
+                  type="button"
+                  @click="togglePasswordVisibility('new')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center pt-8 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  :disabled="isLoading"
+                >
+                  <Eye
+                    v-if="newPasswordType === 'password'"
+                    class="h-5 w-5"
+                  />
+                  <EyeOff
+                    v-else
+                    class="h-5 w-5"
+                  />
+                </button>
               </div>
-              <div>
+              <div class="relative">
                 <label
                   for="confirm-password"
                   class="block text-sm font-medium text-gray-700 mb-2"
@@ -453,12 +478,27 @@
                 >
                 <input
                   id="confirm-password"
-                  type="password"
+                  :type="confirmPasswordType"
                   v-model="passwordForm.confirmPassword"
                   required
                   :disabled="isLoading"
-                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
+                  class="block w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-150 text-gray-900 placeholder-gray-400 disabled:opacity-50 disabled:bg-gray-100"
                 />
+                <button
+                  type="button"
+                  @click="togglePasswordVisibility('confirm')"
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center pt-8 text-gray-500 hover:text-gray-700 focus:outline-none"
+                  :disabled="isLoading"
+                >
+                  <Eye
+                    v-if="confirmPasswordType === 'password'"
+                    class="h-5 w-5"
+                  />
+                  <EyeOff
+                    v-else
+                    class="h-5 w-5"
+                  />
+                </button>
               </div>
               <button
                 type="submit"
@@ -507,7 +547,6 @@
         </div>
       </div>
     </div>
-
     <!-- Toast Notification -->
     <transition name="fade">
       <div
@@ -532,7 +571,6 @@
     </transition>
   </div>
 </template>
-
 <script setup>
   import { ref, computed, reactive, onMounted, watch } from "vue";
   import { useStore } from "vuex";
@@ -550,18 +588,24 @@
     Lock, // Added for change password
     FileText, // Added for documents
     Award, // Added for qualifications
+    Eye, // Added for password visibility
+    EyeOff, // Added for password visibility
   } from "lucide-vue-next";
-
   const store = useStore();
-
   // State
   const photoPreview = ref(null);
+  const selectedPhotoFile = ref(null); // New ref to store the actual File object
   const isLoading = ref(false); // General loading state for actions
   const passwordForm = reactive({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+
+  // Password visibility states
+  const currentPasswordType = ref("password");
+  const newPasswordType = ref("password");
+  const confirmPasswordType = ref("password");
 
   // Toast
   const toast = reactive({
@@ -570,10 +614,8 @@
     type: "info",
   });
   let toastTimeoutId = null;
-
   // Computed properties from Vuex getters
   const currentUser = computed(() => store.state.currentUserDetails);
-
   // Local computed property for displaying photo URL, handling base URL logic
   const displayPhotoUrl = computed(() => {
     const path = currentUser.value?.photo;
@@ -583,7 +625,6 @@
       ? path
       : `${baseURL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
   });
-
   const toastClasses = computed(() => {
     const baseClasses = "transition-all duration-300 ease-in-out";
     switch (toast.type) {
@@ -596,13 +637,11 @@
         return `${baseClasses} bg-blue-600`;
     }
   });
-
   // Utility functions
   const capitalize = (str) => {
     if (!str) return "";
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
-
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
@@ -617,7 +656,6 @@
       return dateString;
     }
   };
-
   const showToast = (msg, type = "info", duration = 3000) => {
     if (toastTimeoutId) clearTimeout(toastTimeoutId);
     toast.message = msg;
@@ -627,53 +665,46 @@
       toast.isVisible = false;
     }, duration);
   };
-
   // Photo upload logic
   const handlePhotoUpload = (event) => {
     const file = event.target.files[0];
     if (file) {
+      selectedPhotoFile.value = file; // Store the actual File object
       const reader = new FileReader();
       reader.onload = (e) => {
         photoPreview.value = e.target.result; // Set preview to Base64 string
       };
       reader.readAsDataURL(file);
     } else {
+      selectedPhotoFile.value = null; // Clear the file if input is cleared
       photoPreview.value = displayPhotoUrl.value; // Revert to current photo if cleared
     }
   };
-
   const updateProfilePhoto = async () => {
-    if (!photoPreview.value || !currentUser.value) {
+    if (!selectedPhotoFile.value || !currentUser.value) {
       showToast("No new photo selected.", "info");
       return;
     }
-
     isLoading.value = true;
     try {
-      if (currentUser.value.role === "teacher") {
-        await store.dispatch("editTeacherById", {
-          teacherId: currentUser.value._id,
-          updates: { photo: photoPreview.value },
-        });
-      } else {
-        await store.dispatch("editUserById", {
-          userId: currentUser.value._id,
-          updates: { photo: photoPreview.value },
-        });
-      }
-      // After successful update, re-fetch current user to ensure all data is fresh
-      await store.dispatch("fetchCurrentUser");
-      // Reset photoPreview to null to hide the "Save New Photo" button
-      photoPreview.value = null;
-      showToast("Profile photo updated successfully!", "success");
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const photoBase64 = e.target.result;
+        // Dispatch base64 string to Vuex action
+        await store.dispatch("updateCurrentUserProfile", { photoBase64 });
+        await store.dispatch("fetchCurrentUser");
+        photoPreview.value = null;
+        selectedPhotoFile.value = null;
+        showToast("Profile photo updated successfully!", "success");
+      };
+      reader.readAsDataURL(selectedPhotoFile.value);
     } catch (error) {
       console.error("Error updating profile photo:", error);
-      showToast("Failed to update profile photo.", "error");
+      showToast(error.message || "Failed to update profile photo.", "error");
     } finally {
       isLoading.value = false;
     }
   };
-
   // Change password logic
   const changePassword = async () => {
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
@@ -685,11 +716,10 @@
       showToast("New password must be at least 6 characters long.", "error");
       return;
     }
-
     isLoading.value = true;
     try {
-      await store.dispatch("changeUserPassword", {
-        userId: currentUser.value._id,
+      // Dispatch password update to the same action
+      await store.dispatch("updateCurrentUserProfile", {
         currentPassword: passwordForm.currentPassword,
         newPassword: passwordForm.newPassword,
       });
@@ -710,6 +740,20 @@
     }
   };
 
+  // Toggle password visibility
+  const togglePasswordVisibility = (field) => {
+    if (field === "current") {
+      currentPasswordType.value =
+        currentPasswordType.value === "password" ? "text" : "password";
+    } else if (field === "new") {
+      newPasswordType.value =
+        newPasswordType.value === "password" ? "text" : "password";
+    } else if (field === "confirm") {
+      confirmPasswordType.value =
+        confirmPasswordType.value === "password" ? "text" : "password";
+    }
+  };
+
   // Fetch user data on component mount
   onMounted(async () => {
     isLoading.value = true;
@@ -722,7 +766,6 @@
       isLoading.value = false;
     }
   });
-
   // Watch for changes in the currentUser object to initialize photoPreview
   // This ensures photoPreview reflects the current profile photo from the store
   // unless a new file is actively selected by the user.
@@ -739,7 +782,6 @@
     { immediate: true, deep: true } // Run immediately on component mount and deep watch for object changes
   );
 </script>
-
 <style scoped>
   /* Basic spinner animation */
   @keyframes spin {
@@ -753,7 +795,6 @@
   .animate-spin {
     animation: spin 1s linear infinite;
   }
-
   /* Toast transition styles */
   .fade-enter-active,
   .fade-leave-active {
@@ -764,7 +805,6 @@
     opacity: 0;
     transform: translateY(20px);
   }
-
   /* Disabled state improvements */
   .disabled\:opacity-50:disabled {
     opacity: 0.5;

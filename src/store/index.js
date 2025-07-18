@@ -145,6 +145,35 @@ export default createStore({
   },
 
   actions: {
+    async updateCurrentUserProfile({ commit }, payload) {
+      try {
+        let res;
+        if (payload instanceof FormData) {
+          res = await api.put("/api/users/update-profile", payload, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+        } else {
+          res = await api.put("/api/users/update-profile", payload);
+        }
+
+        if (res.data?.photo) {
+          commit("SET_USER_PHOTO", res.data.photo);
+          commit("SET_CURRENT_USER_DETAILS", {
+            ...this.state.currentUserDetails,
+            photo: res.data.photo,
+          });
+        }
+
+        console.log("✅ Profile updated:", res.data);
+        return res.data;
+      } catch (err) {
+        console.error(
+          "❌ Failed to update profile:",
+          err.response?.data || err.message
+        );
+        throw err;
+      }
+    },
     async fetchCurrentUser({ commit }) {
       try {
         const res = await api.get("/api/users/me");
