@@ -19,6 +19,7 @@
         </div>
       </div>
       <button
+        v-show="role === 'admin' || role === 'superadmin'"
         @click="openAddModal"
         class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg flex items-center gap-2 transition-colors shadow-sm hover:shadow-md"
       >
@@ -753,7 +754,7 @@
 </template>
 
 <script setup>
-  import { ref, reactive, watch } from "vue";
+  import { ref, reactive, watch, computed } from "vue";
   import { useStore } from "vuex";
   import {
     Search,
@@ -787,7 +788,7 @@
   const showModal = ref(false);
   const isEditing = ref(false);
   const isSubmitting = ref(false);
-
+  const role = computed(() => store.getters.getUserRole);
   // Error handling states
   const formError = ref("");
   const fieldErrors = reactive({});

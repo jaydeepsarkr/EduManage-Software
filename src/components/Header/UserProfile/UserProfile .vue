@@ -212,19 +212,19 @@
   };
 
   // Getters
+  const currentUser = computed(() => store.state.currentUserDetails);
   const userName = computed(() => store.getters.getUserName);
   const userRole = computed(() => store.getters.getUserRole);
   const userPhoto = computed(() => {
-    const path = store.getters.getUserPhoto;
+    const photo = currentUser.value?.photo;
     const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
 
-    if (!path) return null;
-
-    return path.startsWith("http")
-      ? path
-      : `${baseURL.replace(/\/+$/, "")}/${path.replace(/^\/+/, "")}`;
+    return photo
+      ? photo.startsWith("http")
+        ? photo
+        : `${baseURL}/${photo}`
+      : null;
   });
-
   // School presence checker
   const hasSchool = computed(() => !!store.state.schoolId);
 

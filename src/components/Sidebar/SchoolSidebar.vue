@@ -434,6 +434,7 @@
   onMounted(() => {
     store.dispatch("initializeUserRole");
     store.dispatch("fetchStudents", { page: 1, limit: 1 });
+    store.dispatch("fetchCurrentUser");
   });
 
   // Computed values
@@ -442,9 +443,12 @@
   const TotalStudents = computed(() => store.getters.getTotalStudents);
   const userName = computed(() => store.getters.getUserName);
   const UserRole = computed(() => store.getters.getUserRole);
+  const currentUser = computed(() => store.state.currentUserDetails);
+
   const userPhoto = computed(() => {
-    const photo = store.getters.getUserPhoto;
+    const photo = currentUser.value?.photo;
     const baseURL = process.env.VUE_APP_BASE_URL || "http://localhost:5000";
+
     return photo
       ? photo.startsWith("http")
         ? photo

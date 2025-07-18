@@ -5,6 +5,7 @@ import jwt_decode from "jwt-decode";
 //   process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
 export default createStore({
   state: {
+    currentUserDetails: null,
     teachers: [],
 
     teacherPagination: {
@@ -52,6 +53,7 @@ export default createStore({
   },
 
   getters: {
+    currentUserDetails: (state) => state.currentUserDetails,
     getTotalTeachers: (state) => state.teacherPagination.totalResults,
     getTeacherPagination: (state) => state.teacherPagination,
     getAllTeachers: (state) => state.teachers || [],
@@ -76,6 +78,9 @@ export default createStore({
   },
 
   mutations: {
+    SET_CURRENT_USER_DETAILS(state, user) {
+      state.currentUserDetails = user;
+    },
     SET_TEACHER_PAGINATION(state, pagination) {
       state.teacherPagination = pagination;
     },
@@ -140,6 +145,14 @@ export default createStore({
   },
 
   actions: {
+    async fetchCurrentUser({ commit }) {
+      try {
+        const res = await api.get("/api/users/me");
+        commit("SET_CURRENT_USER_DETAILS", res.data.user || res.data);
+      } catch (error) {
+        console.error("❌ Failed to fetch current user:", error);
+      }
+    },
     async editTeacherById(_, { teacherId, updates }) {
       try {
         const res = await api.put(`/api/teachers/${teacherId}`, updates);
