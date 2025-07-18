@@ -14,6 +14,7 @@ import HelpSupport from "../views/Help&Support.vue";
 import createSchool from "../views/School/createSchool.vue";
 import schoolDetails from "../views/School/schoolDtails.vue";
 import Teacher from "../views/Teacher.vue";
+import Profile from "../components/Profile.vue";
 
 const routes = [
   // Public Routes
@@ -76,6 +77,12 @@ const routes = [
     path: "/teacher",
     name: "Teacher",
     component: Teacher,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: Profile,
     meta: { requiresAuth: true },
   },
 ];

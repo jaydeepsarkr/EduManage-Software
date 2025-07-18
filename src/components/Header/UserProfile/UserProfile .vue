@@ -86,10 +86,15 @@
             >
               <User class="w-4 h-4 text-blue-600" />
             </div>
-            <div>
-              <div class="font-medium">Profile</div>
-              <div class="text-xs text-slate-500">View and edit profile</div>
-            </div>
+            <router-link
+              to="/profile"
+              class="block"
+            >
+              <div>
+                <div class="font-medium">Profile</div>
+                <div class="text-xs text-slate-500">View and edit profile</div>
+              </div>
+            </router-link>
           </a>
 
           <!-- Settings -->
