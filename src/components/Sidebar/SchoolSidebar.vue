@@ -471,16 +471,6 @@
 
   const academicItems = computed(() => [
     {
-      id: "students",
-      label: "Students",
-      icon: Users,
-      badge: TotalStudents.value,
-      route: "/students",
-      description:
-        "Manage student records, enrollment, personal information, and academic history.",
-      quickAction: "Add New Student",
-    },
-    {
       id: "teachers",
       label: "Teachers",
       icon: UserCheck,
@@ -490,6 +480,18 @@
       quickAction: "Add New Teacher",
       route: "/teacher",
     },
+
+    {
+      id: "students",
+      label: "Students",
+      icon: Users,
+      badge: TotalStudents.value,
+      route: "/students",
+      description:
+        "Manage student records, enrollment, personal information, and academic history.",
+      quickAction: "Add New Student",
+    },
+
     {
       id: "classes",
       label: "Classes",
@@ -508,6 +510,16 @@
       description: "Track and manage student and teacher attendance records.",
       quickAction: "Mark Attendance",
       route: "/attendance",
+    },
+
+    {
+      id: "teacherAttendance",
+      label: "Teacher Attendance",
+      icon: ClipboardCheck,
+      badge: "Today",
+      description: "Track and manage teacher attendance records.",
+      quickAction: "Mark Teacher Attendance",
+      route: "/teacherAttendance",
     },
   ]);
 

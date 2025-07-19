@@ -835,6 +835,10 @@
   const setAttendance = (studentId, status) => {
     attendance.value[studentId] = status;
   };
+
+  const fetchTodaysData = () => {
+    store.dispatch("fetchTodaysAttendancePercentage");
+  };
   // 💾 Save attendance
   const saveAttendance = async () => {
     isSaving.value = true;
@@ -854,6 +858,7 @@
         alreadyMarked.value[studentId] = true;
       }
       showSuccessToast.value = true;
+      fetchTodaysData();
       setTimeout(() => (showSuccessToast.value = false), 3000);
     } catch (error) {
       console.error("Error while saving attendance:", error);
