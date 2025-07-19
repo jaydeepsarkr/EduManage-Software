@@ -490,153 +490,131 @@
           </div>
 
           <!-- Mobile Cards -->
-          <div
-            v-else
-            class="p-3 sm:p-4 space-y-3 sm:space-y-4"
-          >
+          <div class="p-3 space-y-3 bg-gray-50/30">
             <div
               v-for="student in students"
               :key="student.id"
-              class="bg-white border border-gray-200 rounded-lg p-3 sm:p-4 hover:bg-gray-50 transition-all duration-200 touch-manipulation"
+              class="group bg-white border border-gray-200 rounded-xl p-4 hover:shadow-md hover:border-blue-300 transition-all duration-200 touch-manipulation"
               :class="{
-                'ring-2 ring-blue-500 bg-blue-50': isStudentSelected(
-                  student._id
-                ),
+                'ring-2 ring-blue-400 bg-blue-50/30 shadow-sm':
+                  isStudentSelected(student._id),
               }"
             >
-              <!-- Selection Checkbox -->
-              <div class="flex items-center justify-between mb-2 sm:mb-3">
-                <label
-                  class="flex items-center gap-2 cursor-pointer touch-manipulation"
-                >
+              <!-- Header: Checkbox, Roll Number & Status -->
+              <div class="flex items-center justify-between mb-3">
+                <label class="flex items-center gap-2 cursor-pointer">
                   <input
                     type="checkbox"
                     :checked="isStudentSelected(student._id)"
                     @change="toggleStudentSelection(student._id)"
                     :disabled="isLoading"
-                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
                   />
-                  <span class="text-xs sm:text-sm font-bold text-gray-800">{{
-                    student.rollNumber
-                  }}</span>
+                  <span class="text-sm font-bold text-gray-800">
+                    <span>Roll Number:&nbsp;</span>{{ student.rollNumber }}
+                  </span>
                 </label>
+
                 <span
                   :class="getStatusClass(student.status)"
-                  class="inline-flex items-center gap-1 px-2 py-1 text-[10px] sm:text-xs font-bold rounded-full border"
+                  class="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded-full border"
                 >
-                  <FileChartLine class="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  <FileChartLine class="w-3 h-3" />
                   {{ student.status }}
                 </span>
               </div>
 
-              <!-- Student Info -->
-              <div class="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <div class="flex-shrink-0">
+              <!-- Student Profile -->
+              <div class="flex items-center gap-3 mb-4">
+                <div class="relative flex-shrink-0">
                   <div
-                    class="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 rounded-full bg-blue-600 flex items-center justify-center border border-blue-600"
+                    class="h-12 w-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-sm"
                   >
-                    <span
-                      class="text-[10px] sm:text-xs md:text-sm font-bold text-white"
-                    >
-                      {{ getInitials(student.name) }}
-                    </span>
+                    <span class="text-sm font-bold text-white">{{
+                      getInitials(student.name)
+                    }}</span>
                   </div>
+                  <div
+                    class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"
+                  ></div>
                 </div>
+
                 <div class="flex-1 min-w-0">
-                  <div
-                    class="text-sm sm:text-base font-bold text-gray-800 truncate"
-                  >
+                  <h3 class="text-base font-bold text-gray-900 truncate mb-1">
                     {{ student.name }}
-                  </div>
-                  <div
-                    class="text-[10px] sm:text-xs text-gray-500 flex items-center gap-1 mt-0.5 sm:mt-1"
-                  >
-                    <Mail class="w-2.5 h-2.5 sm:w-3 sm:h-3 flex-shrink-0" />
+                  </h3>
+                  <div class="flex items-center gap-1 text-sm text-gray-600">
+                    <Mail class="w-3 h-3" />
                     <span class="truncate">{{ student.email }}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Contact & Academic Info -->
-              <div class="grid grid-cols-2 gap-2 sm:gap-3 mb-2 sm:mb-3">
-                <div class="space-y-1.5 sm:space-y-2">
-                  <div
-                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-700"
-                  >
-                    <div
-                      class="p-0.5 sm:p-1 bg-green-100 rounded border border-green-200 flex-shrink-0"
-                    >
-                      <Phone class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-green-600" />
+              <!-- Two-Line Info Layout -->
+              <div class="space-y-2 mb-4">
+                <!-- Phone & Address Line -->
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <div class="p-1.5 bg-green-100 rounded-lg">
+                      <Phone class="w-3 h-3 text-green-600" />
                     </div>
-                    <span class="font-medium truncate">{{
+                    <span class="text-sm font-medium text-gray-700 truncate">{{
                       student.phone
                     }}</span>
                   </div>
-                  <div
-                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-500"
-                  >
-                    <div
-                      class="p-0.5 sm:p-1 bg-blue-100 rounded border border-blue-200 flex-shrink-0"
-                    >
-                      <MapPinHouse
-                        class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600"
-                      />
+
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <div class="p-1.5 bg-blue-100 rounded-lg">
+                      <MapPinHouse class="w-3 h-3 text-blue-600" />
                     </div>
                     <span
-                      class="truncate"
+                      class="text-sm text-gray-600 truncate"
                       :title="student.address"
                     >
                       {{
                         student.address
-                          ? student.address.includes(",")
-                            ? student.address.split(",")[0]
-                            : student.address.split(" ")[0]
-                          : ""
+                          ? student.address.split(",")[0] ||
+                            student.address.split(" ")[0]
+                          : "N/A"
                       }}
                     </span>
                   </div>
                 </div>
-                <div class="space-y-1.5 sm:space-y-2">
-                  <div class="flex items-center gap-1.5 sm:gap-2">
-                    <div
-                      class="p-1 sm:p-2 bg-green-600 rounded-lg border border-green-600 flex-shrink-0"
-                    >
-                      <School class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+
+                <!-- Class & Date Line -->
+                <div class="flex items-center gap-4">
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <div class="p-1.5 bg-purple-100 rounded-lg">
+                      <School class="w-3 h-3 text-purple-600" />
                     </div>
-                    <span
-                      class="text-xs sm:text-sm font-semibold text-gray-800 truncate"
-                      >{{ student.class }}</span
+                    <span class="text-sm font-medium text-gray-700 truncate"
+                      ><span>class:&nbsp;</span>{{ student.class }}</span
                     >
                   </div>
-                  <div
-                    class="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs text-gray-600"
-                  >
-                    <div
-                      class="p-0.5 sm:p-1 bg-blue-100 rounded border border-blue-200 flex-shrink-0"
-                    >
-                      <Calendar
-                        class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-blue-600"
-                      />
+
+                  <div class="flex items-center gap-2 flex-1 min-w-0">
+                    <div class="p-1.5 bg-orange-100 rounded-lg">
+                      <Calendar class="w-3 h-3 text-orange-600" />
                     </div>
-                    <span class="font-medium truncate">
-                      {{ formatDate(student.enrollmentDate) }}
-                    </span>
+                    <span class="text-sm text-gray-600 truncate">{{
+                      formatDate(student.enrollmentDate)
+                    }}</span>
                   </div>
                 </div>
               </div>
 
-              <!-- Actions -->
+              <!-- Action Buttons -->
               <div
-                class="flex items-center justify-end gap-1.5 sm:gap-2 pt-2 sm:pt-3 border-t border-gray-100"
+                class="flex items-center justify-end gap-2 pt-3 border-t border-gray-100"
               >
                 <button
                   @click="viewStudentDetails(student)"
                   :disabled="isLoading"
-                  class="flex items-center justify-center p-2 text-blue-600 hover:text-white hover:bg-blue-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-blue-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg transition-colors duration-200 border border-blue-200 hover:border-blue-600"
                   title="View Details"
                 >
                   <svg
-                    class="w-3 h-3 sm:w-4 sm:h-4"
+                    class="w-4 h-4"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -655,46 +633,48 @@
                     ></path>
                   </svg>
                 </button>
+
                 <button
                   @click="editStudent(student)"
                   :disabled="isLoading"
-                  class="flex items-center justify-center p-2 text-green-600 hover:text-white hover:bg-green-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-green-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-green-600 hover:bg-green-600 hover:text-white rounded-lg transition-colors duration-200 border border-green-200 hover:border-green-600"
                   title="Edit"
                 >
-                  <Pencil class="w-3 h-3 sm:w-4 sm:h-4" />
+                  <Pencil class="w-4 h-4" />
                 </button>
+
                 <button
                   @click="deleteStudent(student._id, student.name)"
                   :disabled="isLoading || isDeleting"
-                  class="flex items-center justify-center p-2 text-red-600 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed border border-red-600 touch-manipulation"
+                  class="flex items-center justify-center p-2 text-red-600 hover:bg-red-600 hover:text-white rounded-lg transition-colors duration-200 border border-red-200 hover:border-red-600"
                   title="Delete"
                 >
                   <div
                     v-if="isDeleting && deletingStudentId === student._id"
-                    class="w-3 h-3 sm:w-4 sm:h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
+                    class="w-4 h-4 border-2 border-red-600/30 border-t-red-600 rounded-full animate-spin"
                   ></div>
                   <Trash2
                     v-else
-                    class="w-3 h-3 sm:w-4 sm:h-4"
+                    class="w-4 h-4"
                   />
                 </button>
               </div>
             </div>
 
-            <!-- Mobile Empty State -->
+            <!-- Simple Empty State -->
             <div
               v-if="!isTableLoading && students.length === 0"
-              class="text-center py-8 sm:py-12"
+              class="text-center py-12"
             >
               <div
-                class="w-12 h-12 sm:w-16 sm:h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4 border border-blue-200"
+                class="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-4"
               >
-                <Users class="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+                <Users class="w-8 h-8 text-blue-600" />
               </div>
-              <h3 class="text-base sm:text-lg font-bold text-gray-900 mb-2">
+              <h3 class="text-lg font-bold text-gray-900 mb-2">
                 No students found
               </h3>
-              <p class="text-sm text-gray-600 px-4">
+              <p class="text-sm text-gray-600">
                 Try adjusting your search criteria or add new students.
               </p>
             </div>

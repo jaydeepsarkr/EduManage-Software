@@ -5,6 +5,9 @@ import jwt_decode from "jwt-decode";
 //   process.env.VUE_APP_BASE_URL || "https://server-edumanage.onrender.com";
 export default createStore({
   state: {
+    notifications: [], // ✅ Add this line
+    attendanceRecords: [],
+    attendanceTotal: 0,
     currentUserDetails: null,
     teachers: [],
 
@@ -78,6 +81,15 @@ export default createStore({
   },
 
   mutations: {
+    SET_ATTENDANCE_DATA(state, payload) {
+      state.attendanceRecords = payload.records;
+      state.attendanceTotal = payload.total;
+      state.attendancePagination.page = payload.page;
+      state.attendancePagination.limit = payload.limit;
+    },
+    SET_ATTENDANCE_NOTIFICATIONS(state, notifications) {
+      state.notifications = notifications;
+    },
     SET_CURRENT_USER_DETAILS(state, user) {
       state.currentUserDetails = user;
     },
@@ -145,6 +157,28 @@ export default createStore({
   },
 
   actions: {
+    async fetchAttendanceForToday(
+      { commit },
+      { page = 1, limit = 10, name = "", date = "" }
+    ) {
+      try {
+        const res = await api.get("/api/attendance/teacher/today", {
+          params: { page, limit, name, date },
+        });
+
+        commit("SET_ATTENDANCE_DATA", res.data);
+      } catch (err) {
+        console.error("❌ Failed to fetch today's attendance:", err);
+      }
+    },
+
+    async fetchAttendanceNotifications({ commit }) {
+      const res = await api.get("/api/attendance/teacher/notifications");
+      const notifications = res.data.notifications;
+      commit("SET_ATTENDANCE_NOTIFICATIONS", notifications);
+      return notifications;
+    },
+
     async updateCurrentUserProfile({ commit }, payload) {
       try {
         let res;

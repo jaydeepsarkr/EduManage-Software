@@ -1,376 +1,485 @@
 <template>
-  <div
-    class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 sm:p-6 lg:p-8 font-sans"
-  >
-    <div class="max-w-7xl mx-auto">
-      <!-- Daily Summary Cards -->
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8"
-      >
-        <div
-          class="bg-white rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-300 hover:shadow-2xl"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600">Total Teachers</p>
-              <p class="text-3xl font-bold text-gray-900 mt-1">
-                {{ summaryStats.total }}
-              </p>
-            </div>
-            <div
-              class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center shadow-md"
-            >
-              <Users class="w-7 h-7 text-blue-600" />
-            </div>
-          </div>
+  <div class="min-h-screen bg-gray-50 p-6">
+    <!-- Header Section -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-[15px] sm:text-3xl font-bold text-gray-900">
+            Teacher Attendance Dashboard
+          </h1>
         </div>
-        <div
-          class="bg-white rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-300 hover:shadow-2xl"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600">Present Today</p>
-              <p class="text-3xl font-bold text-green-600 mt-1">
-                {{ summaryStats.present }}
-              </p>
-            </div>
-            <div
-              class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center shadow-md"
+        <div class="flex items-center space-x-4">
+          <!-- Notifications Bell -->
+          <div class="relative">
+            <button
+              @click="showNotifications = !showNotifications"
+              class="relative p-2 text-gray-600 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
             >
-              <CheckCircle class="w-7 h-7 text-green-600" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="bg-white rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-300 hover:shadow-2xl"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600">Late Check-ins</p>
-              <p class="text-3xl font-bold text-yellow-600 mt-1">
-                {{ summaryStats.late }}
-              </p>
-            </div>
+              <Bell class="h-6 w-6" />
+              <span
+                v-if="notifications.length > 0"
+                class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center"
+              >
+                {{ notifications.length }}
+              </span>
+            </button>
+
+            <!-- Enhanced Notifications Dropdown -->
             <div
-              class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center shadow-md"
+              v-if="showNotifications"
+              class="absolute right-[-28px] sm:right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border z-50"
             >
-              <Clock class="w-7 h-7 text-yellow-600" />
-            </div>
-          </div>
-        </div>
-        <div
-          class="bg-white rounded-2xl shadow-xl p-6 border border-white/20 transition-all duration-300 hover:shadow-2xl"
-        >
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-sm font-medium text-gray-600">Absent Today</p>
-              <p class="text-3xl font-bold text-red-600 mt-1">
-                {{ summaryStats.absent }}
-              </p>
-            </div>
-            <div
-              class="w-14 h-14 bg-red-100 rounded-xl flex items-center justify-center shadow-md"
-            >
-              <XCircle class="w-7 h-7 text-red-600" />
+              <div class="p-4 border-b bg-gray-50 rounded-t-lg">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-semibold text-gray-900">Notifications</h3>
+                  <span class="text-xs text-gray-500"
+                    >{{ notifications.length }} items</span
+                  >
+                </div>
+              </div>
+              <div class="max-h-80 overflow-y-auto">
+                <div
+                  v-if="isLoadingNotifications"
+                  class="p-6 text-center"
+                >
+                  <div
+                    class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600 mx-auto mb-2"
+                  ></div>
+                  <p class="text-sm text-gray-500">Loading notifications...</p>
+                </div>
+                <div
+                  v-else-if="notifications.length === 0"
+                  class="p-6 text-gray-500 text-center"
+                >
+                  <Bell class="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <p class="text-sm">No new notifications</p>
+                </div>
+                <div
+                  v-else
+                  class="divide-y divide-gray-100"
+                >
+                  <div
+                    v-for="notification in notifications"
+                    :key="notification.id || notification"
+                    class="p-4 hover:bg-gray-50 transition-colors duration-150"
+                  >
+                    <div class="flex items-start space-x-3">
+                      <!-- Notification Icon -->
+                      <div
+                        :class="[
+                          'flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center',
+                          getNotificationIconClass(notification),
+                        ]"
+                      >
+                        <component
+                          :is="getNotificationIcon(notification)"
+                          class="w-4 h-4"
+                        />
+                      </div>
+
+                      <!-- Notification Content -->
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between">
+                          <p
+                            class="text-xs font-medium text-gray-600 uppercase tracking-wide"
+                          >
+                            {{ getNotificationTitle(notification) }}
+                          </p>
+                          <span
+                            :class="[
+                              'text-xs px-2 py-1 rounded-full',
+                              getNotificationSeverityClass(notification),
+                            ]"
+                          >
+                            {{ getNotificationSeverity(notification) }}
+                          </span>
+                        </div>
+                        <p class="text-sm text-gray-900 mt-1">
+                          {{ getNotificationMessage(notification) }}
+                        </p>
+                        <p class="text-xs text-gray-500 mt-1">
+                          {{ formatNotificationTime(notification) }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notification Footer -->
+              <div class="p-3 border-t bg-gray-50 rounded-b-lg">
+                <button
+                  @click="refreshNotifications"
+                  :disabled="isLoadingNotifications"
+                  class="w-full text-xs text-blue-600 hover:text-blue-800 font-medium disabled:opacity-50"
+                >
+                  <RefreshCw
+                    class="w-3 h-3 inline mr-1"
+                    :class="{ 'animate-spin': isLoadingNotifications }"
+                  />
+                  Refresh Notifications
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <!-- Main Teacher Grid -->
-        <div class="xl:col-span-2">
-          <div class="bg-white rounded-2xl shadow-xl border border-white/20">
-            <div class="p-6 border-b border-gray-100">
-              <div
-                class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4"
-              >
-                <h2 class="text-xl sm:text-2xl font-semibold text-gray-900">
-                  Real-Time Attendance Monitor
-                </h2>
-                <div class="flex flex-wrap gap-2">
-                  <button
-                    v-for="filter in filters"
-                    :key="filter"
-                    @click="activeFilter = filter"
-                    :class="[
-                      'px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200',
-                      activeFilter === filter
-                        ? 'bg-blue-100 text-blue-700 shadow-sm'
-                        : 'text-gray-600 hover:bg-gray-100',
-                    ]"
-                  >
-                    {{ filter }}
-                  </button>
-                </div>
-              </div>
-              <!-- New Filter/Search Bar -->
-              <div class="flex flex-col sm:flex-row gap-4">
-                <div class="relative flex-1">
-                  <Search
-                    class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
-                  />
-                  <input
-                    type="text"
-                    v-model="searchQuery"
-                    placeholder="Search teacher by name..."
-                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-sm"
-                    :disabled="isTableLoading"
-                  />
-                  <div
-                    v-if="isSearching"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2"
-                  >
-                    <div
-                      class="w-4 h-4 border-2 border-blue-200 border-t-blue-600 rounded-full animate-spin"
-                    ></div>
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-green-100 rounded-lg">
+            <UserCheck class="h-6 w-6 text-green-600" />
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Present Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ summaryStats.present }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-yellow-100 rounded-lg">
+            <Clock class="h-6 w-6 text-yellow-600" />
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Late Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ summaryStats.late }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-red-100 rounded-lg">
+            <UserX class="h-6 w-6 text-red-600" />
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Absent Today</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ summaryStats.absent }}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex items-center">
+          <div class="p-2 bg-blue-100 rounded-lg">
+            <Users class="h-6 w-6 text-blue-600" />
+          </div>
+          <div class="ml-4">
+            <p class="text-sm font-medium text-gray-600">Total Teachers</p>
+            <p class="text-2xl font-bold text-gray-900">
+              {{ summaryStats.total }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="bg-white rounded-lg shadow p-6 mb-8">
+      <div
+        class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0"
+      >
+        <div
+          class="flex flex-col md:flex-row md:items-center space-y-4 md:space-y-0 md:space-x-4"
+        >
+          <div class="relative">
+            <Search
+              class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4"
+            />
+            <input
+              v-model="searchName"
+              type="text"
+              placeholder="Search by teacher name..."
+              class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              @input="debouncedSearch"
+            />
+          </div>
+
+          <input
+            v-model="selectedDate"
+            type="date"
+            class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            @change="fetchAttendanceData"
+          />
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-600">Show:</span>
+          <select
+            v-model="pageLimit"
+            @change="fetchAttendanceData"
+            class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+          </select>
+          <span class="text-sm text-gray-600">per page</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Attendance Table/Cards -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold text-gray-900">
+          Today's Teacher Attendance
+        </h2>
+      </div>
+
+      <div
+        v-if="isTableLoading"
+        class="flex items-center justify-center py-12"
+      >
+        <div
+          class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"
+        ></div>
+        <span class="ml-2 text-gray-600">Loading attendance data...</span>
+      </div>
+
+      <div
+        v-else-if="attendanceRecords.length === 0"
+        class="text-center py-12"
+      >
+        <Users class="w-16 h-16 text-gray-300 mx-auto mb-4" />
+        <h3 class="text-lg font-medium text-gray-900 mb-2">
+          No attendance records found
+        </h3>
+        <p class="text-gray-500 mb-4">
+          {{
+            searchName
+              ? "Try adjusting your search terms or filters."
+              : "No attendance data available for the selected date."
+          }}
+        </p>
+        <button
+          @click="fetchAttendanceData(1)"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+        >
+          Refresh Data
+        </button>
+      </div>
+
+      <div v-else>
+        <!-- Mobile Cards View -->
+        <div class="block md:hidden">
+          <div class="divide-y divide-gray-200">
+            <div
+              v-for="record in attendanceRecords"
+              :key="record._id"
+              class="p-4 hover:bg-gray-50 transition-colors duration-150"
+            >
+              <div class="flex items-start space-x-3">
+                <img
+                  :src="
+                    getTeacherPhoto(record) ||
+                    '/placeholder.svg?height=40&width=40'
+                  "
+                  :alt="getTeacherName(record)"
+                  class="h-10 w-10 rounded-full object-cover flex-shrink-0"
+                />
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-sm font-medium text-gray-900 truncate">
+                      {{ getTeacherName(record) }}
+                    </h3>
+                    <span
+                      :class="getStatusBadgeClass(record.status)"
+                      class="inline-flex px-2 py-1 text-xs font-semibold rounded-full capitalize"
+                    >
+                      {{ record.status }}
+                    </span>
                   </div>
-                </div>
-                <div class="relative">
-                  <CalendarDays
-                    class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"
-                  />
-                  <input
-                    type="date"
-                    v-model="selectedDate"
-                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 bg-white/50 backdrop-blur-sm hover:bg-white/80 text-sm"
-                    :disabled="isTableLoading"
-                  />
-                </div>
-                <button
-                  @click="fetchTeachersData(1)"
-                  :disabled="isTableLoading"
-                  class="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl hover:from-blue-700 hover:to-blue-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transform hover:scale-105"
-                >
-                  <RefreshCw
-                    v-if="isTableLoading"
-                    class="w-4 h-4 animate-spin"
-                  />
-                  <span v-else>Apply Filters</span>
-                </button>
-              </div>
-            </div>
-            <div class="p-6 relative">
-              <div
-                v-if="isTableLoading"
-                class="absolute inset-0 bg-white/60 backdrop-blur-sm rounded-xl z-10 flex items-center justify-center"
-              >
-                <div class="text-center">
-                  <div
-                    class="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-2"
-                  ></div>
-                  <p class="text-sm text-gray-600">Loading teachers...</p>
-                </div>
-              </div>
-              <div
-                v-if="filteredTeachers.length > 0"
-                class="grid grid-cols-1 md:grid-cols-2 gap-4"
-              >
-                <div
-                  v-for="teacher in filteredTeachers"
-                  :key="teacher._id"
-                  class="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200 border border-gray-200 shadow-sm hover:shadow-md"
-                >
-                  <div class="flex items-center space-x-4">
-                    <div class="relative">
-                      <img
-                        :src="
-                          teacher.photo || '/placeholder.svg?height=48&width=48'
-                        "
-                        :alt="teacher.name"
-                        class="w-12 h-12 rounded-full object-cover border-2 border-blue-200"
-                      />
-                      <div
-                        :class="[
-                          'absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white',
-                          getStatusColor(teacher.attendanceStatus),
-                        ]"
-                      ></div>
+                  <p class="text-xs text-gray-500 mb-2">
+                    ID: {{ getTeacherId(record) }}
+                  </p>
+                  <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <span class="text-gray-500">Check In:</span>
+                      <p class="font-medium text-gray-900">
+                        {{ formatTime(record.checkIn) }}
+                      </p>
                     </div>
-                    <div class="flex-1 min-w-0">
-                      <h3 class="font-medium text-gray-900 truncate">
-                        {{ teacher.name }}
-                      </h3>
-                      <p class="text-sm text-gray-600">
-                        {{ teacher.subject }}
+                    <div>
+                      <span class="text-gray-500">Check Out:</span>
+                      <p class="font-medium text-gray-900">
+                        {{ formatTime(record.checkOut) }}
                       </p>
                     </div>
                   </div>
-                  <div class="mt-4 space-y-2">
-                    <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Check-in:</span>
-                      <span class="text-sm font-medium text-gray-800">{{
-                        teacher.checkInTime || "-"
-                      }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Check-out:</span>
-                      <span class="text-sm font-medium text-gray-800">{{
-                        teacher.checkOutTime || "-"
-                      }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Duration:</span>
-                      <span class="text-sm font-medium text-gray-800">{{
-                        teacher.duration || "-"
-                      }}</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                      <span class="text-sm text-gray-600">Status:</span>
-                      <span
-                        :class="[
-                          'text-sm font-medium',
-                          getStatusTextColor(teacher.attendanceStatus),
-                        ]"
-                      >
-                        {{ teacher.attendanceStatus || "N/A" }}
-                      </span>
-                    </div>
+                  <div class="mt-2">
+                    <span class="text-xs text-gray-500">Duration:</span>
+                    <p class="text-xs font-medium text-gray-900">
+                      {{ calculateDuration(record.checkIn, record.checkOut) }}
+                    </p>
                   </div>
                 </div>
-              </div>
-              <div
-                v-else
-                class="text-center py-8 text-gray-500"
-              >
-                No teachers found for the selected filters.
-              </div>
-            </div>
-            <!-- Pagination Section -->
-            <div
-              v-if="teachers.length > 0"
-              class="flex flex-col sm:flex-row items-center justify-between mt-6 sm:mt-8 space-y-4 sm:space-y-0 px-6 pb-6"
-            >
-              <!-- Results summary -->
-              <div
-                class="text-xs sm:text-sm text-gray-600 font-medium text-center sm:text-left"
-              >
-                <template v-if="!isTableLoading">
-                  Showing
-                  <span class="font-bold text-gray-900">
-                    {{ (currentPage - 1) * itemsPerPage + 1 }}
-                  </span>
-                  to
-                  <span class="font-bold text-gray-900">
-                    {{ Math.min(currentPage * itemsPerPage, totalResults) }}
-                  </span>
-                  of
-                  <span class="font-bold text-gray-900">
-                    {{ totalResults }}
-                  </span>
-                  results
-                </template>
-                <template v-else>
-                  <div
-                    class="flex items-center gap-2 justify-center sm:justify-start"
-                  >
-                    <div
-                      class="w-4 h-4 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"
-                    ></div>
-                    <span>Loading results...</span>
-                  </div>
-                </template>
-              </div>
-              <!-- Pagination buttons -->
-              <div class="flex items-center gap-1">
-                <!-- Previous button -->
-                <button
-                  @click="goToPage(currentPage - 1)"
-                  :disabled="currentPage === 1 || isTableLoading"
-                  class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
-                >
-                  <ChevronLeft class="w-4 h-4" />
-                </button>
-                <!-- Numbered buttons -->
-                <template
-                  v-for="page in totalPages"
-                  :key="page"
-                >
-                  <button
-                    @click="goToPage(page)"
-                    :disabled="isTableLoading"
-                    :class="[
-                      'px-2 sm:px-3 py-2 text-xs sm:text-sm rounded-lg transition-all duration-200 min-h-[36px] min-w-[36px] border',
-                      page === currentPage
-                        ? 'font-bold bg-blue-600 text-white border-blue-600'
-                        : 'font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 border-gray-300',
-                      'disabled:opacity-50 disabled:cursor-not-allowed',
-                    ]"
-                  >
-                    {{ page }}
-                  </button>
-                </template>
-                <!-- Next button -->
-                <button
-                  @click="goToPage(currentPage + 1)"
-                  :disabled="currentPage === totalPages || isTableLoading"
-                  class="px-2 sm:px-3 py-2 text-xs sm:text-sm font-semibold text-gray-600 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed min-h-[36px] min-w-[36px] border border-gray-300"
-                >
-                  <ChevronRight class="w-4 h-4" />
-                </button>
               </div>
             </div>
           </div>
         </div>
-        <!-- Right Sidebar -->
-        <div class="space-y-6">
-          <!-- Notifications -->
-          <div
-            class="bg-white rounded-2xl shadow-xl border border-white/20 p-6"
-          >
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-              Notifications
-            </h3>
-            <div class="space-y-3">
-              <div
-                v-for="notification in notifications"
-                :key="notification.id"
-                class="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg border border-yellow-200 shadow-sm"
+
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Teacher
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Status
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Check In
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Check Out
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Duration
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                v-for="record in attendanceRecords"
+                :key="record._id"
+                class="hover:bg-gray-50"
               >
-                <AlertCircle
-                  class="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0"
-                />
-                <div>
-                  <p class="text-sm font-medium text-yellow-800">
-                    {{ notification.title }}
-                  </p>
-                  <p class="text-xs text-yellow-700">
-                    {{ notification.message }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Working Hours Chart -->
-          <div
-            class="bg-white rounded-2xl shadow-xl border border-white/20 p-6"
-          >
-            <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-4">
-              Working Hours This Week
-            </h3>
-            <div class="space-y-4">
-              <div
-                v-for="day in weeklyHours"
-                :key="day.day"
-                class="flex items-center justify-between"
-              >
-                <span class="text-sm text-gray-600 font-medium">{{
-                  day.day
-                }}</span>
-                <div class="flex items-center space-x-3">
-                  <div class="w-24 bg-gray-200 rounded-full h-2.5">
-                    <div
-                      class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out"
-                      :style="{ width: `${(day.hours / 8) * 100}%` }"
-                    ></div>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <img
+                      :src="
+                        getTeacherPhoto(record) ||
+                        '/placeholder.svg?height=32&width=32'
+                      "
+                      :alt="getTeacherName(record)"
+                      class="h-8 w-8 rounded-full object-cover"
+                    />
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ getTeacherName(record) }}
+                      </div>
+                      <div class="text-sm text-gray-500">
+                        ID: {{ getTeacherId(record) }}
+                      </div>
+                    </div>
                   </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
                   <span
-                    class="text-sm font-medium text-gray-900 w-10 text-right"
-                    >{{ day.hours }}h</span
+                    :class="getStatusBadgeClass(record.status)"
+                    class="inline-flex px-2 py-1 text-xs font-semibold rounded-full capitalize"
                   >
-                </div>
-              </div>
-            </div>
+                    {{ record.status }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatTime(record.checkIn) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ formatTime(record.checkOut) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ calculateDuration(record.checkIn, record.checkOut) }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div
+        v-if="attendanceRecords.length > 0"
+        class="bg-gray-50 px-4 md:px-6 py-3 flex items-center justify-between border-t border-gray-200"
+      >
+        <div class="flex-1 flex justify-between sm:hidden">
+          <button
+            @click="previousPage"
+            :disabled="currentPage <= 1"
+            class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          <button
+            @click="nextPage"
+            :disabled="currentPage >= totalPages"
+            class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </div>
+        <div
+          class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between"
+        >
+          <div>
+            <p class="text-sm text-gray-700">
+              Showing
+              <span class="font-medium">{{ getStartRecord() }}</span>
+              to
+              <span class="font-medium">{{ getEndRecord() }}</span>
+              of
+              <span class="font-medium">{{ attendanceTotal }}</span>
+              results
+            </p>
+          </div>
+          <div>
+            <nav
+              class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+            >
+              <button
+                @click="previousPage"
+                :disabled="currentPage <= 1"
+                class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronLeft class="h-5 w-5" />
+              </button>
+
+              <button
+                v-for="page in visiblePages"
+                :key="page"
+                @click="goToPage(page)"
+                :class="[
+                  'relative inline-flex items-center px-4 py-2 border text-sm font-medium',
+                  page === currentPage
+                    ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
+                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50',
+                ]"
+              >
+                {{ page }}
+              </button>
+
+              <button
+                @click="nextPage"
+                :disabled="currentPage >= totalPages"
+                class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <ChevronRight class="h-5 w-5" />
+              </button>
+            </nav>
           </div>
         </div>
       </div>
@@ -382,202 +491,363 @@
   import { ref, computed, onMounted, watch } from "vue";
   import { useStore } from "vuex";
   import {
-    Users,
-    CheckCircle,
+    Bell,
+    UserCheck,
+    UserX,
     Clock,
-    XCircle,
-    AlertCircle,
+    Users,
     Search,
-    CalendarDays,
-    RefreshCw,
     ChevronLeft,
     ChevronRight,
+    RefreshCw,
+    AlertCircle,
+    CheckCircle,
+    Info,
   } from "lucide-vue-next";
 
   const store = useStore();
 
   // Reactive data
-  const activeFilter = ref("All");
 
-  const searchQuery = ref("");
+  const showNotifications = ref(false);
+  const searchName = ref("");
   const selectedDate = ref(new Date().toISOString().split("T")[0]);
+  const pageLimit = ref(10);
   const currentPage = ref(1);
-  const itemsPerPage = ref(6);
-
-  // Loading states
   const isTableLoading = ref(false);
-  const isSearching = ref(false);
+  const isLoadingNotifications = ref(false);
 
-  const filters = ref(["All", "Present", "Late", "Absent"]);
-
-  const teachers = computed(() => store.getters.getAllTeachers || []);
-  const totalResults = computed(
-    () => store.getters.getTeacherPagination?.totalResults || 0
-  );
-  const totalPages = computed(() => {
-    const total = store.getters.getTeacherPagination?.totalResults || 0;
-    const limit = itemsPerPage.value;
-    return Math.ceil(total / limit);
+  // Computed properties from Vuex store
+  const attendanceRecords = computed(() => {
+    console.log(
+      "📊 Current attendance records:",
+      store.state.attendanceRecords
+    );
+    return store.state.attendanceRecords || [];
   });
 
+  const attendanceTotal = computed(() => {
+    console.log("📊 Total attendance count:", store.state.attendanceTotal);
+    return store.state.attendanceTotal || 0;
+  });
+
+  const notifications = computed(() => {
+    const rawNotifications = store.state.notifications || [];
+    console.log("📊 Raw notifications from store:", rawNotifications);
+
+    // Handle both string array and object array formats
+    return rawNotifications.map((notification, index) => {
+      if (typeof notification === "string") {
+        return {
+          id: `notification_${index}`,
+          message: notification,
+          type: "info",
+          severity: "info",
+          createdAt: new Date().toISOString(),
+          title: "Attendance Alert",
+        };
+      }
+      return notification;
+    });
+  });
+
+  // Computed stats based on actual data
   const summaryStats = computed(() => {
-    const total = teachers.value.length;
-    const present = teachers.value.filter(
-      (t) => t.attendanceStatus === "Present"
-    ).length;
-    const late = teachers.value.filter(
-      (t) => t.attendanceStatus === "Late"
-    ).length;
-    const absent = teachers.value.filter(
-      (t) => t.attendanceStatus === "Absent"
-    ).length;
+    const records = attendanceRecords.value;
+    const total = records.length;
+    const present = records.filter((r) => r.status === "present").length;
+    const late = records.filter((r) => r.status === "late").length;
+    const absent = records.filter((r) => r.status === "absent").length;
+
+    console.log("📊 Summary stats:", { total, present, late, absent });
     return { total, present, late, absent };
   });
 
-  // Filtered teachers (client-side filter based on activeFilter)
-  const filteredTeachers = computed(() => {
-    if (activeFilter.value === "All") {
-      return teachers.value;
+  // Computed pagination
+  const totalPages = computed(() =>
+    Math.ceil(attendanceTotal.value / pageLimit.value)
+  );
+  const visiblePages = computed(() => {
+    const pages = [];
+    const start = Math.max(1, currentPage.value - 2);
+    const end = Math.min(totalPages.value, currentPage.value + 2);
+
+    for (let i = start; i <= end; i++) {
+      pages.push(i);
     }
-    return teachers.value.filter(
-      (teacher) => teacher.attendanceStatus === activeFilter.value
-    );
+    return pages;
   });
 
-  // Notifications (static for now)
-  const notifications = ref([
-    {
-      id: 1,
-      title: "Late Check-ins",
-      message: "2 teachers checked in late today",
-    },
-    {
-      id: 2,
-      title: "Missing Check-out",
-      message: "3 teachers haven't checked out yet",
-    },
-  ]);
+  // Helper methods to extract teacher data
+  const getTeacherName = (record) => {
+    return record.userId?.name || record.name || "Unknown Teacher";
+  };
 
-  // Weekly hours data (static for now)
-  const weeklyHours = ref([
-    { day: "Mon", hours: 8 },
-    { day: "Tue", hours: 7.5 },
-    { day: "Wed", hours: 8 },
-    { day: "Thu", hours: 6.5 },
-    { day: "Fri", hours: 7 },
-    { day: "Sat", hours: 0 },
-    { day: "Sun", hours: 0 },
-  ]);
+  const getTeacherPhoto = (record) => {
+    return record.userId?.photo || record.photo || null;
+  };
 
-  // Methods
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Present":
-        return "bg-green-500";
-      case "Late":
-        return "bg-yellow-500";
-      case "Absent":
-        return "bg-red-500";
+  const getTeacherId = (record) => {
+    return record.userId?._id || record.userId || record._id || "N/A";
+  };
+
+  // Notification helper methods
+  const getNotificationMessage = (notification) => {
+    return notification.message || notification;
+  };
+
+  const getNotificationTitle = (notification) => {
+    return notification.title || "Notification";
+  };
+
+  const getNotificationSeverity = (notification) => {
+    return notification.severity || "info";
+  };
+
+  const getNotificationIcon = (notification) => {
+    const severity = getNotificationSeverity(notification);
+    switch (severity) {
+      case "error":
+        return AlertCircle;
+      case "warning":
+        return Clock;
+      case "info":
+        return Info;
       default:
-        return "bg-gray-500";
+        return CheckCircle;
     }
   };
 
-  const getStatusTextColor = (status) => {
-    switch (status) {
-      case "Present":
-        return "text-green-600";
-      case "Late":
-        return "text-yellow-600";
-      case "Absent":
-        return "text-red-600";
+  const getNotificationIconClass = (notification) => {
+    const severity = getNotificationSeverity(notification);
+    switch (severity) {
+      case "error":
+        return "bg-red-100 text-red-600";
+      case "warning":
+        return "bg-yellow-100 text-yellow-600";
+      case "info":
+        return "bg-blue-100 text-blue-600";
       default:
-        return "text-gray-600";
+        return "bg-green-100 text-green-600";
     }
   };
 
-  const fetchTeachersData = async (page = currentPage.value) => {
-    isTableLoading.value = true;
+  const getNotificationSeverityClass = (notification) => {
+    const severity = getNotificationSeverity(notification);
+    switch (severity) {
+      case "error":
+        return "bg-red-100 text-red-800";
+      case "warning":
+        return "bg-yellow-100 text-yellow-800";
+      case "info":
+        return "bg-blue-100 text-blue-800";
+      default:
+        return "bg-green-100 text-green-800";
+    }
+  };
+
+  const formatNotificationTime = (notification) => {
+    const createdAt = notification.createdAt || new Date().toISOString();
     try {
-      currentPage.value = page;
-      await store.dispatch("fetchTeachers", {
-        page: currentPage.value,
-        limit: itemsPerPage.value,
-        search: searchQuery.value.trim(),
-        date: selectedDate.value, // Pass the selected date to the backend
+      const date = new Date(createdAt);
+      const now = new Date();
+      const diffMs = now - date;
+      const diffMins = Math.floor(diffMs / (1000 * 60));
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+      if (diffMins < 1) return "Just now";
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
       });
     } catch (error) {
-      console.error("Error fetching teachers for dashboard:", error);
+      return "Recently";
+    }
+  };
+
+  // Methods
+  const fetchAttendanceData = async (page = currentPage.value) => {
+    isTableLoading.value = true;
+    try {
+      currentPage.value = Number(page);
+      const limit = Number(pageLimit.value);
+
+      console.log("📡 Fetching attendance data with params:", {
+        page: currentPage.value,
+        limit: limit,
+        name: searchName.value.trim(),
+        date: selectedDate.value,
+      });
+
+      await store.dispatch("fetchAttendanceForToday", {
+        page: currentPage.value,
+        limit: limit,
+        name: searchName.value.trim(),
+        date: selectedDate.value,
+      });
+
+      console.log("✅ Attendance data fetched successfully");
+      console.log("📊 Records:", attendanceRecords.value);
+      console.log("📊 Total:", attendanceTotal.value);
+    } catch (error) {
+      console.error("❌ Error fetching attendance data:", error);
     } finally {
       isTableLoading.value = false;
-      isSearching.value = false;
+    }
+  };
+
+  const fetchNotifications = async () => {
+    isLoadingNotifications.value = true;
+    try {
+      console.log("📡 Fetching notifications...");
+      await store.dispatch("fetchAttendanceNotifications");
+      console.log("✅ Notifications fetched:", notifications.value);
+    } catch (error) {
+      console.error("❌ Failed to fetch notifications:", error);
+    } finally {
+      isLoadingNotifications.value = false;
+    }
+  };
+
+  const refreshNotifications = async () => {
+    await fetchNotifications();
+  };
+
+  // Debounced search
+  let searchTimeout;
+  const debouncedSearch = () => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentPage.value = 1;
+      fetchAttendanceData();
+    }, 500);
+  };
+
+  // Pagination methods
+  const previousPage = () => {
+    if (currentPage.value > 1) {
+      currentPage.value--;
+      fetchAttendanceData();
+    }
+  };
+
+  const nextPage = () => {
+    if (currentPage.value < totalPages.value) {
+      currentPage.value++;
+      fetchAttendanceData();
     }
   };
 
   const goToPage = (page) => {
-    if (page >= 1 && page <= totalPages.value && !isTableLoading.value) {
-      fetchTeachersData(page);
+    currentPage.value = page;
+    fetchAttendanceData();
+  };
+
+  // Utility methods
+  const getStatusBadgeClass = (status) => {
+    const statusLower = status?.toLowerCase();
+    switch (statusLower) {
+      case "present":
+        return "bg-green-100 text-green-800";
+      case "late":
+        return "bg-yellow-100 text-yellow-800";
+      case "absent":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  let searchTimeout = null;
-  watch(searchQuery, () => {
-    clearTimeout(searchTimeout);
-    isSearching.value = true;
-    searchTimeout = setTimeout(() => {
-      fetchTeachersData(1);
-    }, 300);
+  const formatTime = (timestamp) => {
+    if (!timestamp) return "N/A";
+    try {
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) return "Invalid Time";
+
+      return date.toLocaleTimeString("en-US", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+    } catch (error) {
+      console.error("Error formatting time:", error);
+      return "Invalid Time";
+    }
+  };
+
+  const calculateDuration = (checkIn, checkOut) => {
+    if (!checkIn || !checkOut) return "N/A";
+
+    try {
+      const start = new Date(checkIn);
+      const end = new Date(checkOut);
+
+      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "Invalid";
+
+      const diffMs = end - start;
+      const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+
+      if (diffHours < 0 || diffMinutes < 0) return "Invalid";
+
+      return `${diffHours}h ${diffMinutes}m`;
+    } catch (error) {
+      console.error("Error calculating duration:", error);
+      return "Error";
+    }
+  };
+
+  // Pagination helper methods
+  const getStartRecord = () => {
+    const start = (currentPage.value - 1) * Number(pageLimit.value) + 1;
+    return isNaN(start) ? 1 : start;
+  };
+
+  const getEndRecord = () => {
+    const end = Math.min(
+      currentPage.value * Number(pageLimit.value),
+      attendanceTotal.value
+    );
+    return isNaN(end) ? attendanceTotal.value : end;
+  };
+
+  // Watchers
+  watch([pageLimit], () => {
+    // Convert pageLimit to number to avoid NaN issues
+    pageLimit.value = Number(pageLimit.value);
+    currentPage.value = 1;
+    fetchAttendanceData();
   });
 
-  watch(selectedDate, () => {
-    fetchTeachersData(1);
-  });
-
+  // Lifecycle
   onMounted(() => {
-    fetchTeachersData();
+    console.log("🚀 Component mounted, fetching data...");
+    fetchAttendanceData();
+    fetchNotifications();
   });
 </script>
 
 <style scoped>
-  /* Basic spinner animation */
-  @keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  .animate-spin {
-    animation: spin 1s linear infinite;
+  /* Custom scrollbar for notifications */
+  .max-h-80::-webkit-scrollbar {
+    width: 4px;
   }
 
-  /* Stronger Pulse animation for NFC scanner */
-  @keyframes pulse-strong {
-    0%,
-    100% {
-      opacity: 1;
-      transform: scale(1);
-    }
-    50% {
-      opacity: 0.7;
-      transform: scale(1.05);
-    }
-  }
-  .animate-pulse-strong {
-    animation: pulse-strong 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  .max-h-80::-webkit-scrollbar-track {
+    background: #f1f1f1;
   }
 
-  /* Backdrop blur for loading overlay */
-  .backdrop-blur-sm {
-    backdrop-filter: blur(4px);
+  .max-h-80::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
   }
 
-  /* Disabled state improvements */
-  .disabled\:opacity-50:disabled {
-    opacity: 0.5;
-  }
-  .disabled\:cursor-not-allowed:disabled {
-    cursor: not-allowed;
+  .max-h-80::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
   }
 </style>
